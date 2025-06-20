@@ -92,7 +92,7 @@ def create_request():
                 upload_results['logo'] = logo_url
                 
                 # Extrair cores da logo (formato estruturado)
-                colors, color_error = color_extractor.extract_colors_from_logo(logo_url)
+                colors, color_error = color_extractor.extract_colors_from_logo_structured(logo_url)
                 if colors:
                     upload_results['colors'] = colors
                     request_obj.style_preferences_input = json.dumps({
@@ -658,6 +658,81 @@ def test_claude_models():
         'results': results,
         'recommendation': 'Use o primeiro modelo com status success'
     })
+
+@app.route('/update-skeleton/<skeleton_id>', methods=['POST'])
+def update_skeleton(skeleton_id):
+    """Atualizar dados do esqueleto"""
+    try:
+        skeleton = GeneratedSkeleton.get_by_id(skeleton_id)
+        if not skeleton:
+            return jsonify({
+                'success': False,
+                'error': 'Esqueleto não encontrado'
+            })
+        
+        # Receber novos dados
+        data = request.get_json()
+        new_skeleton_data = data.get('skeleton_data')
+        
+        if not new_skeleton_data:
+            return jsonify({
+                'success': False,
+                'error': 'Dados do esqueleto não fornecidos'
+            })
+        
+        # Validar estrutura básica
+        if not skeleton_generator._validate_skeleton_structure(new_skeleton_data):
+            return jsonify({
+                'success': False,
+                'error': 'Estrutura do esqueleto inválida'
+            })
+        
+        # Atualizar no banco
+        query = """
+        UPDATE generated_skeletons 
+        SET parsed_skeleton_data = %s, status = 'user_edited'
+        WHERE skeleton_id = %s
+        """
+        
+        result = db.execute_query(query, (json.dumps(new_skeleton_data), skeleton_id))
+        
+        if result:
+            # Log da alteração
+            ExecutionLog.add_log(
+                skeleton.request_id,
+                'SKELETON_EDITOR',
+                'INFO',
+                'Esqueleto editado pelo usuário',
+                json.dumps({
+                    'skeleton_id': skeleton_id,
+                    'sections_count': len(new_skeleton_data.get('sections', [])),
+                    'edited_fields': list(new_skeleton_data.keys())
+                })
+            )
+            
+            return jsonify({
+                'success': True,
+                'message': 'Esqueleto atualizado com sucesso!'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Erro ao salvar no banco de dados'
+            })
+            
+    except Exception as e:
+        ExecutionLog.add_log(
+            skeleton.request_id if skeleton else 'unknown',
+            'SKELETON_EDITOR',
+            'ERROR',
+            'Erro ao atualizar esqueleto',
+            str(e)
+        )
+        
+        return jsonify({
+            'success': False,
+            'error': f'Erro interno: {str(e)}'
+        })
 
 if __name__ == '__main__':
     print("🚀 Iniciando Landing Page Generator...")

@@ -139,15 +139,53 @@ class ColorExtractor:
         }
     
     def validate_color_palette(self, colors):
-        """Valida se as cores formam uma boa paleta"""
-        if not isinstance(colors, dict) or len(colors) != 3:
+        """Valida se a paleta de cores está correta"""
+        try:
+            required_keys = ['primary', 'secondary', 'accent']
+            
+            # Verificar se todas as chaves existem
+            if not all(key in colors for key in required_keys):
+                return False
+            
+            # Verificar se todas as cores são válidas
+            for color in colors.values():
+                if not self._is_valid_hex_color(color):
+                    return False
+            
+            return True
+            
+        except Exception:
             return False
-        
-        required_keys = ['primary', 'secondary', 'accent']
-        if not all(key in colors for key in required_keys):
-            return False
-        
-        # Validar formato hex
+    
+    def _is_valid_hex_color(self, color):
+        """Verifica se uma cor está no formato hex válido"""
         import re
-        hex_pattern = r'^#[0-9A-Fa-f]{6}$'
-        return all(re.match(hex_pattern, colors[key]) for key in required_keys)
+        return bool(re.match(r'^#[0-9A-Fa-f]{6}$', color))
+    
+    def extract_colors_from_logo_structured(self, logo_url):
+        """Extrai cores da logo em formato estruturado (60-30-10)"""
+        try:
+            colors_list, error = self.extract_colors_from_logo(logo_url)
+            
+            if error or not colors_list or len(colors_list) < 3:
+                return self._get_fallback_colors_structured(), error
+            
+            # Estruturar cores seguindo regra 60-30-10
+            structured_colors = {
+                'primary': colors_list[0],    # 60% - Cor dominante
+                'secondary': colors_list[1],  # 30% - Cor complementar
+                'accent': colors_list[2]      # 10% - Cor de destaque
+            }
+            
+            return structured_colors, None
+            
+        except Exception as e:
+            return self._get_fallback_colors_structured(), str(e)
+    
+    def _get_fallback_colors_structured(self):
+        """Cores padrão estruturadas"""
+        return {
+            'primary': '#2563eb',   # Azul profissional
+            'secondary': '#64748b', # Cinza neutro
+            'accent': '#f59e0b'     # Laranja vibrante
+        }

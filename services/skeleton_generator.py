@@ -173,6 +173,8 @@ DIRETRIZES OBRIGATÓRIAS:
 4. Focar em conversão e experiência do usuário
 5. Considerar responsividade mobile-first
 
+IMPORTANTE: Para os elementos, use nomes simples e claros que o usuário comum possa entender facilmente.
+
 ESTRUTURA DE RESPOSTA OBRIGATÓRIA (JSON):
 {{
   "sections": [
@@ -181,7 +183,7 @@ ESTRUTURA DE RESPOSTA OBRIGATÓRIA (JSON):
       "order": 1,
       "title": "Título da Seção",
       "description": "Descrição do que a seção faz",
-      "elements": ["elemento1", "elemento2"],
+      "elements": ["Título Principal", "Subtítulo", "Botão de Ação", "Imagem de Destaque"],
       "style_notes": "Notas específicas de estilo",
       "content_guidelines": "Diretrizes de conteúdo"
     }}
@@ -221,6 +223,16 @@ SEÇÕES RECOMENDADAS (escolha as mais adequadas):
 - contact: Contato e formulário
 - faq: Perguntas frequentes
 
+ELEMENTOS COMUNS (use nomes simples como estes):
+- "Título Principal", "Subtítulo", "Texto Descritivo"
+- "Botão de Ação", "Botão Secundário", "Link"
+- "Imagem Principal", "Foto do Produto", "Ícone"
+- "Lista de Benefícios", "Cards de Serviços"
+- "Formulário de Contato", "Campo de Email"
+- "Depoimento do Cliente", "Avaliação com Estrelas"
+- "Preço em Destaque", "Tabela de Preços"
+- "Logotipo da Empresa", "Redes Sociais"
+
 RESPONDA APENAS COM O JSON VÁLIDO, SEM TEXTO ADICIONAL.
 """
         return system_prompt
@@ -243,11 +255,11 @@ Gere o esqueleto em JSON seguindo exatamente a estrutura especificada no system 
             cleaned_content = response_content.strip()
             
             # Remover blocos de código markdown se existirem
-            if cleaned_content.startswith('```'):
+            if cleaned_content.startswith(''):
                 lines = cleaned_content.split('\n')
-                # Remover primeira linha (```json ou ```)
+                # Remover primeira linha (json ou )
                 lines = lines[1:]
-                # Remover última linha se for ```
+                # Remover última linha se for 
                 if lines and lines[-1].strip() == '```':
                     lines = lines[:-1]
                 cleaned_content = '\n'.join(lines)

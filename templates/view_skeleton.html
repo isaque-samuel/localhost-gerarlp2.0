@@ -2,312 +2,1653 @@
 
 {% block title %}Esqueleto {{ skeleton.skeleton_id[:8] }}... - Gerador de Landing Page{% endblock %}
 
+{% block head %}
+<style>
+:root {
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --info-color: #3b82f6;
+    --light-bg: #0c0c0c;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+}
+
+body {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header Styles */
+.skeleton-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow);
+}
+
+.skeleton-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.skeleton-subtitle {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.edit-mode-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.edit-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.edit-mode-toggle.active {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+/* Section Cards */
+.section-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    border: 2px solid transparent;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.section-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+}
+
+.section-card.editing {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.section-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-order {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.section-description {
+    color: #64748b;
+    margin: 0.25rem 0 0 0;
+    font-size: 0.95rem;
+}
+
+.section-body {
+    padding: 1.5rem;
+}
+
+/* Editable Fields */
+.editable-field {
+    position: relative;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: var(--transition);
+    cursor: pointer;
+    border: 2px solid transparent;
+    color: black;
+}
+
+.editable-field:hover {
+    background: #f1f5f9;
+    border-color: var(--primary-color);
+}
+
+.editable-field.editing {
+    background: #f0fdf4;
+    border-color: var(--success-color);
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    padding: 0.25rem;
+    margin-left: 0.5rem;
+    border-radius: 4px;
+    opacity: 0;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.editable-field:hover + .edit-btn,
+.edit-btn:hover {
+    opacity: 1;
+}
+
+/* Element Tags */
+.elements-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+}
+
+.element-tag {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.element-tag.trust-element {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+}
+
+.element-tag.urgency-element {
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+}
+
+/* Sidebar Cards */
+.info-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.visual-identity-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+}
+
+.strategy-card {
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    color: white;
+}
+
+.context-card {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+}
+
+.stats-card {
+    background: linear-gradient(135deg, var(--info-color) 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Color Palette */
+.color-palette {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.color-item {
+    text-align: center;
+    flex: 1;
+}
+
+.color-preview {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--border-radius);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: var(--transition);
+    margin: 0 auto 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.color-preview:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.color-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-bottom: 0.25rem;
+}
+
+.color-value {
+    font-size: 0.75rem;
+    font-family: 'Monaco', 'Menlo', monospace;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    color: white;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+    color: white;
+}
+
+.btn-secondary {
+    background: #64748b;
+    color: white;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
+    color: white;
+}
+
+/* Modals */
+.modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .skeleton-header {
+        padding: 1.5rem;
+    }
+    
+    .skeleton-title {
+        font-size: 1.5rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .section-order {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .color-palette {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .color-preview {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+</style>
+{% endblock %}
+
 {% block content %}
+<!-- Header -->
+<div class="skeleton-header">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h1 class="skeleton-title">
+                <i class="fas fa-sitemap me-2"></i>
+                Esqueleto da Landing Page
+            </h1>
+            <p class="skeleton-subtitle mb-0">
+                {{ request.page_title if request else 'Projeto' }} - {{ request.company_name if request else 'Empresa' }}
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-{{ 'success' if skeleton.status == 'completed' else 'warning' }} fs-6 px-3 py-2">
+                <i class="fas fa-{{ 'check-circle' if skeleton.status == 'completed' else 'clock' }} me-1"></i>
+                {{ skeleton.status }}
+            </span>
+            <button class="edit-mode-toggle" onclick="toggleEditMode()" id="editModeToggle">
+                <i class="fas fa-edit me-2"></i>
+                <span id="editModeText">Modo Edição</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3><i class="fas fa-sitemap"></i> Esqueleto da Landing Page</h3>
-                <span class="badge bg-{{ 'success' if skeleton.status == 'completed' else 'warning' }} fs-6">
-                    {{ skeleton.status }}
-                </span>
-            </div>
-            <div class="card-body">
-                {% if request %}
-                <div class="mb-3">
-                    <strong>Projeto:</strong> {{ request.page_title }}<br>
-                    <strong>Empresa:</strong> {{ request.company_name or 'Não informado' }}
-                </div>
-                {% endif %}
-                
-                {% if skeleton.parsed_skeleton_data %}
-                {% set data = skeleton.parsed_skeleton_data %}
-                
-                <!-- SEÇÕES -->
-                <div class="mb-4">
-                    <h5><i class="fas fa-layer-group"></i> Seções da Landing Page</h5>
-                    <div class="row">
-                        {% for section in data.sections %}
-                        <div class="col-md-6 mb-3">
-                            <div class="card border-primary">
-                                <div class="card-header bg-primary text-white d-flex justify-content-between">
-                                    <strong>{{ section.order }}. {{ section.title }}</strong>
-                                    <small>{{ section.name }}</small>
-                                </div>
-                                <div class="card-body">
-                                    <p class="text-muted">{{ section.description }}</p>
-                                    
-                                    {% if section.elements %}
-                                    <div class="mb-2">
-                                        <strong>Elementos:</strong>
-                                        <div class="mt-1">
-                                            {% for element in section.elements %}
-                                            <span class="badge bg-secondary me-1">{{ element }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                    
-                                    {% if section.style_notes %}
-                                    <div class="mb-2">
-                                        <strong>Estilo:</strong>
-                                        <small class="text-muted d-block">{{ section.style_notes }}</small>
-                                    </div>
-                                    {% endif %}
-                                    
-                                    {% if section.content_guidelines %}
-                                    <div>
-                                        <strong>Conteúdo:</strong>
-                                        <small class="text-muted d-block">{{ section.content_guidelines }}</small>
-                                    </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- IDENTIDADE VISUAL -->
-                {% if data.visual_identity %}
-                <div class="mb-4">
-                    <h5><i class="fas fa-palette"></i> Identidade Visual</h5>
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>Paleta de Cores:</strong>
-                                    <div class="d-flex gap-3 mt-2">
-                                        <div class="text-center">
-                                            <div style="width: 50px; height: 50px; background: {{ data.visual_identity.primary_color }}; border-radius: 8px; border: 2px solid #ddd;"></div>
-                                            <small class="d-block mt-1">Primária</small>
-                                            <code class="small">{{ data.visual_identity.primary_color }}</code>
-                                        </div>
-                                        <div class="text-center">
-                                            <div style="width: 50px; height: 50px; background: {{ data.visual_identity.secondary_color }}; border-radius: 8px; border: 2px solid #ddd;"></div>
-                                            <small class="d-block mt-1">Secundária</small>
-                                            <code class="small">{{ data.visual_identity.secondary_color }}</code>
-                                        </div>
-                                        <div class="text-center">
-                                            <div style="width: 50px; height: 50px; background: {{ data.visual_identity.accent_color }}; border-radius: 8px; border: 2px solid #ddd;"></div>
-                                            <small class="d-block mt-1">Destaque</small>
-                                            <code class="small">{{ data.visual_identity.accent_color }}</code>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Tipografia:</strong>
-                                    <ul class="list-unstyled mt-2">
-                                        <li><strong>Principal:</strong> {{ data.visual_identity.font_primary or 'Não definida' }}</li>
-                                        <li><strong>Secundária:</strong> {{ data.visual_identity.font_secondary or 'Não definida' }}</li>
-                                    </ul>
-                                    
-                                    <strong>Layout:</strong>
-                                    <ul class="list-unstyled mt-2">
-                                        <li><strong>Estilo:</strong> {{ data.visual_identity.layout_style or 'Não definido' }}</li>
-                                        <li><strong>Espaçamento:</strong> {{ data.visual_identity.spacing_unit or 'Não definido' }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                
-                <!-- CONTEXTO GLOBAL -->
-                {% if data.global_context %}
-                <div class="mb-4">
-                    <h5><i class="fas fa-bullseye"></i> Contexto e Estratégia</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <strong>Contexto do Negócio</strong>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-unstyled">
-                                        <li><strong>Tipo:</strong> {{ data.global_context.business_type or 'Não definido' }}</li>
-                                        <li><strong>Tom de Voz:</strong> {{ data.global_context.tone_of_voice or 'Não definido' }}</li>
-                                        <li><strong>Público-alvo:</strong> {{ data.global_context.target_audience or 'Não definido' }}</li>
-                                        <li><strong>Objetivo Principal:</strong> {{ data.global_context.primary_goal or 'Não definido' }}</li>
-                                    </ul>
-                                    
-                                    {% if data.global_context.secondary_goals %}
-                                    <strong>Objetivos Secundários:</strong>
-                                    <ul class="mt-1">
-                                        {% for goal in data.global_context.secondary_goals %}
-                                        <li>{{ goal }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                    {% endif %}
-                                </div>
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Sections -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">
+                <i class="fas fa-layer-group me-2 text-primary"></i>
+                Seções da Página
+            </h3>
+            <button class="action-btn btn-success d-none" onclick="addNewSection()" id="addSectionBtn">
+                <i class="fas fa-plus"></i>
+                Adicionar Seção
+            </button>
+        </div>
+
+        <div id="sectionsContainer">
+            {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.sections %}
+                {% for section in skeleton.parsed_skeleton_data.sections %}
+                <div class="section-card slide-in" data-section-index="{{ loop.index0 }}">
+                    <div class="section-header">
+                        <div class="d-flex align-items-center flex-grow-1">
+                            <div class="section-order">{{ section.order }}</div>
+                            <div class="flex-grow-1">
+                                <h4 class="section-title">
+                                    <span class="editable-field" data-field="title" data-section="{{ loop.index0 }}">
+                                        {{ section.title }}
+                                    </span>
+                                    <button class="edit-btn d-none" onclick="editField(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </h4>
+                                <p class="section-description">
+                                    <span class="editable-field" data-field="description" data-section="{{ loop.index0 }}">
+                                        {{ section.description }}
+                                    </span>
+                                    <button class="edit-btn d-none" onclick="editField(this)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </p>
                             </div>
                         </div>
                         
-                        {% if data.conversion_strategy %}
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <strong>Estratégia de Conversão</strong>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-unstyled">
-                                        <li><strong>CTA Principal:</strong> "{{ data.conversion_strategy.primary_cta or 'Não definido' }}"</li>
-                                        <li><strong>CTA Secundário:</strong> "{{ data.conversion_strategy.secondary_cta or 'Não definido' }}"</li>
-                                        <li><strong>Proposta de Valor:</strong> {{ data.conversion_strategy.value_proposition or 'Não definida' }}</li>
-                                    </ul>
-                                    
-                                    {% if data.conversion_strategy.trust_elements %}
-                                    <strong>Elementos de Confiança:</strong>
-                                    <div class="mt-1">
-                                        {% for element in data.conversion_strategy.trust_elements %}
-                                        <span class="badge bg-success me-1">{{ element }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                    
-                                    {% if data.conversion_strategy.urgency_elements %}
-                                    <strong class="d-block mt-2">Elementos de Urgência:</strong>
-                                    <div class="mt-1">
-                                        {% for element in data.conversion_strategy.urgency_elements %}
-                                        <span class="badge bg-warning me-1">{{ element }}</span>
-                                        {% endfor %}
-                                    </div>
-                                    {% endif %}
-                                </div>
+                        <!-- Section Actions -->
+                        <div class="section-actions d-none">
+                            <div class="btn-group" role="group">
+                                {% if not loop.first %}
+                                <button class="btn btn-outline-primary btn-sm" onclick="moveSection({{ loop.index0 }}, 'up')" title="Mover para cima">
+                                    <i class="fas fa-arrow-up"></i>
+                                </button>
+                                {% endif %}
+                                {% if not loop.last %}
+                                <button class="btn btn-outline-primary btn-sm" onclick="moveSection({{ loop.index0 }}, 'down')" title="Mover para baixo">
+                                    <i class="fas fa-arrow-down"></i>
+                                </button>
+                                {% endif %}
+                                <button class="btn btn-outline-danger btn-sm" onclick="removeSection({{ loop.index0 }})" title="Remover seção">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-body">
+                        <!-- Elements -->
+                        {% if section.elements %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted">
+                                <i class="fas fa-puzzle-piece me-1"></i>
+                                Elementos:
+                            </label>
+                            <div class="elements-container" data-field="elements" data-section="{{ loop.index0 }}">
+                                {% for element in section.elements %}
+                                <span class="element-tag">
+                                    <i class="fas fa-cube me-1"></i>
+                                    {{ element }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm d-none" onclick="editElements({{ loop.index0 }})">
+                                <i class="fas fa-edit me-1"></i>
+                                Editar Elementos
+                            </button>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Style Notes -->
+                        {% if section.style_notes %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted">
+                                <i class="fas fa-palette me-1"></i>
+                                Notas de Estilo:
+                            </label>
+                            <div class="bg-light p-3 rounded">
+                                <span class="editable-field" data-field="style_notes" data-section="{{ loop.index0 }}">
+                                    {{ section.style_notes }}
+                                </span>
+                                <button class="edit-btn d-none" onclick="editField(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Content Guidelines -->
+                        {% if section.content_guidelines %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-muted">
+                                <i class="fas fa-file-alt me-1"></i>
+                                Diretrizes de Conteúdo:
+                            </label>
+                            <div class="bg-light p-3 rounded">
+                                <span class="editable-field" data-field="content_guidelines" data-section="{{ loop.index0 }}">
+                                    {{ section.content_guidelines }}
+                                </span>
+                                <button class="edit-btn d-none" onclick="editField(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                             </div>
                         </div>
                         {% endif %}
                     </div>
                 </div>
-                {% endif %}
-                
-                {% else %}
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Dados do esqueleto não disponíveis ou não foram parseados corretamente.
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h4>Nenhuma seção encontrada</h4>
+                    <p class="text-muted">O esqueleto não possui seções definidas.</p>
                 </div>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
-        
-        <!-- RESPOSTA BRUTA (PARA DEBUG) -->
-        {% if skeleton.raw_skeleton_response_from_ai %}
-        <div class="card mt-3">
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Visual Identity -->
+        {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.visual_identity %}
+        <div class="info-card visual-identity-card">
             <div class="card-header">
-                <h5><i class="fas fa-code"></i> Resposta Bruta da IA</h5>
+                <h6 class="card-title">
+                    <i class="fas fa-palette"></i>
+                    Identidade Visual
+                </h6>
             </div>
             <div class="card-body">
-                <details>
-                    <summary class="btn btn-outline-secondary btn-sm">Ver resposta completa</summary>
-                    <pre class="mt-3 bg-light p-3 rounded"><code>{{ skeleton.raw_skeleton_response_from_ai }}</code></pre>
-                </details>
+                <!-- Color Palette -->
+                <div class="color-palette">
+                    <div class="color-item">
+                        <div class="color-label">Primária (60%)</div>
+                        <div class="color-preview" 
+                             style="background: {{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}"
+                             onclick="editColor('primary', '{{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}')">
+                        </div>
+                        <div class="color-value" data-field="primary_color">
+                            {{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}
+                        </div>
+                    </div>
+                    
+                    <div class="color-item">
+                        <div class="color-label">Secundária (30%)</div>
+                        <div class="color-preview" 
+                             style="background: {{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}"
+                             onclick="editColor('secondary', '{{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}')">
+                        </div>
+                        <div class="color-value" data-field="secondary_color">
+                            {{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}
+                        </div>
+                    </div>
+                    
+                    <div class="color-item">
+                        <div class="color-label">Destaque (10%)</div>
+                        <div class="color-preview" 
+                             style="background: {{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}"
+                             onclick="editColor('accent', '{{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}')">
+                        </div>
+                        <div class="color-value" data-field="accent_color">
+                            {{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Typography -->
+                <div class="mt-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <small class="d-block opacity-75">Fonte Principal:</small>
+                                <small class="editable-field" data-field="font_primary">
+                                    {{ skeleton.parsed_skeleton_data.visual_identity.font_primary or 'Inter' }}
+                                </small>
+                                <button class="edit-btn d-none" onclick="editField(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <small class="d-block opacity-75">Fonte Secundária:</small>
+                                <small class="editable-field" data-field="font_secondary">
+                                    {{ skeleton.parsed_skeleton_data.visual_identity.font_secondary or 'Georgia' }}
+                                </small>
+                                <button class="edit-btn d-none" onclick="editField(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <small class="d-block opacity-75">Estilo Layout:</small>
+                                <small class="editable-field" data-field="layout_style">
+                                    {{ skeleton.parsed_skeleton_data.visual_identity.layout_style or 'modern_grid' }}
+                                </small>
+                                <button class="edit-btn d-none" onclick="editField(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <small class="d-block opacity-75">Espaçamento:</small>
+                                <small class="editable-field" data-field="spacing_unit">
+                                    {{ skeleton.parsed_skeleton_data.visual_identity.spacing_unit or '1.5rem' }}
+                                </small>
+                                <button class="edit-btn d-none" onclick="editField(this)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         {% endif %}
-    </div>
-    
-    <div class="col-md-4">
-        <!-- MÉTRICAS -->
-        <div class="card">
+        
+        <!-- Conversion Strategy -->
+        {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.conversion_strategy %}
+        <div class="info-card strategy-card">
             <div class="card-header">
-                <h5><i class="fas fa-chart-line"></i> Métricas de Geração</h5>
+                <h6 class="card-title">
+                    <i class="fas fa-bullseye"></i>
+                    Estratégia de Conversão
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-2">CTA Principal:</small>
+                    <div class="bg-white bg-opacity-20 p-2 rounded">
+                        <span class="editable-field " data-field="primary_cta">
+                            {{ skeleton.parsed_skeleton_data.conversion_strategy.primary_cta or 'Entre em Contato' }}
+                        </span>
+                        <button class="edit-btn d-none " onclick="editField(this)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-2">CTA Secundário:</small>
+                    <div class="bg-white bg-opacity-20 p-2 rounded">
+                        <span class="editable-field " data-field="secondary_cta">
+                            {{ skeleton.parsed_skeleton_data.conversion_strategy.secondary_cta or 'Saiba Mais' }}
+                        </span>
+                        <button class="edit-btn d-none " onclick="editField(this)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-2">Proposta de Valor:</small>
+                    <div class="bg-white bg-opacity-20 p-2 rounded">
+                        <span class="editable-field " data-field="value_proposition">
+                            {{ skeleton.parsed_skeleton_data.conversion_strategy.value_proposition or 'Solução inovadora para seu negócio' }}
+                        </span>
+                        <button class="edit-btn d-none " onclick="editField(this)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Trust Elements -->
+                {% if skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-2">Elementos de Confiança:</small>
+                    <div class="elements-container">
+                        {% for element in skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
+                        <span class="element-tag trust-element">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            {{ element }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Urgency Elements -->
+                {% if skeleton.parsed_skeleton_data.conversion_strategy.urgency_elements %}
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-2">Elementos de Urgência:</small>
+                    <div class="elements-container">
+                        {% for element in skeleton.parsed_skeleton_data.conversion_strategy.urgency_elements %}
+                        <span class="element-tag urgency-element">
+                            <i class="fas fa-clock me-1"></i>
+                            {{ element }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Global Context -->
+        {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.global_context %}
+        <div class="info-card context-card">
+            <div class="card-header">
+                <h6 class="card-title">
+                    <i class="fas fa-globe"></i>
+                    Contexto Global
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-1">Tipo de Negócio:</small>
+                    <span class="editable-field " data-field="business_type">
+                        {{ skeleton.parsed_skeleton_data.global_context.business_type or 'Não definido' }}
+                    </span>
+                    <button class="edit-btn d-none " onclick="editField(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                
+                                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-1">Tom de Voz:</small>
+                    <span class="editable-field " data-field="tone_of_voice">
+                        {{ skeleton.parsed_skeleton_data.global_context.tone_of_voice or 'Não definido' }}
+                    </span>
+                    <button class="edit-btn d-none " onclick="editField(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-1">Público-Alvo:</small>
+                    <span class="editable-field " data-field="target_audience">
+                        {{ skeleton.parsed_skeleton_data.global_context.target_audience or 'Não definido' }}
+                    </span>
+                    <button class="edit-btn d-none " onclick="editField(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-1">Objetivo Principal:</small>
+                    <span class="editable-field " data-field="primary_goal">
+                        {{ skeleton.parsed_skeleton_data.global_context.primary_goal or 'Não definido' }}
+                    </span>
+                    <button class="edit-btn d-none " onclick="editField(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                
+                {% if skeleton.parsed_skeleton_data.global_context.secondary_goals %}
+                <div class="mb-3">
+                    <small class="d-block opacity-75 mb-2">Objetivos Secundários:</small>
+                    <div class="elements-container">
+                        {% for goal in skeleton.parsed_skeleton_data.global_context.secondary_goals %}
+                        <span class="element-tag">
+                            <i class="fas fa-target me-1"></i>
+                            {{ goal }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Statistics -->
+        <div class="info-card stats-card">
+            <div class="card-header">
+                <h6 class="card-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Estatísticas
+                </h6>
             </div>
             <div class="card-body">
                 <div class="row text-center">
-                    <div class="col-6">
-                        <i class="fas fa-clock fa-2x text-info"></i>
-                        <p class="mt-1 mb-0">Tempo</p>
-                        <small class="text-muted">{{ (skeleton.duration_ms_phase1 / 1000)|round(2) }}s</small>
+                    <div class="col-4">
+                        <div class="mb-2">
+                            <i class="fas fa-layer-group fa-2x mb-2"></i>
+                            <div class="fw-bold fs-4">{{ skeleton.parsed_skeleton_data.sections|length if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.sections else 0 }}</div>
+                            <small class="opacity-75">Seções</small>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <i class="fas fa-coins fa-2x text-warning"></i>
-                        <p class="mt-1 mb-0">Tokens</p>
-                        <small class="text-muted">{{ skeleton.prompt_tokens_phase1 + skeleton.completion_tokens_phase1 }}</small>
+                    <div class="col-4">
+                        <div class="mb-2">
+                            <i class="fas fa-coins fa-2x mb-2"></i>
+                            <div class="fw-bold fs-4">{{ skeleton.prompt_tokens_phase1 + skeleton.completion_tokens_phase1 }}</div>
+                            <small class="opacity-75">Tokens</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="mb-2">
+                            <i class="fas fa-clock fa-2x mb-2"></i>
+                            <div class="fw-bold fs-4">{{ "%.1f"|format(skeleton.duration_ms_phase1 / 1000) }}s</div>
+                            <small class="opacity-75">Tempo</small>
+                        </div>
                     </div>
                 </div>
                 
-                <hr>
+                <hr class="my-3 opacity-25">
                 
-                <div class="small">
-                    <div class="d-flex justify-content-between">
-                        <span>Tokens de Entrada:</span>
-                        <span>{{ skeleton.prompt_tokens_phase1 }}</span>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <small class="d-block opacity-75">Criado em:</small>
+                        <small class="fw-semibold">{{ skeleton.created_at.strftime('%d/%m/%Y %H:%M') if skeleton.created_at else 'N/A' }}</small>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Tokens de Saída:</span>
-                        <span>{{ skeleton.completion_tokens_phase1 }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Duração:</span>
-                        <span>{{ skeleton.duration_ms_phase1 }}ms</span>
+                    <div class="col-6">
+                        <small class="d-block opacity-75">Status:</small>
+                        <small class="fw-semibold">{{ skeleton.status }}</small>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- AÇÕES -->
-        <div class="card mt-3">
+        <!-- Actions -->
+        <div class="info-card">
             <div class="card-header">
-                <h5><i class="fas fa-cogs"></i> Ações</h5>
+                <h6 class="card-title">
+                    <i class="fas fa-cogs"></i>
+                    Ações
+                </h6>
             </div>
             <div class="card-body">
-                <a href="{{ url_for('view_request', request_id=skeleton.request_id) }}" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-arrow-left"></i> Voltar à Solicitação
-                </a>
-                
-                <button class="btn btn-outline-primary btn-sm mt-2" onclick="regenerateSkeleton('{{ skeleton.skeleton_id }}')">
-                    <i class="fas fa-redo"></i> Regenerar
-                </button>
-                
-                <button class="btn btn-success btn-sm mt-2 w-100" onclick="nextPhase('{{ skeleton.request_id }}')">
-                    <i class="fas fa-arrow-right"></i> Gerar Hero Section
-                </button>
-            </div>
-        </div>
-        
-        <!-- STATUS -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5><i class="fas fa-info-circle"></i> Informações</h5>
-            </div>
-            <div class="card-body">
-                <div class="small">
-                    <div class="d-flex justify-content-between">
-                        <span>ID do Esqueleto:</span>
-                        <code class="small">{{ skeleton.skeleton_id[:8] }}...</code>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Status:</span>
-                        <span class="badge bg-{{ 'success' if skeleton.status == 'completed' else 'warning' }}">{{ skeleton.status }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Criado em:</span>
-                        <span>{{ skeleton.created_at.strftime('%d/%m %H:%M') if skeleton.created_at else 'N/A' }}</span>
-                    </div>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('view_request', request_id=skeleton.request_id) }}" class="action-btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Voltar para Solicitação
+                    </a>
+                    
+                    <button class="action-btn btn-warning" onclick="regenerateSkeleton()">
+                        <i class="fas fa-redo"></i>
+                        Regenerar Esqueleto
+                    </button>
+                    
+                    <button class="action-btn btn-success" onclick="generateHeroSection()" id="generateHeroBtn">
+                        <i class="fas fa-rocket"></i>
+                        Gerar Hero Section
+                    </button>
+                    
+                    <button class="action-btn btn-primary d-none" onclick="saveChanges()" id="saveChangesBtn">
+                        <i class="fas fa-save"></i>
+                        Salvar Alterações
+                    </button>
                 </div>
-                
-                {% if skeleton.error_details %}
-                <div class="alert alert-danger mt-2">
-                    <strong>Erro:</strong> {{ skeleton.error_details }}
-                </div>
-                {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modals -->
+
+<!-- Color Edit Modal -->
+<div class="modal fade" id="colorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-palette me-2"></i>
+                    Editar Cor <span id="colorType"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Seletor de Cor:</label>
+                        <input type="color" class="form-control form-control-color w-100" id="colorPicker" style="height: 60px;">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Código Hex:</label>
+                        <input type="text" class="form-control" id="colorHex" placeholder="#000000" pattern="^#[0-9A-Fa-f]{6}$">
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <label class="form-label">Preview:</label>
+                    <div id="colorPreview" style="width: 100%; height: 60px; border-radius: 8px; border: 2px solid #dee2e6;"></div>
+                </div>
+                
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Esta cor será aplicada seguindo a regra 60-30-10 de design.
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveColor()">Salvar Cor</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Section Modal -->
+<div class="modal fade" id="addSectionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    Adicionar Nova Seção
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Tipo de Seção:</label>
+                        <select class="form-select" id="newSectionName">
+                            <option value="about">Sobre Nós</option>
+                            <option value="services">Serviços</option>
+                            <option value="benefits">Benefícios</option>
+                            <option value="testimonials">Depoimentos</option>
+                            <option value="pricing">Preços</option>
+                            <option value="faq">FAQ</option>
+                            <option value="team">Equipe</option>
+                            <option value="portfolio">Portfólio</option>
+                            <option value="contact">Contato</option>
+                            <option value="custom">Personalizada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6" id="customNameField" style="display: none;">
+                        <label class="form-label">Nome Personalizado:</label>
+                        <input type="text" class="form-control" id="customSectionName" placeholder="Ex: newsletter">
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <label class="form-label">Título da Seção:</label>
+                    <input type="text" class="form-control" id="newSectionTitle" placeholder="Ex: Sobre Nossa Empresa">
+                </div>
+                
+                <div class="mt-3">
+                    <label class="form-label">Descrição:</label>
+                    <textarea class="form-control" id="newSectionDescription" rows="3" placeholder="Descreva o propósito e conteúdo desta seção..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveNewSection()">Adicionar Seção</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Elements Edit Modal -->
+<div class="modal fade" id="elementsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-puzzle-piece me-2"></i>
+                    Editar Elementos
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label">Elementos (um por linha):</label>
+                <textarea class="form-control" id="elementsTextarea" rows="6" placeholder="title&#10;subtitle&#10;cta_button&#10;image"></textarea>
+                <small class="text-muted mt-2 d-block">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Digite cada elemento em uma linha separada. Ex: title, subtitle, button, image
+                </small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveElements()">Salvar Elementos</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <h5>Salvando alterações...</h5>
+        <p class="text-muted mb-0">Por favor, aguarde.</p>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
-function regenerateSkeleton(skeletonId) {
-    if (confirm('🔄 Deseja regenerar este esqueleto?\n\nIsso criará uma nova versão baseada no mesmo briefing.')) {
-        showAlert('info', '🔄 Regenerando esqueleto...');
+// Global Variables
+let isEditMode = false;
+let hasChanges = false;
+let skeletonData = {{ skeleton.parsed_skeleton_data | tojson | safe }};
+let currentColorField = '';
+let currentElementsSection = -1;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎨 Editor de Esqueleto carregado!');
+    
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Add slide-in animation to cards
+    const cards = document.querySelectorAll('.section-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add('slide-in');
+        }, index * 100);
+    });
+});
+
+// Toggle Edit Mode
+function toggleEditMode() {
+    isEditMode = !isEditMode;
+    const toggle = document.getElementById('editModeToggle');
+    const text = document.getElementById('editModeText');
+    const editBtns = document.querySelectorAll('.edit-btn');
+    const sectionActions = document.querySelectorAll('.section-actions');
+    const addSectionBtn = document.getElementById('addSectionBtn');
+    
+    if (isEditMode) {
+        toggle.classList.add('active');
+        text.textContent = 'Sair da Edição';
+        editBtns.forEach(btn => btn.classList.remove('d-none'));
+        sectionActions.forEach(action => action.classList.remove('d-none'));
+        addSectionBtn.classList.remove('d-none');
         
-        fetch(`/regenerate-skeleton/${skeletonId}`, {
+        // Add edit mode styling
+        document.querySelectorAll('.editable-field').forEach(field => {
+            field.style.cursor = 'pointer';
+            field.addEventListener('click', handleFieldClick);
+        });
+        
+        showAlert('info', '✏️ Modo de edição ativado! Clique nos campos para editar.');
+    } else {
+        toggle.classList.remove('active');
+        text.textContent = 'Modo Edição';
+        editBtns.forEach(btn => btn.classList.add('d-none'));
+               sectionActions.forEach(action => action.classList.add('d-none'));
+        addSectionBtn.classList.add('d-none');
+        
+        // Remove edit mode styling
+        document.querySelectorAll('.editable-field').forEach(field => {
+            field.style.cursor = 'default';
+            field.removeEventListener('click', handleFieldClick);
+            field.classList.remove('editing');
+        });
+        
+        // Show save button if there are changes
+        if (hasChanges) {
+            document.getElementById('saveChangesBtn').classList.remove('d-none');
+            showAlert('warning', '⚠️ Você tem alterações não salvas. Clique em "Salvar Alterações" para manter as mudanças.');
+        }
+    }
+}
+
+// Handle field click in edit mode
+function handleFieldClick(event) {
+    if (!isEditMode) return;
+    
+    const field = event.target.closest('.editable-field');
+    if (field) {
+        editField(field.nextElementSibling);
+    }
+}
+
+// Edit Field
+function editField(button) {
+    const field = button.previousElementSibling;
+    const currentValue = field.textContent.trim();
+    const fieldType = field.dataset.field;
+    const sectionIndex = field.dataset.section;
+    
+    // Create input element
+    let input;
+    if (fieldType === 'description' || fieldType === 'style_notes' || fieldType === 'content_guidelines') {
+        input = document.createElement('textarea');
+        input.className = 'form-control';
+        input.rows = 3;
+    } else {
+        input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control';
+    }
+    
+    input.value = currentValue;
+    input.style.minWidth = '200px';
+    
+    // Replace field with input
+    field.style.display = 'none';
+    field.classList.add('editing');
+    field.parentNode.insertBefore(input, field.nextSibling);
+    
+    // Focus and select
+    input.focus();
+    input.select();
+    
+    // Handle save
+    const saveEdit = () => {
+        const newValue = input.value.trim();
+        if (newValue !== currentValue) {
+            field.textContent = newValue;
+            updateSkeletonData(fieldType, newValue, sectionIndex);
+            hasChanges = true;
+            showAlert('success', '✅ Campo atualizado! Lembre-se de salvar as alterações.');
+        }
+        
+        // Restore field
+        field.style.display = 'inline';
+        field.classList.remove('editing');
+        input.remove();
+    };
+    
+    // Handle cancel
+    const cancelEdit = () => {
+        field.style.display = 'inline';
+        field.classList.remove('editing');
+        input.remove();
+    };
+    
+    // Event listeners
+    input.addEventListener('blur', saveEdit);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            saveEdit();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            cancelEdit();
+        }
+    });
+}
+
+// Edit Color
+function editColor(colorType, currentColor) {
+    if (!isEditMode) {
+        showAlert('warning', '⚠️ Ative o modo de edição para alterar cores.');
+        return;
+    }
+    
+    currentColorField = colorType;
+    document.getElementById('colorType').textContent = colorType === 'primary' ? 'Primária' : 
+                                                     colorType === 'secondary' ? 'Secundária' : 'Destaque';
+    document.getElementById('colorPicker').value = currentColor;
+    document.getElementById('colorHex').value = currentColor;
+    document.getElementById('colorPreview').style.background = currentColor;
+    
+    // Sync color picker and hex input
+    const picker = document.getElementById('colorPicker');
+    const hex = document.getElementById('colorHex');
+    const preview = document.getElementById('colorPreview');
+    
+    picker.addEventListener('input', () => {
+        hex.value = picker.value;
+        preview.style.background = picker.value;
+    });
+    
+    hex.addEventListener('input', () => {
+        if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) {
+            picker.value = hex.value;
+            preview.style.background = hex.value;
+        }
+    });
+    
+    new bootstrap.Modal(document.getElementById('colorModal')).show();
+}
+
+// Save Color
+function saveColor() {
+    const newColor = document.getElementById('colorHex').value;
+    
+    if (!/^#[0-9A-Fa-f]{6}$/.test(newColor)) {
+        showAlert('danger', '❌ Cor inválida! Use o formato #RRGGBB');
+        return;
+    }
+    
+    // Update visual identity
+    if (!skeletonData.visual_identity) {
+        skeletonData.visual_identity = {};
+    }
+    
+    skeletonData.visual_identity[currentColorField + '_color'] = newColor;
+    
+    // Update UI
+    const colorPreview = document.querySelector(`[onclick*="${currentColorField}"]`);
+    const colorValue = document.querySelector(`[data-field="${currentColorField}_color"]`);
+    
+    if (colorPreview) {
+        colorPreview.style.background = newColor;
+    }
+    if (colorValue) {
+        colorValue.textContent = newColor;
+    }
+    
+    hasChanges = true;
+    bootstrap.Modal.getInstance(document.getElementById('colorModal')).hide();
+    showAlert('success', `✅ Cor ${currentColorField} atualizada para ${newColor}!`);
+}
+
+// Edit Elements
+function editElements(sectionIndex) {
+    if (!isEditMode) return;
+    
+    currentElementsSection = sectionIndex;
+    const elements = skeletonData.sections[sectionIndex].elements || [];
+    document.getElementById('elementsTextarea').value = elements.join('\n');
+    
+    new bootstrap.Modal(document.getElementById('elementsModal')).show();
+}
+
+// Save Elements
+function saveElements() {
+    const elementsText = document.getElementById('elementsTextarea').value;
+    const elements = elementsText.split('\n')
+                                .map(el => el.trim())
+                                .filter(el => el.length > 0);
+    
+    if (currentElementsSection >= 0) {
+        skeletonData.sections[currentElementsSection].elements = elements;
+        
+        // Update UI
+        const container = document.querySelector(`[data-field="elements"][data-section="${currentElementsSection}"]`);
+        if (container) {
+            container.innerHTML = elements.map(el => 
+                `<span class="element-tag">
+                    <i class="fas fa-cube me-1"></i>
+                    ${el}
+                </span>`
+            ).join('');
+        }
+        
+        hasChanges = true;
+        bootstrap.Modal.getInstance(document.getElementById('elementsModal')).hide();
+        showAlert('success', '✅ Elementos atualizados!');
+    }
+}
+
+// Add New Section
+function addNewSection() {
+    if (!isEditMode) return;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('addSectionModal'));
+    
+    // Handle section type change
+    document.getElementById('newSectionName').addEventListener('change', function() {
+        const customField = document.getElementById('customNameField');
+        const titleField = document.getElementById('newSectionTitle');
+        
+        if (this.value === 'custom') {
+            customField.style.display = 'block';
+        } else {
+            customField.style.display = 'none';
+            
+            // Auto-fill title based on section type
+            const titles = {
+                'about': 'Sobre Nós',
+                'services': 'Nossos Serviços',
+                'benefits': 'Benefícios',
+                'testimonials': 'Depoimentos',
+                'pricing': 'Preços e Planos',
+                'faq': 'Perguntas Frequentes',
+                'team': 'Nossa Equipe',
+                'portfolio': 'Portfólio',
+                'contact': 'Entre em Contato'
+            };
+            
+            titleField.value = titles[this.value] || '';
+        }
+    });
+    
+    modal.show();
+}
+
+// Save New Section
+function saveNewSection() {
+    const sectionName = document.getElementById('newSectionName').value;
+    const customName = document.getElementById('customSectionName').value;
+    const title = document.getElementById('newSectionTitle').value;
+    const description = document.getElementById('newSectionDescription').value;
+    
+    if (!title.trim()) {
+        showAlert('danger', '❌ Título da seção é obrigatório!');
+        return;
+    }
+    
+    const finalName = sectionName === 'custom' ? customName : sectionName;
+    
+    if (!finalName.trim()) {
+        showAlert('danger', '❌ Nome da seção é obrigatório!');
+        return;
+    }
+    
+    // Create new section
+    const newSection = {
+        name: finalName,
+        order: skeletonData.sections.length + 1,
+        title: title.trim(),
+        description: description.trim() || 'Nova seção adicionada pelo usuário',
+        elements: ['content', 'layout'],
+        style_notes: 'Estilo a ser definido',
+        content_guidelines: 'Conteúdo a ser desenvolvido'
+    };
+    
+    // Add to skeleton data
+    skeletonData.sections.push(newSection);
+    
+    // Add to UI
+    addSectionToUI(newSection, skeletonData.sections.length - 1);
+    
+    hasChanges = true;
+    bootstrap.Modal.getInstance(document.getElementById('addSectionModal')).hide();
+    showAlert('success', `✅ Seção "${title}" adicionada com sucesso!`);
+    
+    // Clear form
+    document.getElementById('newSectionTitle').value = '';
+    document.getElementById('newSectionDescription').value = '';
+    document.getElementById('customSectionName').value = '';
+}
+
+// Add Section to UI
+function addSectionToUI(section, index) {
+    const container = document.getElementById('sectionsContainer');
+    const sectionHTML = `
+        <div class="section-card slide-in" data-section-index="${index}">
+            <div class="section-header">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <div class="section-order">${section.order}</div>
+                    <div class="flex-grow-1">
+                        <h4 class="section-title">
+                            <span class="editable-field" data-field="title" data-section="${index}">
+                                ${section.title}
+                            </span>
+                            <button class="edit-btn" onclick="editField(this)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </h4>
+                        <p class="section-description">
+                            <span class="editable-field" data-field="description" data-section="${index}">
+                                ${section.description}
+                            </span>
+                            <button class="edit-btn" onclick="editField(this)">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="section-actions">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-outline-primary btn-sm" onclick="moveSection(${index}, 'up')" title="Mover para cima">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="moveSection(${index}, 'down')" title="Mover para baixo">
+                            <i class="fas fa-arrow-down"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="removeSection(${index})" title="Remover seção">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-body">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted">
+                        <i class="fas fa-puzzle-piece me-1"></i>
+                        Elementos:
+                    </label>
+                    <div class="elements-container" data-field="elements" data-section="${index}">
+                        ${section.elements.map(el => `
+                            <span class="element-tag">
+                                <i class="fas fa-cube me-1"></i>
+                                ${el}
+                            </span>
+                        `).join('')}
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm" onclick="editElements(${index})">
+                        <i class="fas fa-edit me-1"></i>
+                        Editar Elementos
+                    </button>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted">
+                        <i class="fas fa-palette me-1"></i>
+                        Notas de Estilo:
+                    </label>
+                    <div class="bg-light p-3 rounded">
+                        <span class="editable-field" data-field="style_notes" data-section="${index}">
+                            ${section.style_notes}
+                        </span>
+                        <button class="edit-btn" onclick="editField(this)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted">
+                        <i class="fas fa-file-alt me-1"></i>
+                        Diretrizes de Conteúdo:
+                    </label>
+                    <div class="bg-light p-3 rounded">
+                        <span class="editable-field" data-field="content_guidelines" data-section="${index}">
+                            ${section.content_guidelines}
+                        </span>
+                        <button class="edit-btn" onclick="editField(this)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', sectionHTML);
+    
+    // Add event listeners to new editable fields
+    const newCard = container.lastElementChild;
+    newCard.querySelectorAll('.editable-field').forEach(field => {
+        if (isEditMode) {
+            field.style.cursor = 'pointer';
+            field.addEventListener('click', handleFieldClick);
+        }
+    });
+}
+
+// Move Section
+function moveSection(index, direction) {
+    if (!isEditMode) return;
+    
+    const sections = skeletonData.sections;
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    if (newIndex < 0 || newIndex >= sections.length) return;
+    
+        // Swap sections
+    [sections[index], sections[newIndex]] = [sections[newIndex], sections[index]];
+    
+    // Update order numbers
+    sections[index].order = index + 1;
+    sections[newIndex].order = newIndex + 1;
+    
+    // Rebuild UI
+    rebuildSectionsUI();
+    
+    hasChanges = true;
+    showAlert('success', '✅ Seção reordenada!');
+}
+
+// Remove Section
+function removeSection(index) {
+    if (!isEditMode) return;
+    
+    const section = skeletonData.sections[index];
+    
+    if (confirm(`🗑️ Tem certeza que deseja remover a seção "${section.title}"?\n\nEsta ação não pode ser desfeita.`)) {
+        // Remove from data
+        skeletonData.sections.splice(index, 1);
+        
+        // Update order numbers
+        skeletonData.sections.forEach((section, i) => {
+            section.order = i + 1;
+        });
+        
+        // Rebuild UI
+        rebuildSectionsUI();
+        
+        hasChanges = true;
+        showAlert('success', `✅ Seção "${section.title}" removida!`);
+    }
+}
+
+// Rebuild Sections UI
+function rebuildSectionsUI() {
+    const container = document.getElementById('sectionsContainer');
+    container.innerHTML = '';
+    
+    skeletonData.sections.forEach((section, index) => {
+        addSectionToUI(section, index);
+    });
+    
+    // Update statistics
+    const sectionsCount = document.querySelector('.stats-card .fs-4');
+    if (sectionsCount) {
+        sectionsCount.textContent = skeletonData.sections.length;
+    }
+}
+
+// Update Skeleton Data
+function updateSkeletonData(fieldType, newValue, sectionIndex) {
+    if (sectionIndex !== undefined && sectionIndex !== null) {
+        // Section field
+        if (skeletonData.sections[sectionIndex]) {
+            skeletonData.sections[sectionIndex][fieldType] = newValue;
+        }
+    } else {
+        // Global field
+        const fieldParts = fieldType.split('_');
+        
+        if (fieldParts[0] === 'primary' || fieldParts[0] === 'secondary' || fieldParts[0] === 'accent') {
+            if (!skeletonData.visual_identity) skeletonData.visual_identity = {};
+            skeletonData.visual_identity[fieldType] = newValue;
+        } else if (['business_type', 'tone_of_voice', 'target_audience', 'primary_goal'].includes(fieldType)) {
+            if (!skeletonData.global_context) skeletonData.global_context = {};
+            skeletonData.global_context[fieldType] = newValue;
+        } else if (['primary_cta', 'secondary_cta', 'value_proposition'].includes(fieldType)) {
+            if (!skeletonData.conversion_strategy) skeletonData.conversion_strategy = {};
+            skeletonData.conversion_strategy[fieldType] = newValue;
+        } else if (['font_primary', 'font_secondary', 'layout_style', 'spacing_unit'].includes(fieldType)) {
+            if (!skeletonData.visual_identity) skeletonData.visual_identity = {};
+            skeletonData.visual_identity[fieldType] = newValue;
+        }
+    }
+}
+
+// Save Changes
+function saveChanges() {
+    if (!hasChanges) {
+        showAlert('info', 'ℹ️ Não há alterações para salvar.');
+        return;
+    }
+    
+    if (confirm('💾 Deseja salvar todas as alterações feitas no esqueleto?')) {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        
+        fetch(`/update-skeleton/{{ skeleton.skeleton_id }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                skeleton_data: skeletonData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            
+            if (data.success) {
+                hasChanges = false;
+                document.getElementById('saveChangesBtn').classList.add('d-none');
+                showAlert('success', '✅ ' + data.message);
+                
+                // Update page timestamp
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                showAlert('danger', '❌ ' + (data.error || 'Erro ao salvar alterações'));
+            }
+        })
+        .catch(error => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            console.error('Erro:', error);
+            showAlert('danger', '❌ Erro de conexão ao salvar alterações.');
+        });
+    }
+}
+
+// Regenerate Skeleton
+function regenerateSkeleton() {
+    if (hasChanges) {
+        if (!confirm('⚠️ Você tem alterações não salvas que serão perdidas.\n\nDeseja continuar mesmo assim?')) {
+            return;
+        }
+    }
+    
+    if (confirm('🔄 Deseja regenerar o esqueleto?\n\nIsso criará uma nova versão baseada no briefing original e substituirá o atual.')) {
+        showAlert('info', '🔄 Regenerando esqueleto... Isso pode levar alguns segundos.');
+        
+        // Disable button
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Regenerando...';
+        btn.disabled = true;
+        
+        fetch(`/regenerate-skeleton/{{ skeleton.skeleton_id }}`, {
             method: 'POST'
         })
-               .then(response => response.json())
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
                 showAlert('success', '✅ ' + data.message);
@@ -316,24 +1657,69 @@ function regenerateSkeleton(skeletonId) {
                 }, 2000);
             } else {
                 showAlert('danger', '❌ ' + (data.error || 'Erro ao regenerar esqueleto'));
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         })
         .catch(error => {
             console.error('Erro:', error);
             showAlert('danger', '❌ Erro de conexão ao regenerar esqueleto.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         });
     }
 }
 
-function nextPhase(requestId) {
-    if (confirm('🎨 Deseja avançar para a geração da Hero Section?\n\nIsso criará a primeira seção da landing page baseada no esqueleto.')) {
+// Generate Hero Section
+function generateHeroSection() {
+    if (hasChanges) {
+        if (!confirm('⚠️ Você tem alterações não salvas.\n\nDeseja salvar antes de continuar para a Hero Section?')) {
+            return;
+        }
+        saveChanges();
+        return;
+    }
+    
+    if (confirm('🎨 Deseja gerar a Hero Section baseada neste esqueleto?\n\nIsso iniciará a próxima fase do desenvolvimento.')) {
         showAlert('info', '🚧 Funcionalidade será implementada na Fase 3!');
         // TODO: Implementar na Fase 3
+        
+        // Placeholder para futura implementação
+        /*
+        const btn = document.getElementById('generateHeroBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Hero...';
+        btn.disabled = true;
+        
+        fetch(`/generate-hero-section/{{ skeleton.skeleton_id }}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', '✅ ' + data.message);
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 2000);
+            } else {
+                showAlert('danger', '❌ ' + (data.error || 'Erro ao gerar hero section'));
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showAlert('danger', '❌ Erro de conexão.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
+        */
     }
 }
 
+// Utility Functions
 function showAlert(type, message) {
-    // Remover alertas existentes
+    // Remove existing alerts
     const existingAlerts = document.querySelectorAll('.alert');
     existingAlerts.forEach(alert => {
         if (alert.classList.contains('alert-dismissible')) {
@@ -351,12 +1737,115 @@ function showAlert(type, message) {
     const container = document.querySelector('.container');
     container.insertBefore(alertDiv, container.firstChild);
     
-    // Auto-remover após 8 segundos
+    // Auto-remove after 8 seconds
     setTimeout(() => {
         if (alertDiv.parentNode) {
             alertDiv.remove();
         }
     }, 8000);
+    
+    // Scroll to top to show alert
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Keyboard Shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + E = Toggle Edit Mode
+    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault();
+        toggleEditMode();
+    }
+    
+    // Ctrl/Cmd + S = Save Changes
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (hasChanges) {
+            saveChanges();
+        }
+    }
+    
+    // Escape = Exit Edit Mode
+    if (e.key === 'Escape' && isEditMode) {
+        toggleEditMode();
+    }
+});
+
+// Warn before leaving with unsaved changes
+window.addEventListener('beforeunload', function(e) {
+    if (hasChanges) {
+        e.preventDefault();
+        e.returnValue = 'Você tem alterações não salvas. Tem certeza que deseja sair?';
+        return e.returnValue;
+    }
+});
+
+// Auto-save draft (optional feature)
+let autoSaveInterval;
+function startAutoSave() {
+    if (autoSaveInterval) clearInterval(autoSaveInterval);
+    
+    autoSaveInterval = setInterval(() => {
+        if (hasChanges && isEditMode) {
+            // Save draft to localStorage
+            localStorage.setItem('skeleton_draft_{{ skeleton.skeleton_id }}', JSON.stringify({
+                data: skeletonData,
+                timestamp: new Date().toISOString()
+            }));
+            
+            console.log('💾 Rascunho salvo automaticamente');
+        }
+    }, 30000); // Auto-save every 30 seconds
+}
+
+// Load draft on page load
+function loadDraft() {
+    const draft = localStorage.getItem('skeleton_draft_{{ skeleton.skeleton_id }}');
+    if (draft) {
+        try {
+            const draftData = JSON.parse(draft);
+            const draftTime = new Date(draftData.timestamp);
+            const timeDiff = (new Date() - draftTime) / 1000 / 60; // minutes
+            
+            if (timeDiff < 60) { // Less than 1 hour old
+                if (confirm(`📝 Encontrado um rascunho salvo há ${Math.round(timeDiff)} minutos.\n\nDeseja restaurar as alterações?`)) {
+                    skeletonData = draftData.data;
+                    rebuildSectionsUI();
+                    hasChanges = true;
+                    showAlert('info', '📝 Rascunho restaurado! Lembre-se de salvar as alterações.');
+                }
+            }
+        } catch (e) {
+            console.error('Erro ao carregar rascunho:', e);
+        }
+    }
+}
+
+// Initialize auto-save and draft loading
+document.addEventListener('DOMContentLoaded', function() {
+    loadDraft();
+    startAutoSave();
+});
+
+// Export skeleton data (for debugging)
+function exportSkeletonData() {
+    const dataStr = JSON.stringify(skeletonData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `skeleton_{{ skeleton.skeleton_id }}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+// Console helper
+console.log('🎨 Editor de Esqueleto carregado!');
+console.log('📊 Dados do esqueleto:', skeletonData);
+console.log('⌨️ Atalhos disponíveis:');
+console.log('  - Ctrl/Cmd + E: Alternar modo de edição');
+console.log('  - Ctrl/Cmd + S: Salvar alterações');
+console.log('  - Escape: Sair do modo de edição');
+console.log('🔧 Funções disponíveis no console:');
+console.log('  - exportSkeletonData(): Exportar dados do esqueleto');
 </script>
 {% endblock %}
