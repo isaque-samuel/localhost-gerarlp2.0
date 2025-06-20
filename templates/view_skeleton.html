@@ -4,54 +4,244 @@
 
 {% block head %}
 <style>
-:root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --success-color: #10b981;
-    --warning-color: #f59e0b;
-    --danger-color: #ef4444;
-    --info-color: #3b82f6;
-    --light-bg: #0c0c0c;
-    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --border-radius: 12px;
-    --transition: all 0.3s ease;
-}
-
-body {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-/* Header Styles */
+/* Estilos específicos para o editor de esqueleto */
 .skeleton-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: var(--gradient-primary);
     color: white;
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: var(--card-shadow);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-lg);
 }
 
 .skeleton-title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-sm);
 }
 
 .skeleton-subtitle {
     opacity: 0.9;
     font-size: 1.1rem;
+    margin: 0;
+}
+
+.section-card {
+    background: white !important;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+    transition: var(--transition-normal);
+    border: 2px solid transparent;
+}
+
+.section-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+
+.section-card.editing {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.section-header {
+    background: var(--gray-100) !important;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--gray-200);
+    color: white !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(78, 104, 223)!important;
+}
+
+.section-order {
+    background: var(--gradient-primary);
+    color: white !important;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-right: var(--spacing-md);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-md);
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    margin: 0;
+}
+
+.section-description {
+    color: var(--gray-600);
+    margin: var(--spacing-xs) 0 0 0;
+    font-size: 0.95rem;
+}
+
+.section-body {
+    padding: var(--spacing-lg);
+}
+
+.editable-field {
+    position: relative;
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    transition: var(--transition-normal);
+    cursor: pointer;
+    border: 2px solid transparent;
+    min-width: 100px;
+    min-height: 24px;
+    color: black;
+}
+
+.editable-field:hover {
+    background: var(--gray-100);
+    border-color: var(--primary-color);
+}
+
+.editable-field.editing {
+    background: #f0fdf4;
+    border-color: var(--success-color);
+}
+
+.edit-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.editable-field:hover .edit-indicator {
+    display: flex;
+}
+
+.element-tag {
+    background: var(--gradient-primary);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin: var(--spacing-xs);
+    box-shadow: var(--shadow-sm);
+}
+
+.info-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+}
+
+.info-card.visual-identity {
+    background: var(--gradient-primary);
+    color: white;
+}
+
+.info-card.strategy {
+    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+    color: white;
+}
+
+.info-card.context {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+}
+
+.info-card.stats {
+    background: linear-gradient(135deg, var(--info-color) 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.card-header-custom {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-body-custom {
+    padding: var(--spacing-lg);
+}
+
+.card-title-custom {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.color-palette {
+    display: flex;
+    gap: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+}
+
+.color-item {
+    text-align: center;
+    flex: 1;
+}
+
+.color-preview {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    margin: 0 auto var(--spacing-sm);
+    box-shadow: var(--shadow-md);
+}
+
+.color-preview:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-lg);
+}
+
+.color-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xs);
+}
+
+.color-value {
+    font-size: 0.75rem;
+    font-family: 'Monaco', 'Menlo', monospace;
+    background: rgba(255, 255, 255, 0.2);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
 }
 
 .edit-mode-toggle {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: var(--spacing-sm) var(--spacing-lg);
     border-radius: 50px;
     font-weight: 600;
-    transition: var(--transition);
+    transition: var(--transition-normal);
 }
 
 .edit-mode-toggle:hover {
@@ -66,305 +256,38 @@ body {
     border-color: var(--success-color);
 }
 
-/* Section Cards */
-.section-card {
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    transition: var(--transition);
-    border: 2px solid transparent;
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-}
-
-.section-card:hover {
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-2px);
-}
-
-.section-card.editing {
-    border-color: var(--success-color);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-}
-
-.section-header {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    padding: 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
+.section-actions {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    gap: var(--spacing-sm);
 }
 
-.section-order {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.2rem;
-    margin-right: 1rem;
-    flex-shrink: 0;
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+.field-group {
+    margin-bottom: var(--spacing-md);
 }
 
-.section-title {
-    font-size: 1.25rem;
+.field-label {
     font-weight: 600;
-    color: #1e293b;
-    margin: 0;
-}
-
-.section-description {
-    color: #64748b;
-    margin: 0.25rem 0 0 0;
-    font-size: 0.95rem;
-}
-
-.section-body {
-    padding: 1.5rem;
-}
-
-/* Editable Fields */
-.editable-field {
-    position: relative;
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    transition: var(--transition);
-    cursor: pointer;
-    border: 2px solid transparent;
-    color: black;
-}
-
-.editable-field:hover {
-    background: #f1f5f9;
-    border-color: var(--primary-color);
-}
-
-.editable-field.editing {
-    background: #f0fdf4;
-    border-color: var(--success-color);
-}
-
-.edit-btn {
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    padding: 0.25rem;
-    margin-left: 0.5rem;
-    border-radius: 4px;
-    opacity: 0;
-    transition: var(--transition);
-    cursor: pointer;
-}
-
-.editable-field:hover + .edit-btn,
-.edit-btn:hover {
-    opacity: 1;
-}
-
-/* Element Tags */
-.elements-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0.75rem 0;
-}
-
-.element-tag {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    padding: 0.375rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
-}
-
-.element-tag.trust-element {
-    background: linear-gradient(135deg, var(--success-color), #059669);
-}
-
-.element-tag.urgency-element {
-    background: linear-gradient(135deg, var(--warning-color), #d97706);
-}
-
-/* Sidebar Cards */
-.info-card {
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    margin-bottom: 1.5rem;
-    overflow: hidden;
-}
-
-.visual-identity-card {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    color: white;
-}
-
-.strategy-card {
-    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-    color: white;
-}
-
-.context-card {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    color: white;
-}
-
-.stats-card {
-    background: linear-gradient(135deg, var(--info-color) 0%, #1d4ed8 100%);
-    color: white;
-}
-
-.card-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-
-.card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-xs);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--spacing-xs);
 }
 
-/* Color Palette */
-.color-palette {
+.field-value {
+    background: rgba(255, 255, 255, 0.1);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    min-height: 40px;
     display: flex;
-    gap: 1rem;
-    margin: 1rem 0;
-}
-
-.color-item {
-    text-align: center;
-    flex: 1;
-}
-
-.color-preview {
-    width: 60px;
-    height: 60px;
-    border-radius: var(--border-radius);
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: var(--transition);
-    margin: 0 auto 0.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.color-preview:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.color-label {
-    font-size: 0.8rem;
-    opacity: 0.9;
-    margin-bottom: 0.25rem;
-}
-
-.color-value {
-    font-size: 0.75rem;
-    font-family: 'Monaco', 'Menlo', monospace;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-}
-
-/* Action Buttons */
-.action-btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: var(--transition);
-    border: none;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-}
-
-.btn-success {
-    background: linear-gradient(135deg, var(--success-color), #059669);
-    color: white;
-}
-
-.btn-warning {
-    background: linear-gradient(135deg, var(--warning-color), #d97706);
-    color: white;
-}
-
-.btn-secondary {
-    background: #64748b;
-    color: white;
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--card-shadow-hover);
-    color: white;
-}
-
-/* Modals */
-.modal-content {
-    border-radius: var(--border-radius);
-    border: none;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-}
-
-/* Loading Overlay */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.loading-content {
-    background: white;
-    padding: 2rem;
-    border-radius: var(--border-radius);
-    text-align: center;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .skeleton-header {
-        padding: 1.5rem;
+        padding: var(--spacing-lg);
     }
     
     .skeleton-title {
@@ -374,49 +297,18 @@ body {
     .section-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .section-order {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
+        gap: var(--spacing-md);
     }
     
     .color-palette {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: var(--spacing-sm);
     }
     
     .color-preview {
         width: 50px;
         height: 50px;
     }
-}
-
-/* Animations */
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-.pulse {
-    animation: pulse 2s infinite;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.slide-in {
-    animation: slideIn 0.3s ease-out;
 }
 </style>
 {% endblock %}
@@ -430,7 +322,7 @@ body {
                 <i class="fas fa-sitemap me-2"></i>
                 Esqueleto da Landing Page
             </h1>
-            <p class="skeleton-subtitle mb-0">
+            <p class="skeleton-subtitle">
                 {{ request.page_title if request else 'Projeto' }} - {{ request.company_name if request else 'Empresa' }}
             </p>
         </div>
@@ -441,7 +333,7 @@ body {
             </span>
             <button class="edit-mode-toggle" onclick="toggleEditMode()" id="editModeToggle">
                 <i class="fas fa-edit me-2"></i>
-                <span id="editModeText">Modo Edição</span>
+                <span id="editModeText">Ativar Edição</span>
             </button>
         </div>
     </div>
@@ -450,14 +342,14 @@ body {
 <div class="row">
     <!-- Main Content -->
     <div class="col-lg-8">
-        <!-- Sections -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="mb-0">
+        <!-- Seções -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0" style="color: black;">
                 <i class="fas fa-layer-group me-2 text-primary"></i>
                 Seções da Página
             </h3>
-            <button class="action-btn btn-success d-none" onclick="addNewSection()" id="addSectionBtn">
-                <i class="fas fa-plus"></i>
+            <button class="btn btn-success d-none" onclick="addNewSection()" id="addSectionBtn">
+                <i class="fas fa-plus me-1"></i>
                 Adicionar Seção
             </button>
         </div>
@@ -465,40 +357,35 @@ body {
         <div id="sectionsContainer">
             {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.sections %}
                 {% for section in skeleton.parsed_skeleton_data.sections %}
-                <div class="section-card slide-in" data-section-index="{{ loop.index0 }}">
-                    <div class="section-header">
-                        <div class="d-flex align-items-center flex-grow-1">
+                <div class="section-card" data-section-index="{{ loop.index0 }}" >
+                    <div class="section-header" >
+                        <div class="d-flex align-items-center flex-grow-1" >
                             <div class="section-order">{{ section.order }}</div>
                             <div class="flex-grow-1">
                                 <h4 class="section-title">
                                     <span class="editable-field" data-field="title" data-section="{{ loop.index0 }}">
                                         {{ section.title }}
+                                        <span class="edit-indicator"><i class="fas fa-edit"></i></span>
                                     </span>
-                                    <button class="edit-btn d-none" onclick="editField(this)">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
                                 </h4>
                                 <p class="section-description">
                                     <span class="editable-field" data-field="description" data-section="{{ loop.index0 }}">
                                         {{ section.description }}
+                                        <span class="edit-indicator"><i class="fas fa-edit"></i></span>
                                     </span>
-                                    <button class="edit-btn d-none" onclick="editField(this)">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
                                 </p>
                             </div>
                         </div>
                         
-                        <!-- Section Actions -->
                         <div class="section-actions d-none">
                             <div class="btn-group" role="group">
                                 {% if not loop.first %}
-                                <button class="btn btn-outline-primary btn-sm" onclick="moveSection({{ loop.index0 }}, 'up')" title="Mover para cima">
+                                <button class="btn btn-outline-primary btn-sm" onclick="SkeletonEditor.moveSection({{ loop.index0 }}, 'up')" title="Mover para cima">
                                     <i class="fas fa-arrow-up"></i>
                                 </button>
                                 {% endif %}
                                 {% if not loop.last %}
-                                <button class="btn btn-outline-primary btn-sm" onclick="moveSection({{ loop.index0 }}, 'down')" title="Mover para baixo">
+                                <button class="btn btn-outline-primary btn-sm" onclick="SkeletonEditor.moveSection({{ loop.index0 }}, 'down')" title="Mover para baixo">
                                     <i class="fas fa-arrow-down"></i>
                                 </button>
                                 {% endif %}
@@ -510,13 +397,13 @@ body {
                     </div>
                     
                     <div class="section-body">
-                        <!-- Elements -->
+                        <!-- Elementos -->
                         {% if section.elements %}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted">
-                                <i class="fas fa-puzzle-piece me-1"></i>
+                        <div class="field-group">
+                            <div class="field-label">
+                                <i class="fas fa-puzzle-piece"></i>
                                 Elementos:
-                            </label>
+                            </div>
                             <div class="elements-container" data-field="elements" data-section="{{ loop.index0 }}">
                                 {% for element in section.elements %}
                                 <span class="element-tag">
@@ -525,45 +412,41 @@ body {
                                 </span>
                                 {% endfor %}
                             </div>
-                            <button class="btn btn-outline-primary btn-sm d-none" onclick="editElements({{ loop.index0 }})">
+                            <button class="btn btn-outline-primary btn-sm mt-2 d-none edit-only" onclick="editElements({{ loop.index0 }})">
                                 <i class="fas fa-edit me-1"></i>
                                 Editar Elementos
                             </button>
                         </div>
                         {% endif %}
                         
-                        <!-- Style Notes -->
+                        <!-- Notas de Estilo -->
                         {% if section.style_notes %}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted">
-                                <i class="fas fa-palette me-1"></i>
+                        <div class="field-group">
+                            <div class="field-label">
+                                <i class="fas fa-palette"></i>
                                 Notas de Estilo:
-                            </label>
+                            </div>
                             <div class="bg-light p-3 rounded">
                                 <span class="editable-field" data-field="style_notes" data-section="{{ loop.index0 }}">
                                     {{ section.style_notes }}
+                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
                                 </span>
-                                <button class="edit-btn d-none" onclick="editField(this)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
                             </div>
                         </div>
                         {% endif %}
                         
-                        <!-- Content Guidelines -->
+                        <!-- Diretrizes de Conteúdo -->
                         {% if section.content_guidelines %}
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted">
-                                <i class="fas fa-file-alt me-1"></i>
+                        <div class="field-group">
+                            <div class="field-label">
+                                <i class="fas fa-file-alt"></i>
                                 Diretrizes de Conteúdo:
-                            </label>
+                            </div>
                             <div class="bg-light p-3 rounded">
                                 <span class="editable-field" data-field="content_guidelines" data-section="{{ loop.index0 }}">
                                     {{ section.content_guidelines }}
+                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
                                 </span>
-                                <button class="edit-btn d-none" onclick="editField(this)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
                             </div>
                         </div>
                         {% endif %}
@@ -578,24 +461,38 @@ body {
                 </div>
             {% endif %}
         </div>
+        
+        <!-- Botão de Salvar no Final das Seções -->
+        <div class="text-center mt-4 d-none edit-only" id="saveChangesFooter">
+            <div class="bg-info bg-opacity-10 border border-info rounded p-3 d-flex align-items-center justify-content-center">
+                <div class="me-3 text-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Você tem alterações não salvas
+                </div>
+                <button class="btn btn-success btn-lg" onclick="saveChanges()">
+                    <i class="fas fa-save me-2"></i>
+                    Salvar Todas as Alterações
+                </button>
+            </div>
+        </div>
     </div>
     
     <!-- Sidebar -->
     <div class="col-lg-4">
-        <!-- Visual Identity -->
+        <!-- Identidade Visual -->
         {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.visual_identity %}
-        <div class="info-card visual-identity-card">
-            <div class="card-header">
-                <h6 class="card-title">
+        <div class="info-card visual-identity">
+            <div class="card-header-custom">
+                <h6 class="card-title-custom">
                     <i class="fas fa-palette"></i>
                     Identidade Visual
                 </h6>
             </div>
-            <div class="card-body">
-                <!-- Color Palette -->
+            <div class="card-body-custom">
+                <!-- Paleta de Cores -->
                 <div class="color-palette">
                     <div class="color-item">
-                        <div class="color-label">Primária (60%)</div>
+                        <div class="color-label">Primária</div>
                         <div class="color-preview" 
                              style="background: {{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}"
                              onclick="editColor('primary', '{{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}')">
@@ -606,7 +503,7 @@ body {
                     </div>
                     
                     <div class="color-item">
-                        <div class="color-label">Secundária (30%)</div>
+                        <div class="color-label">Secundária</div>
                         <div class="color-preview" 
                              style="background: {{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}"
                              onclick="editColor('secondary', '{{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}')">
@@ -617,7 +514,7 @@ body {
                     </div>
                     
                     <div class="color-item">
-                        <div class="color-label">Destaque (10%)</div>
+                        <div class="color-label">Destaque</div>
                         <div class="color-preview" 
                              style="background: {{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}"
                              onclick="editColor('accent', '{{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}')">
@@ -628,54 +525,52 @@ body {
                     </div>
                 </div>
                 
-                <!-- Typography -->
-                <div class="mt-4">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="mb-2">
-                                <small class="d-block opacity-75">Fonte Principal:</small>
-                                <small class="editable-field" data-field="font_primary">
+                <!-- Tipografia e Layout -->
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <div class="field-group">
+                            <div class="field-label">Fonte Principal:</div>
+                            <div class="field-value">
+                                <span class="editable-field" data-field="font_primary" data-context="visual_identity">
                                     {{ skeleton.parsed_skeleton_data.visual_identity.font_primary or 'Inter' }}
-                                </small>
-                                <button class="edit-btn d-none" onclick="editField(this)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="mb-2">
-                                <small class="d-block opacity-75">Fonte Secundária:</small>
-                                <small class="editable-field" data-field="font_secondary">
-                                    {{ skeleton.parsed_skeleton_data.visual_identity.font_secondary or 'Georgia' }}
-                                </small>
-                                <button class="edit-btn d-none" onclick="editField(this)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                                </span>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="mb-2">
-                                <small class="d-block opacity-75">Estilo Layout:</small>
-                                <small class="editable-field" data-field="layout_style">
-                                    {{ skeleton.parsed_skeleton_data.visual_identity.layout_style or 'modern_grid' }}
-                                </small>
-                                <button class="edit-btn d-none" onclick="editField(this)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                    <div class="col-6">
+                        <div class="field-group">
+                            <div class="field-label">Fonte Secundária:</div>
+                            <div class="field-value">
+                                <span class="editable-field" data-field="font_secondary" data-context="visual_identity">
+                                    {{ skeleton.parsed_skeleton_data.visual_identity.font_secondary or 'Georgia' }}
+                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                                </span>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="mb-2">
-                                <small class="d-block opacity-75">Espaçamento:</small>
-                                <small class="editable-field" data-field="spacing_unit">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="field-group">
+                            <div class="field-label">Estilo Layout:</div>
+                            <div class="field-value">
+                                <span class="editable-field" data-field="layout_style" data-context="visual_identity">
+                                    {{ skeleton.parsed_skeleton_data.visual_identity.layout_style or 'modern_grid' }}
+                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="field-group">
+                            <div class="field-label">Espaçamento:</div>
+                            <div class="field-value">
+                                <span class="editable-field" data-field="spacing_unit" data-context="visual_identity">
                                     {{ skeleton.parsed_skeleton_data.visual_identity.spacing_unit or '1.5rem' }}
-                                </small>
-                                <button class="edit-btn d-none" onclick="editField(this)">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -684,139 +579,141 @@ body {
         </div>
         {% endif %}
         
-        <!-- Conversion Strategy -->
+        <!-- Estratégia de Conversão -->
         {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.conversion_strategy %}
-        <div class="info-card strategy-card">
-            <div class="card-header">
-                <h6 class="card-title">
+        <div class="info-card strategy">
+            <div class="card-header-custom">
+                <h6 class="card-title-custom">
                     <i class="fas fa-bullseye"></i>
                     Estratégia de Conversão
                 </h6>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-2">CTA Principal:</small>
-                    <div class="bg-white bg-opacity-20 p-2 rounded">
-                        <span class="editable-field " data-field="primary_cta">
+            <div class="card-body-custom">
+                <div class="field-group">
+                    <div class="field-label">CTA Principal:</div>
+                    <div class="field-value">
+                        <span class="editable-field" data-field="primary_cta" data-context="conversion_strategy">
                             {{ skeleton.parsed_skeleton_data.conversion_strategy.primary_cta or 'Entre em Contato' }}
+                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
                         </span>
-                        <button class="edit-btn d-none " onclick="editField(this)">
-                            <i class="fas fa-edit"></i>
-                        </button>
                     </div>
                 </div>
                 
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-2">CTA Secundário:</small>
-                    <div class="bg-white bg-opacity-20 p-2 rounded">
-                        <span class="editable-field " data-field="secondary_cta">
+                <div class="field-group">
+                    <div class="field-label">CTA Secundário:</div>
+                    <div class="field-value">
+                        <span class="editable-field" data-field="secondary_cta" data-context="conversion_strategy">
                             {{ skeleton.parsed_skeleton_data.conversion_strategy.secondary_cta or 'Saiba Mais' }}
+                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
                         </span>
-                        <button class="edit-btn d-none " onclick="editField(this)">
-                            <i class="fas fa-edit"></i>
-                        </button>
                     </div>
                 </div>
                 
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-2">Proposta de Valor:</small>
-                    <div class="bg-white bg-opacity-20 p-2 rounded">
-                        <span class="editable-field " data-field="value_proposition">
+                <div class="field-group">
+                    <div class="field-label">Proposta de Valor:</div>
+                    <div class="field-value">
+                        <span class="editable-field" data-field="value_proposition" data-context="conversion_strategy">
                             {{ skeleton.parsed_skeleton_data.conversion_strategy.value_proposition or 'Solução inovadora para seu negócio' }}
+                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
                         </span>
-                        <button class="edit-btn d-none " onclick="editField(this)">
-                            <i class="fas fa-edit"></i>
-                        </button>
                     </div>
                 </div>
                 
-                <!-- Trust Elements -->
+                <!-- Elementos de Confiança -->
                 {% if skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-2">Elementos de Confiança:</small>
-                    <div class="elements-container">
+                <div class="field-group">
+                    <div class="field-label">Elementos de Confiança:</div>
+                    <div class="elements-container" data-field="trust_elements" data-context="conversion_strategy">
                         {% for element in skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
-                        <span class="element-tag trust-element">
+                        <span class="element-tag">
                             <i class="fas fa-shield-alt me-1"></i>
                             {{ element }}
                         </span>
                         {% endfor %}
                     </div>
+                    <button class="btn btn-outline-light btn-sm mt-2 d-none edit-only" onclick="editTrustElements()">
+                        <i class="fas fa-edit me-1"></i>
+                        Editar
+                    </button>
                 </div>
                 {% endif %}
                 
-                <!-- Urgency Elements -->
+                <!-- Elementos de Urgência -->
                 {% if skeleton.parsed_skeleton_data.conversion_strategy.urgency_elements %}
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-2">Elementos de Urgência:</small>
-                    <div class="elements-container">
+                <div class="field-group">
+                    <div class="field-label">Elementos de Urgência:</div>
+                    <div class="elements-container" data-field="urgency_elements" data-context="conversion_strategy">
                         {% for element in skeleton.parsed_skeleton_data.conversion_strategy.urgency_elements %}
-                        <span class="element-tag urgency-element">
+                        <span class="element-tag">
                             <i class="fas fa-clock me-1"></i>
                             {{ element }}
                         </span>
                         {% endfor %}
                     </div>
+                    <button class="btn btn-outline-light btn-sm mt-2 d-none edit-only" onclick="editUrgencyElements()">
+                        <i class="fas fa-edit me-1"></i>
+                        Editar
+                    </button>
                 </div>
                 {% endif %}
             </div>
         </div>
         {% endif %}
         
-        <!-- Global Context -->
+        <!-- Contexto Global -->
         {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.global_context %}
-        <div class="info-card context-card">
-            <div class="card-header">
-                <h6 class="card-title">
+        <div class="info-card context">
+            <div class="card-header-custom">
+                <h6 class="card-title-custom">
                     <i class="fas fa-globe"></i>
                     Contexto Global
                 </h6>
             </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-1">Tipo de Negócio:</small>
-                    <span class="editable-field " data-field="business_type">
-                        {{ skeleton.parsed_skeleton_data.global_context.business_type or 'Não definido' }}
-                    </span>
-                    <button class="edit-btn d-none " onclick="editField(this)">
-                        <i class="fas fa-edit"></i>
-                    </button>
+            <div class="card-body-custom">
+                <div class="field-group">
+                    <div class="field-label">Tipo de Negócio:</div>
+                    <div class="field-value">
+                        <span class="editable-field" data-field="business_type" data-context="global_context">
+                            {{ skeleton.parsed_skeleton_data.global_context.business_type or 'Não definido' }}
+                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                        </span>
+                    </div>
                 </div>
                 
-                                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-1">Tom de Voz:</small>
-                    <span class="editable-field " data-field="tone_of_voice">
-                        {{ skeleton.parsed_skeleton_data.global_context.tone_of_voice or 'Não definido' }}
-                    </span>
-                    <button class="edit-btn d-none " onclick="editField(this)">
-                        <i class="fas fa-edit"></i>
-                    </button>
+                <div class="field-group">
+                    <div class="field-label">Tom de Voz:</div>
+                    <div class="field-value">
+                        <span class="editable-field" data-field="tone_of_voice" data-context="global_context">
+                            {{ skeleton.parsed_skeleton_data.global_context.tone_of_voice or 'Não definido' }}
+                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                        </span>
+                    </div>
                 </div>
                 
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-1">Público-Alvo:</small>
-                    <span class="editable-field " data-field="target_audience">
-                        {{ skeleton.parsed_skeleton_data.global_context.target_audience or 'Não definido' }}
-                    </span>
-                    <button class="edit-btn d-none " onclick="editField(this)">
-                        <i class="fas fa-edit"></i>
-                    </button>
+                <div class="field-group">
+                    <div class="field-label">Público-Alvo:</div>
+                    <div class="field-value">
+                        <span class="editable-field" data-field="target_audience" data-context="global_context">
+                            {{ skeleton.parsed_skeleton_data.global_context.target_audience or 'Não definido' }}
+                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                        </span>
+                    </div>
                 </div>
                 
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-1">Objetivo Principal:</small>
-                    <span class="editable-field " data-field="primary_goal">
-                        {{ skeleton.parsed_skeleton_data.global_context.primary_goal or 'Não definido' }}
-                    </span>
-                    <button class="edit-btn d-none " onclick="editField(this)">
-                        <i class="fas fa-edit"></i>
-                    </button>
+                <div class="field-group">
+                    <div class="field-label">Objetivo Principal:</div>
+                    <div class="field-value">
+                        <span class="editable-field" data-field="primary_goal" data-context="global_context">
+                            {{ skeleton.parsed_skeleton_data.global_context.primary_goal or 'Não definido' }}
+                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
+                        </span>
+                    </div>
                 </div>
                 
                 {% if skeleton.parsed_skeleton_data.global_context.secondary_goals %}
-                <div class="mb-3">
-                    <small class="d-block opacity-75 mb-2">Objetivos Secundários:</small>
-                    <div class="elements-container">
+                <div class="field-group">
+                    <div class="field-label">Objetivos Secundários:</div>
+                    <div class="elements-container" data-field="secondary_goals" data-context="global_context">
                         {% for goal in skeleton.parsed_skeleton_data.global_context.secondary_goals %}
                         <span class="element-tag">
                             <i class="fas fa-target me-1"></i>
@@ -824,21 +721,25 @@ body {
                         </span>
                         {% endfor %}
                     </div>
+                    <button class="btn btn-outline-light btn-sm mt-2 d-none edit-only" onclick="editSecondaryGoals()">
+                        <i class="fas fa-edit me-1"></i>
+                        Editar
+                    </button>
                 </div>
                 {% endif %}
             </div>
         </div>
         {% endif %}
         
-        <!-- Statistics -->
-        <div class="info-card stats-card">
-            <div class="card-header">
-                <h6 class="card-title">
+        <!-- Estatísticas -->
+        <div class="info-card stats">
+            <div class="card-header-custom">
+                <h6 class="card-title-custom">
                     <i class="fas fa-chart-bar"></i>
                     Estatísticas
                 </h6>
             </div>
-            <div class="card-body">
+            <div class="card-body-custom">
                 <div class="row text-center">
                     <div class="col-4">
                         <div class="mb-2">
@@ -878,7 +779,7 @@ body {
             </div>
         </div>
         
-        <!-- Actions -->
+        <!-- Ações -->
         <div class="info-card">
             <div class="card-header">
                 <h6 class="card-title">
@@ -888,24 +789,24 @@ body {
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ url_for('view_request', request_id=skeleton.request_id) }}" class="action-btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i>
+                    <a href="{{ url_for('view_request', request_id=skeleton.request_id) }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
                         Voltar para Solicitação
                     </a>
                     
-                    <button class="action-btn btn-warning" onclick="regenerateSkeleton()">
-                        <i class="fas fa-redo"></i>
+                    <button class="btn btn-warning" onclick="regenerateSkeleton()">
+                        <i class="fas fa-redo me-1"></i>
                         Regenerar Esqueleto
                     </button>
                     
-                    <button class="action-btn btn-success" onclick="generateHeroSection()" id="generateHeroBtn">
-                        <i class="fas fa-rocket"></i>
-                        Gerar Hero Section
+                    <button class="btn btn-success d-none" onclick="saveChanges()" id="saveChangesBtn">
+                        <i class="fas fa-save me-1"></i>
+                        Salvar Alterações
                     </button>
                     
-                    <button class="action-btn btn-primary d-none" onclick="saveChanges()" id="saveChangesBtn">
-                        <i class="fas fa-save"></i>
-                        Salvar Alterações
+                    <button class="btn btn-primary" onclick="generateHeroSection()" id="generateHeroBtn">
+                        <i class="fas fa-rocket me-1"></i>
+                        Gerar Hero Section
                     </button>
                 </div>
             </div>
@@ -913,13 +814,13 @@ body {
     </div>
 </div>
 
-<!-- Modals -->
+<!-- Modais -->
 
-<!-- Color Edit Modal -->
+<!-- Modal de Edição de Cor -->
 <div class="modal fade" id="colorModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-gradient text-white">
                 <h5 class="modal-title">
                     <i class="fas fa-palette me-2"></i>
                     Editar Cor <span id="colorType"></span>
@@ -942,13 +843,6 @@ body {
                     <label class="form-label">Preview:</label>
                     <div id="colorPreview" style="width: 100%; height: 60px; border-radius: 8px; border: 2px solid #dee2e6;"></div>
                 </div>
-                
-                <div class="mt-3">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Esta cor será aplicada seguindo a regra 60-30-10 de design.
-                    </small>
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -958,11 +852,11 @@ body {
     </div>
 </div>
 
-<!-- Add Section Modal -->
+<!-- Modal de Adicionar Seção -->
 <div class="modal fade" id="addSectionModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-gradient text-white">
                 <h5 class="modal-title">
                     <i class="fas fa-plus me-2"></i>
                     Adicionar Nova Seção
@@ -1010,11 +904,11 @@ body {
     </div>
 </div>
 
-<!-- Elements Edit Modal -->
+<!-- Modal de Editar Elementos -->
 <div class="modal fade" id="elementsModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-gradient text-white">
                 <h5 class="modal-title">
                     <i class="fas fa-puzzle-piece me-2"></i>
                     Editar Elementos
@@ -1023,10 +917,13 @@ body {
             </div>
             <div class="modal-body">
                 <label class="form-label">Elementos (um por linha):</label>
-                <textarea class="form-control" id="elementsTextarea" rows="6" placeholder="title&#10;subtitle&#10;cta_button&#10;image"></textarea>
+                <textarea class="form-control" id="elementsTextarea" rows="6" placeholder="title
+subtitle
+cta_button
+image"></textarea>
                 <small class="text-muted mt-2 d-block">
                     <i class="fas fa-info-circle me-1"></i>
-                    Digite cada elemento em uma linha separada. Ex: title, subtitle, button, image
+                    Digite cada elemento em uma linha separada.
                 </small>
             </div>
             <div class="modal-footer">
@@ -1037,815 +934,18 @@ body {
     </div>
 </div>
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-content">
-        <div class="spinner-border text-primary mb-3" role="status">
-            <span class="visually-hidden">Carregando...</span>
-        </div>
-        <h5>Salvando alterações...</h5>
-        <p class="text-muted mb-0">Por favor, aguarde.</p>
-    </div>
-</div>
-
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/skeleton-editor.js') }}"></script>
 <script>
-// Global Variables
-let isEditMode = false;
-let hasChanges = false;
-let skeletonData = {{ skeleton.parsed_skeleton_data | tojson | safe }};
-let currentColorField = '';
-let currentElementsSection = -1;
-
-// Initialize
+// Inicializar o editor com os dados do esqueleto
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🎨 Editor de Esqueleto carregado!');
+    const skeletonData = {{ skeleton.parsed_skeleton_data | tojson | safe }};
+    const skeletonId = '{{ skeleton.skeleton_id }}';
     
-    // Initialize tooltips
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-    
-    // Add slide-in animation to cards
-    const cards = document.querySelectorAll('.section-card');
-    cards.forEach((card, index) => {
-        setTimeout(() => {
-            card.classList.add('slide-in');
-        }, index * 100);
-    });
+    // Inicializar o editor
+    SkeletonEditor.init(skeletonData, skeletonId);
 });
-
-// Toggle Edit Mode
-function toggleEditMode() {
-    isEditMode = !isEditMode;
-    const toggle = document.getElementById('editModeToggle');
-    const text = document.getElementById('editModeText');
-    const editBtns = document.querySelectorAll('.edit-btn');
-    const sectionActions = document.querySelectorAll('.section-actions');
-    const addSectionBtn = document.getElementById('addSectionBtn');
-    
-    if (isEditMode) {
-        toggle.classList.add('active');
-        text.textContent = 'Sair da Edição';
-        editBtns.forEach(btn => btn.classList.remove('d-none'));
-        sectionActions.forEach(action => action.classList.remove('d-none'));
-        addSectionBtn.classList.remove('d-none');
-        
-        // Add edit mode styling
-        document.querySelectorAll('.editable-field').forEach(field => {
-            field.style.cursor = 'pointer';
-            field.addEventListener('click', handleFieldClick);
-        });
-        
-        showAlert('info', '✏️ Modo de edição ativado! Clique nos campos para editar.');
-    } else {
-        toggle.classList.remove('active');
-        text.textContent = 'Modo Edição';
-        editBtns.forEach(btn => btn.classList.add('d-none'));
-               sectionActions.forEach(action => action.classList.add('d-none'));
-        addSectionBtn.classList.add('d-none');
-        
-        // Remove edit mode styling
-        document.querySelectorAll('.editable-field').forEach(field => {
-            field.style.cursor = 'default';
-            field.removeEventListener('click', handleFieldClick);
-            field.classList.remove('editing');
-        });
-        
-        // Show save button if there are changes
-        if (hasChanges) {
-            document.getElementById('saveChangesBtn').classList.remove('d-none');
-            showAlert('warning', '⚠️ Você tem alterações não salvas. Clique em "Salvar Alterações" para manter as mudanças.');
-        }
-    }
-}
-
-// Handle field click in edit mode
-function handleFieldClick(event) {
-    if (!isEditMode) return;
-    
-    const field = event.target.closest('.editable-field');
-    if (field) {
-        editField(field.nextElementSibling);
-    }
-}
-
-// Edit Field
-function editField(button) {
-    const field = button.previousElementSibling;
-    const currentValue = field.textContent.trim();
-    const fieldType = field.dataset.field;
-    const sectionIndex = field.dataset.section;
-    
-    // Create input element
-    let input;
-    if (fieldType === 'description' || fieldType === 'style_notes' || fieldType === 'content_guidelines') {
-        input = document.createElement('textarea');
-        input.className = 'form-control';
-        input.rows = 3;
-    } else {
-        input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'form-control';
-    }
-    
-    input.value = currentValue;
-    input.style.minWidth = '200px';
-    
-    // Replace field with input
-    field.style.display = 'none';
-    field.classList.add('editing');
-    field.parentNode.insertBefore(input, field.nextSibling);
-    
-    // Focus and select
-    input.focus();
-    input.select();
-    
-    // Handle save
-    const saveEdit = () => {
-        const newValue = input.value.trim();
-        if (newValue !== currentValue) {
-            field.textContent = newValue;
-            updateSkeletonData(fieldType, newValue, sectionIndex);
-            hasChanges = true;
-            showAlert('success', '✅ Campo atualizado! Lembre-se de salvar as alterações.');
-        }
-        
-        // Restore field
-        field.style.display = 'inline';
-        field.classList.remove('editing');
-        input.remove();
-    };
-    
-    // Handle cancel
-    const cancelEdit = () => {
-        field.style.display = 'inline';
-        field.classList.remove('editing');
-        input.remove();
-    };
-    
-    // Event listeners
-    input.addEventListener('blur', saveEdit);
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            saveEdit();
-        } else if (e.key === 'Escape') {
-            e.preventDefault();
-            cancelEdit();
-        }
-    });
-}
-
-// Edit Color
-function editColor(colorType, currentColor) {
-    if (!isEditMode) {
-        showAlert('warning', '⚠️ Ative o modo de edição para alterar cores.');
-        return;
-    }
-    
-    currentColorField = colorType;
-    document.getElementById('colorType').textContent = colorType === 'primary' ? 'Primária' : 
-                                                     colorType === 'secondary' ? 'Secundária' : 'Destaque';
-    document.getElementById('colorPicker').value = currentColor;
-    document.getElementById('colorHex').value = currentColor;
-    document.getElementById('colorPreview').style.background = currentColor;
-    
-    // Sync color picker and hex input
-    const picker = document.getElementById('colorPicker');
-    const hex = document.getElementById('colorHex');
-    const preview = document.getElementById('colorPreview');
-    
-    picker.addEventListener('input', () => {
-        hex.value = picker.value;
-        preview.style.background = picker.value;
-    });
-    
-    hex.addEventListener('input', () => {
-        if (/^#[0-9A-Fa-f]{6}$/.test(hex.value)) {
-            picker.value = hex.value;
-            preview.style.background = hex.value;
-        }
-    });
-    
-    new bootstrap.Modal(document.getElementById('colorModal')).show();
-}
-
-// Save Color
-function saveColor() {
-    const newColor = document.getElementById('colorHex').value;
-    
-    if (!/^#[0-9A-Fa-f]{6}$/.test(newColor)) {
-        showAlert('danger', '❌ Cor inválida! Use o formato #RRGGBB');
-        return;
-    }
-    
-    // Update visual identity
-    if (!skeletonData.visual_identity) {
-        skeletonData.visual_identity = {};
-    }
-    
-    skeletonData.visual_identity[currentColorField + '_color'] = newColor;
-    
-    // Update UI
-    const colorPreview = document.querySelector(`[onclick*="${currentColorField}"]`);
-    const colorValue = document.querySelector(`[data-field="${currentColorField}_color"]`);
-    
-    if (colorPreview) {
-        colorPreview.style.background = newColor;
-    }
-    if (colorValue) {
-        colorValue.textContent = newColor;
-    }
-    
-    hasChanges = true;
-    bootstrap.Modal.getInstance(document.getElementById('colorModal')).hide();
-    showAlert('success', `✅ Cor ${currentColorField} atualizada para ${newColor}!`);
-}
-
-// Edit Elements
-function editElements(sectionIndex) {
-    if (!isEditMode) return;
-    
-    currentElementsSection = sectionIndex;
-    const elements = skeletonData.sections[sectionIndex].elements || [];
-    document.getElementById('elementsTextarea').value = elements.join('\n');
-    
-    new bootstrap.Modal(document.getElementById('elementsModal')).show();
-}
-
-// Save Elements
-function saveElements() {
-    const elementsText = document.getElementById('elementsTextarea').value;
-    const elements = elementsText.split('\n')
-                                .map(el => el.trim())
-                                .filter(el => el.length > 0);
-    
-    if (currentElementsSection >= 0) {
-        skeletonData.sections[currentElementsSection].elements = elements;
-        
-        // Update UI
-        const container = document.querySelector(`[data-field="elements"][data-section="${currentElementsSection}"]`);
-        if (container) {
-            container.innerHTML = elements.map(el => 
-                `<span class="element-tag">
-                    <i class="fas fa-cube me-1"></i>
-                    ${el}
-                </span>`
-            ).join('');
-        }
-        
-        hasChanges = true;
-        bootstrap.Modal.getInstance(document.getElementById('elementsModal')).hide();
-        showAlert('success', '✅ Elementos atualizados!');
-    }
-}
-
-// Add New Section
-function addNewSection() {
-    if (!isEditMode) return;
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('addSectionModal'));
-    
-    // Handle section type change
-    document.getElementById('newSectionName').addEventListener('change', function() {
-        const customField = document.getElementById('customNameField');
-        const titleField = document.getElementById('newSectionTitle');
-        
-        if (this.value === 'custom') {
-            customField.style.display = 'block';
-        } else {
-            customField.style.display = 'none';
-            
-            // Auto-fill title based on section type
-            const titles = {
-                'about': 'Sobre Nós',
-                'services': 'Nossos Serviços',
-                'benefits': 'Benefícios',
-                'testimonials': 'Depoimentos',
-                'pricing': 'Preços e Planos',
-                'faq': 'Perguntas Frequentes',
-                'team': 'Nossa Equipe',
-                'portfolio': 'Portfólio',
-                'contact': 'Entre em Contato'
-            };
-            
-            titleField.value = titles[this.value] || '';
-        }
-    });
-    
-    modal.show();
-}
-
-// Save New Section
-function saveNewSection() {
-    const sectionName = document.getElementById('newSectionName').value;
-    const customName = document.getElementById('customSectionName').value;
-    const title = document.getElementById('newSectionTitle').value;
-    const description = document.getElementById('newSectionDescription').value;
-    
-    if (!title.trim()) {
-        showAlert('danger', '❌ Título da seção é obrigatório!');
-        return;
-    }
-    
-    const finalName = sectionName === 'custom' ? customName : sectionName;
-    
-    if (!finalName.trim()) {
-        showAlert('danger', '❌ Nome da seção é obrigatório!');
-        return;
-    }
-    
-    // Create new section
-    const newSection = {
-        name: finalName,
-        order: skeletonData.sections.length + 1,
-        title: title.trim(),
-        description: description.trim() || 'Nova seção adicionada pelo usuário',
-        elements: ['content', 'layout'],
-        style_notes: 'Estilo a ser definido',
-        content_guidelines: 'Conteúdo a ser desenvolvido'
-    };
-    
-    // Add to skeleton data
-    skeletonData.sections.push(newSection);
-    
-    // Add to UI
-    addSectionToUI(newSection, skeletonData.sections.length - 1);
-    
-    hasChanges = true;
-    bootstrap.Modal.getInstance(document.getElementById('addSectionModal')).hide();
-    showAlert('success', `✅ Seção "${title}" adicionada com sucesso!`);
-    
-    // Clear form
-    document.getElementById('newSectionTitle').value = '';
-    document.getElementById('newSectionDescription').value = '';
-    document.getElementById('customSectionName').value = '';
-}
-
-// Add Section to UI
-function addSectionToUI(section, index) {
-    const container = document.getElementById('sectionsContainer');
-    const sectionHTML = `
-        <div class="section-card slide-in" data-section-index="${index}">
-            <div class="section-header">
-                <div class="d-flex align-items-center flex-grow-1">
-                    <div class="section-order">${section.order}</div>
-                    <div class="flex-grow-1">
-                        <h4 class="section-title">
-                            <span class="editable-field" data-field="title" data-section="${index}">
-                                ${section.title}
-                            </span>
-                            <button class="edit-btn" onclick="editField(this)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </h4>
-                        <p class="section-description">
-                            <span class="editable-field" data-field="description" data-section="${index}">
-                                ${section.description}
-                            </span>
-                            <button class="edit-btn" onclick="editField(this)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="section-actions">
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-outline-primary btn-sm" onclick="moveSection(${index}, 'up')" title="Mover para cima">
-                            <i class="fas fa-arrow-up"></i>
-                        </button>
-                        <button class="btn btn-outline-primary btn-sm" onclick="moveSection(${index}, 'down')" title="Mover para baixo">
-                            <i class="fas fa-arrow-down"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="removeSection(${index})" title="Remover seção">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section-body">
-                <div class="mb-3">
-                    <label class="form-label fw-semibold text-muted">
-                        <i class="fas fa-puzzle-piece me-1"></i>
-                        Elementos:
-                    </label>
-                    <div class="elements-container" data-field="elements" data-section="${index}">
-                        ${section.elements.map(el => `
-                            <span class="element-tag">
-                                <i class="fas fa-cube me-1"></i>
-                                ${el}
-                            </span>
-                        `).join('')}
-                    </div>
-                    <button class="btn btn-outline-primary btn-sm" onclick="editElements(${index})">
-                        <i class="fas fa-edit me-1"></i>
-                        Editar Elementos
-                    </button>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label fw-semibold text-muted">
-                        <i class="fas fa-palette me-1"></i>
-                        Notas de Estilo:
-                    </label>
-                    <div class="bg-light p-3 rounded">
-                        <span class="editable-field" data-field="style_notes" data-section="${index}">
-                            ${section.style_notes}
-                        </span>
-                        <button class="edit-btn" onclick="editField(this)">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label fw-semibold text-muted">
-                        <i class="fas fa-file-alt me-1"></i>
-                        Diretrizes de Conteúdo:
-                    </label>
-                    <div class="bg-light p-3 rounded">
-                        <span class="editable-field" data-field="content_guidelines" data-section="${index}">
-                            ${section.content_guidelines}
-                        </span>
-                        <button class="edit-btn" onclick="editField(this)">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    container.insertAdjacentHTML('beforeend', sectionHTML);
-    
-    // Add event listeners to new editable fields
-    const newCard = container.lastElementChild;
-    newCard.querySelectorAll('.editable-field').forEach(field => {
-        if (isEditMode) {
-            field.style.cursor = 'pointer';
-            field.addEventListener('click', handleFieldClick);
-        }
-    });
-}
-
-// Move Section
-function moveSection(index, direction) {
-    if (!isEditMode) return;
-    
-    const sections = skeletonData.sections;
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    
-    if (newIndex < 0 || newIndex >= sections.length) return;
-    
-        // Swap sections
-    [sections[index], sections[newIndex]] = [sections[newIndex], sections[index]];
-    
-    // Update order numbers
-    sections[index].order = index + 1;
-    sections[newIndex].order = newIndex + 1;
-    
-    // Rebuild UI
-    rebuildSectionsUI();
-    
-    hasChanges = true;
-    showAlert('success', '✅ Seção reordenada!');
-}
-
-// Remove Section
-function removeSection(index) {
-    if (!isEditMode) return;
-    
-    const section = skeletonData.sections[index];
-    
-    if (confirm(`🗑️ Tem certeza que deseja remover a seção "${section.title}"?\n\nEsta ação não pode ser desfeita.`)) {
-        // Remove from data
-        skeletonData.sections.splice(index, 1);
-        
-        // Update order numbers
-        skeletonData.sections.forEach((section, i) => {
-            section.order = i + 1;
-        });
-        
-        // Rebuild UI
-        rebuildSectionsUI();
-        
-        hasChanges = true;
-        showAlert('success', `✅ Seção "${section.title}" removida!`);
-    }
-}
-
-// Rebuild Sections UI
-function rebuildSectionsUI() {
-    const container = document.getElementById('sectionsContainer');
-    container.innerHTML = '';
-    
-    skeletonData.sections.forEach((section, index) => {
-        addSectionToUI(section, index);
-    });
-    
-    // Update statistics
-    const sectionsCount = document.querySelector('.stats-card .fs-4');
-    if (sectionsCount) {
-        sectionsCount.textContent = skeletonData.sections.length;
-    }
-}
-
-// Update Skeleton Data
-function updateSkeletonData(fieldType, newValue, sectionIndex) {
-    if (sectionIndex !== undefined && sectionIndex !== null) {
-        // Section field
-        if (skeletonData.sections[sectionIndex]) {
-            skeletonData.sections[sectionIndex][fieldType] = newValue;
-        }
-    } else {
-        // Global field
-        const fieldParts = fieldType.split('_');
-        
-        if (fieldParts[0] === 'primary' || fieldParts[0] === 'secondary' || fieldParts[0] === 'accent') {
-            if (!skeletonData.visual_identity) skeletonData.visual_identity = {};
-            skeletonData.visual_identity[fieldType] = newValue;
-        } else if (['business_type', 'tone_of_voice', 'target_audience', 'primary_goal'].includes(fieldType)) {
-            if (!skeletonData.global_context) skeletonData.global_context = {};
-            skeletonData.global_context[fieldType] = newValue;
-        } else if (['primary_cta', 'secondary_cta', 'value_proposition'].includes(fieldType)) {
-            if (!skeletonData.conversion_strategy) skeletonData.conversion_strategy = {};
-            skeletonData.conversion_strategy[fieldType] = newValue;
-        } else if (['font_primary', 'font_secondary', 'layout_style', 'spacing_unit'].includes(fieldType)) {
-            if (!skeletonData.visual_identity) skeletonData.visual_identity = {};
-            skeletonData.visual_identity[fieldType] = newValue;
-        }
-    }
-}
-
-// Save Changes
-function saveChanges() {
-    if (!hasChanges) {
-        showAlert('info', 'ℹ️ Não há alterações para salvar.');
-        return;
-    }
-    
-    if (confirm('💾 Deseja salvar todas as alterações feitas no esqueleto?')) {
-        document.getElementById('loadingOverlay').style.display = 'flex';
-        
-        fetch(`/update-skeleton/{{ skeleton.skeleton_id }}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                skeleton_data: skeletonData
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('loadingOverlay').style.display = 'none';
-            
-            if (data.success) {
-                hasChanges = false;
-                document.getElementById('saveChangesBtn').classList.add('d-none');
-                showAlert('success', '✅ ' + data.message);
-                
-                // Update page timestamp
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                showAlert('danger', '❌ ' + (data.error || 'Erro ao salvar alterações'));
-            }
-        })
-        .catch(error => {
-            document.getElementById('loadingOverlay').style.display = 'none';
-            console.error('Erro:', error);
-            showAlert('danger', '❌ Erro de conexão ao salvar alterações.');
-        });
-    }
-}
-
-// Regenerate Skeleton
-function regenerateSkeleton() {
-    if (hasChanges) {
-        if (!confirm('⚠️ Você tem alterações não salvas que serão perdidas.\n\nDeseja continuar mesmo assim?')) {
-            return;
-        }
-    }
-    
-    if (confirm('🔄 Deseja regenerar o esqueleto?\n\nIsso criará uma nova versão baseada no briefing original e substituirá o atual.')) {
-        showAlert('info', '🔄 Regenerando esqueleto... Isso pode levar alguns segundos.');
-        
-        // Disable button
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Regenerando...';
-        btn.disabled = true;
-        
-        fetch(`/regenerate-skeleton/{{ skeleton.skeleton_id }}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('success', '✅ ' + data.message);
-                setTimeout(() => {
-                    window.location.href = data.redirect_url;
-                }, 2000);
-            } else {
-                showAlert('danger', '❌ ' + (data.error || 'Erro ao regenerar esqueleto'));
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            showAlert('danger', '❌ Erro de conexão ao regenerar esqueleto.');
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
-    }
-}
-
-// Generate Hero Section
-function generateHeroSection() {
-    if (hasChanges) {
-        if (!confirm('⚠️ Você tem alterações não salvas.\n\nDeseja salvar antes de continuar para a Hero Section?')) {
-            return;
-        }
-        saveChanges();
-        return;
-    }
-    
-    if (confirm('🎨 Deseja gerar a Hero Section baseada neste esqueleto?\n\nIsso iniciará a próxima fase do desenvolvimento.')) {
-        showAlert('info', '🚧 Funcionalidade será implementada na Fase 3!');
-        // TODO: Implementar na Fase 3
-        
-        // Placeholder para futura implementação
-        /*
-        const btn = document.getElementById('generateHeroBtn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Hero...';
-        btn.disabled = true;
-        
-        fetch(`/generate-hero-section/{{ skeleton.skeleton_id }}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('success', '✅ ' + data.message);
-                setTimeout(() => {
-                    window.location.href = data.redirect_url;
-                }, 2000);
-            } else {
-                showAlert('danger', '❌ ' + (data.error || 'Erro ao gerar hero section'));
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            showAlert('danger', '❌ Erro de conexão.');
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
-        */
-    }
-}
-
-// Utility Functions
-function showAlert(type, message) {
-    // Remove existing alerts
-    const existingAlerts = document.querySelectorAll('.alert');
-    existingAlerts.forEach(alert => {
-        if (alert.classList.contains('alert-dismissible')) {
-            alert.remove();
-        }
-    });
-    
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    const container = document.querySelector('.container');
-    container.insertBefore(alertDiv, container.firstChild);
-    
-    // Auto-remove after 8 seconds
-    setTimeout(() => {
-        if (alertDiv.parentNode) {
-            alertDiv.remove();
-        }
-    }, 8000);
-    
-    // Scroll to top to show alert
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// Keyboard Shortcuts
-document.addEventListener('keydown', function(e) {
-    // Ctrl/Cmd + E = Toggle Edit Mode
-    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
-        e.preventDefault();
-        toggleEditMode();
-    }
-    
-    // Ctrl/Cmd + S = Save Changes
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        if (hasChanges) {
-            saveChanges();
-        }
-    }
-    
-    // Escape = Exit Edit Mode
-    if (e.key === 'Escape' && isEditMode) {
-        toggleEditMode();
-    }
-});
-
-// Warn before leaving with unsaved changes
-window.addEventListener('beforeunload', function(e) {
-    if (hasChanges) {
-        e.preventDefault();
-        e.returnValue = 'Você tem alterações não salvas. Tem certeza que deseja sair?';
-        return e.returnValue;
-    }
-});
-
-// Auto-save draft (optional feature)
-let autoSaveInterval;
-function startAutoSave() {
-    if (autoSaveInterval) clearInterval(autoSaveInterval);
-    
-    autoSaveInterval = setInterval(() => {
-        if (hasChanges && isEditMode) {
-            // Save draft to localStorage
-            localStorage.setItem('skeleton_draft_{{ skeleton.skeleton_id }}', JSON.stringify({
-                data: skeletonData,
-                timestamp: new Date().toISOString()
-            }));
-            
-            console.log('💾 Rascunho salvo automaticamente');
-        }
-    }, 30000); // Auto-save every 30 seconds
-}
-
-// Load draft on page load
-function loadDraft() {
-    const draft = localStorage.getItem('skeleton_draft_{{ skeleton.skeleton_id }}');
-    if (draft) {
-        try {
-            const draftData = JSON.parse(draft);
-            const draftTime = new Date(draftData.timestamp);
-            const timeDiff = (new Date() - draftTime) / 1000 / 60; // minutes
-            
-            if (timeDiff < 60) { // Less than 1 hour old
-                if (confirm(`📝 Encontrado um rascunho salvo há ${Math.round(timeDiff)} minutos.\n\nDeseja restaurar as alterações?`)) {
-                    skeletonData = draftData.data;
-                    rebuildSectionsUI();
-                    hasChanges = true;
-                    showAlert('info', '📝 Rascunho restaurado! Lembre-se de salvar as alterações.');
-                }
-            }
-        } catch (e) {
-            console.error('Erro ao carregar rascunho:', e);
-        }
-    }
-}
-
-// Initialize auto-save and draft loading
-document.addEventListener('DOMContentLoaded', function() {
-    loadDraft();
-    startAutoSave();
-});
-
-// Export skeleton data (for debugging)
-function exportSkeletonData() {
-    const dataStr = JSON.stringify(skeletonData, null, 2);
-    const dataBlob = new Blob([dataStr], {type: 'application/json'});
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `skeleton_{{ skeleton.skeleton_id }}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-}
-
-// Console helper
-console.log('🎨 Editor de Esqueleto carregado!');
-console.log('📊 Dados do esqueleto:', skeletonData);
-console.log('⌨️ Atalhos disponíveis:');
-console.log('  - Ctrl/Cmd + E: Alternar modo de edição');
-console.log('  - Ctrl/Cmd + S: Salvar alterações');
-console.log('  - Escape: Sair do modo de edição');
-console.log('🔧 Funções disponíveis no console:');
-console.log('  - exportSkeletonData(): Exportar dados do esqueleto');
 </script>
 {% endblock %}

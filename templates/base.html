@@ -28,34 +28,34 @@
     <!-- Custom CSS -->
     <style>
         :root {
-            /* Primary Colors */
-            --primary-color: #667eea;
-            --primary-dark: #5a67d8;
-            --primary-light: #7c3aed;
+            /* Primary Colors - Tons mais profissionais */
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
             
-            /* Secondary Colors */
-            --secondary-color: #764ba2;
-            --accent-color: #f093fb;
+            /* Secondary Colors - Tons neutros */
+            --secondary-color: #475569;
+            --accent-color: #0ea5e9;
             
             /* Neutral Colors */
-            --dark-color: #1a202c;
-            --light-color: #f7fafc;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-300: #dee2e6;
-            --gray-600: #6c757d;
-            --gray-800: #343a40;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #64748b;
+            --gray-800: #334155;
             
             /* Status Colors */
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --info-color: #3b82f6;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --info-color: #0284c7;
             
-            /* Gradients */
-            --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            --gradient-accent: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-light) 100%);
-            --gradient-dark: linear-gradient(135deg, var(--dark-color) 0%, var(--gray-800) 100%);
+            /* Gradients - Mais sutis */
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            --gradient-accent: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            --gradient-dark: linear-gradient(135deg, #1e293b 0%, #334155 100%);
             
             /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -96,7 +96,7 @@
             font-family: var(--font-primary);
             line-height: 1.6;
             color: var(--dark-color);
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #dcdddd 0%, #919191 100%) !important;
             min-height: 100vh;
             margin: 0;
             padding: 0;
@@ -829,6 +829,57 @@
                 transition-duration: 0.01ms !important;
             }
         }
+
+        /* Notificações Flutuantes */
+#floating-notifications {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+#floating-notifications .alert {
+    pointer-events: auto;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsivo para mobile */
+@media (max-width: 768px) {
+    #floating-notifications {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+
     </style>
     
     {% block head %}{% endblock %}
@@ -1074,57 +1125,45 @@
             isLoading = false;
         }
         
-        function showAlert(type, message, duration = 8000) {
-            // Remove existing alerts
-            const existingAlerts = document.querySelectorAll('.alert');
-            existingAlerts.forEach(alert => {
-                if (alert.classList.contains('alert-dismissible')) {
-                    alert.remove();
-                }
-            });
-            
-            const iconMap = {
-                'success': 'fas fa-check-circle',
-                'danger': 'fas fa-exclamation-triangle',
-                'warning': 'fas fa-exclamation-circle',
-                'info': 'fas fa-info-circle'
-            };
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-                <div class="d-flex align-items-center">
-                    <i class="${iconMap[type] || 'fas fa-bell'} me-2"></i>
-                    <div class="flex-grow-1">${message}</div>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            const container = document.querySelector('.container');
-            const flashMessages = container.querySelector('.flash-messages');
-            
-            if (flashMessages) {
-                flashMessages.appendChild(alertDiv);
-            } else {
-                const flashDiv = document.createElement('div');
-                flashDiv.className = 'flash-messages';
-                flashDiv.appendChild(alertDiv);
-                container.insertBefore(flashDiv, container.firstChild);
+      function showAlert(type, message, duration = 8000) {
+    // Criar ou usar container de notificações flutuantes
+    let notificationContainer = document.getElementById('floating-notifications');
+    if (!notificationContainer) {
+        notificationContainer = document.createElement('div');
+        notificationContainer.id = 'floating-notifications';
+        document.body.appendChild(notificationContainer);
+    }
+    
+    const iconMap = {
+        'success': 'fas fa-check-circle',
+        'danger': 'fas fa-exclamation-triangle',
+        'warning': 'fas fa-exclamation-circle',
+        'info': 'fas fa-info-circle'
+    };
+    
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="${iconMap[type] || 'fas fa-bell'} me-2"></i>
+            <div class="flex-grow-1">${message}</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    notificationContainer.appendChild(alertDiv);
+    
+    // Auto-remove
+    if (duration > 0) {
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
             }
-            
-            // Auto-remove
-            if (duration > 0) {
-                setTimeout(() => {
-                    if (alertDiv.parentNode) {
-                        alertDiv.remove();
-                    }
-                }, duration);
-            }
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
+        }, duration);
+    }
+}
+
+
         // Modal Functions
         function showCreateModal() {
             const modal = new bootstrap.Modal(document.getElementById('createModal'));
