@@ -95,9 +95,11 @@
                         <small class="text-info">60-30-10</small>
                     </div>
                     <div class="col">
-                        <i class="fas fa-robot fa-2x text-muted"></i>
+                        <i class="fas fa-robot fa-2x text-{{ 'success' if claude_status == 'connected' else 'warning' if claude_status == 'not_configured' else 'danger' }}"></i>
                         <p class="mt-2 mb-0">Claude API</p>
-                        <small class="text-muted">Próxima fase</small>
+                        <small class="text-{{ 'success' if claude_status == 'connected' else 'warning' if claude_status == 'not_configured' else 'danger' }}">
+                            {{ 'Conectado' if claude_status == 'connected' else 'Não configurado' if claude_status == 'not_configured' else 'Erro' }}
+                        </small>
                     </div>
                 </div>
             </div>

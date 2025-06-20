@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Esqueleto {{ skeleton.skeleton_id[:8] }}... - Gerador de Landing Page{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3><i class="fas fa-sitemap"></i> Esqueleto da Landing Page</h3>
+                <span class="badge bg-{{ 'success' if skeleton.status == 'completed' else 'warning' }} fs-6">
+                    {{ skeleton.status }}
+                </span>
+            </div>
+            <div class="card-body">
+                {% if request %}
+                <div class="mb-3">
+                    <strong>Projeto:</strong> {{ request.page_title }}<br>
+                    <strong>Empresa:</strong> {{ request.company_name or 'Não informado' }}
+                </div>
+                {% endif %}
+                
+                {% if skeleton.parsed_skeleton_data %}
+                {% set data = skeleton.parsed_skeleton_data %}
+                
+                <!-- SEÇÕES -->
+                <div class="mb-4">
+                    <h5><i class="fas fa-layer-group"></i> Seções da Landing Page</h5>
+                    <div class="row">
+                        {% for section in data.sections %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between">
+                                    <strong>{{ section.order }}. {{ section.title }}</strong>
+                                    <small>{{ section.name }}</small>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted">{{ section.description }}</p>
+                                    
+                                    {% if section.elements %}
+                                    <div class="mb-2">
+                                        <strong>Elementos:</strong>
+                                        <div class="mt-1">
+                                            {% for element in section.elements %}
+                                            <span class="badge bg-secondary me-1">{{ element }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if section.style_notes %}
+                                    <div class="mb-2">
+                                        <strong>Estilo:</strong>
+                                        <small class="text-muted d-block">{{ section.style_notes }}</small>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if section.content_guidelines %}
+                                    <div>
+                                        <strong>Conteúdo:</strong>
+                                        <small class="text-muted d-block">{{ section.content_guidelines }}</small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- IDENTIDADE VISUAL -->
+                {% if data.visual_identity %}
+                <div class="mb-4">
+                    <h5><i class="fas fa-palette"></i> Identidade Visual</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Paleta de Cores:</strong>
+                                    <div class="d-flex gap-3 mt-2">
+                                        <div class="text-center">
+                                            <div style="width: 50px; height: 50px; background: {{ data.visual_identity.primary_color }}; border-radius: 8px; border: 2px solid #ddd;"></div>
+                                            <small class="d-block mt-1">Primária</small>
+                                            <code class="small">{{ data.visual_identity.primary_color }}</code>
+                                        </div>
+                                        <div class="text-center">
+                                            <div style="width: 50px; height: 50px; background: {{ data.visual_identity.secondary_color }}; border-radius: 8px; border: 2px solid #ddd;"></div>
+                                            <small class="d-block mt-1">Secundária</small>
+                                            <code class="small">{{ data.visual_identity.secondary_color }}</code>
+                                        </div>
+                                        <div class="text-center">
+                                            <div style="width: 50px; height: 50px; background: {{ data.visual_identity.accent_color }}; border-radius: 8px; border: 2px solid #ddd;"></div>
+                                            <small class="d-block mt-1">Destaque</small>
+                                            <code class="small">{{ data.visual_identity.accent_color }}</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Tipografia:</strong>
+                                    <ul class="list-unstyled mt-2">
+                                        <li><strong>Principal:</strong> {{ data.visual_identity.font_primary or 'Não definida' }}</li>
+                                        <li><strong>Secundária:</strong> {{ data.visual_identity.font_secondary or 'Não definida' }}</li>
+                                    </ul>
+                                    
+                                    <strong>Layout:</strong>
+                                    <ul class="list-unstyled mt-2">
+                                        <li><strong>Estilo:</strong> {{ data.visual_identity.layout_style or 'Não definido' }}</li>
+                                        <li><strong>Espaçamento:</strong> {{ data.visual_identity.spacing_unit or 'Não definido' }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- CONTEXTO GLOBAL -->
+                {% if data.global_context %}
+                <div class="mb-4">
+                    <h5><i class="fas fa-bullseye"></i> Contexto e Estratégia</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>Contexto do Negócio</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><strong>Tipo:</strong> {{ data.global_context.business_type or 'Não definido' }}</li>
+                                        <li><strong>Tom de Voz:</strong> {{ data.global_context.tone_of_voice or 'Não definido' }}</li>
+                                        <li><strong>Público-alvo:</strong> {{ data.global_context.target_audience or 'Não definido' }}</li>
+                                        <li><strong>Objetivo Principal:</strong> {{ data.global_context.primary_goal or 'Não definido' }}</li>
+                                    </ul>
+                                    
+                                    {% if data.global_context.secondary_goals %}
+                                    <strong>Objetivos Secundários:</strong>
+                                    <ul class="mt-1">
+                                        {% for goal in data.global_context.secondary_goals %}
+                                        <li>{{ goal }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if data.conversion_strategy %}
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>Estratégia de Conversão</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><strong>CTA Principal:</strong> "{{ data.conversion_strategy.primary_cta or 'Não definido' }}"</li>
+                                        <li><strong>CTA Secundário:</strong> "{{ data.conversion_strategy.secondary_cta or 'Não definido' }}"</li>
+                                        <li><strong>Proposta de Valor:</strong> {{ data.conversion_strategy.value_proposition or 'Não definida' }}</li>
+                                    </ul>
+                                    
+                                    {% if data.conversion_strategy.trust_elements %}
+                                    <strong>Elementos de Confiança:</strong>
+                                    <div class="mt-1">
+                                        {% for element in data.conversion_strategy.trust_elements %}
+                                        <span class="badge bg-success me-1">{{ element }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if data.conversion_strategy.urgency_elements %}
+                                    <strong class="d-block mt-2">Elementos de Urgência:</strong>
+                                    <div class="mt-1">
+                                        {% for element in data.conversion_strategy.urgency_elements %}
+                                        <span class="badge bg-warning me-1">{{ element }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Dados do esqueleto não disponíveis ou não foram parseados corretamente.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- RESPOSTA BRUTA (PARA DEBUG) -->
+        {% if skeleton.raw_skeleton_response_from_ai %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-code"></i> Resposta Bruta da IA</h5>
+            </div>
+            <div class="card-body">
+                <details>
+                    <summary class="btn btn-outline-secondary btn-sm">Ver resposta completa</summary>
+                    <pre class="mt-3 bg-light p-3 rounded"><code>{{ skeleton.raw_skeleton_response_from_ai }}</code></pre>
+                </details>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <!-- MÉTRICAS -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line"></i> Métricas de Geração</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <i class="fas fa-clock fa-2x text-info"></i>
+                        <p class="mt-1 mb-0">Tempo</p>
+                        <small class="text-muted">{{ (skeleton.duration_ms_phase1 / 1000)|round(2) }}s</small>
+                    </div>
+                    <div class="col-6">
+                        <i class="fas fa-coins fa-2x text-warning"></i>
+                        <p class="mt-1 mb-0">Tokens</p>
+                        <small class="text-muted">{{ skeleton.prompt_tokens_phase1 + skeleton.completion_tokens_phase1 }}</small>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="small">
+                    <div class="d-flex justify-content-between">
+                        <span>Tokens de Entrada:</span>
+                        <span>{{ skeleton.prompt_tokens_phase1 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Tokens de Saída:</span>
+                        <span>{{ skeleton.completion_tokens_phase1 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Duração:</span>
+                        <span>{{ skeleton.duration_ms_phase1 }}ms</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- AÇÕES -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs"></i> Ações</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('view_request', request_id=skeleton.request_id) }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Voltar à Solicitação
+                </a>
+                
+                <button class="btn btn-outline-primary btn-sm mt-2" onclick="regenerateSkeleton('{{ skeleton.skeleton_id }}')">
+                    <i class="fas fa-redo"></i> Regenerar
+                </button>
+                
+                <button class="btn btn-success btn-sm mt-2 w-100" onclick="nextPhase('{{ skeleton.request_id }}')">
+                    <i class="fas fa-arrow-right"></i> Gerar Hero Section
+                </button>
+            </div>
+        </div>
+        
+        <!-- STATUS -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Informações</h5>
+            </div>
+            <div class="card-body">
+                <div class="small">
+                    <div class="d-flex justify-content-between">
+                        <span>ID do Esqueleto:</span>
+                        <code class="small">{{ skeleton.skeleton_id[:8] }}...</code>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Status:</span>
+                        <span class="badge bg-{{ 'success' if skeleton.status == 'completed' else 'warning' }}">{{ skeleton.status }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Criado em:</span>
+                        <span>{{ skeleton.created_at.strftime('%d/%m %H:%M') if skeleton.created_at else 'N/A' }}</span>
+                    </div>
+                </div>
+                
+                {% if skeleton.error_details %}
+                <div class="alert alert-danger mt-2">
+                    <strong>Erro:</strong> {{ skeleton.error_details }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function regenerateSkeleton(skeletonId) {
+    if (confirm('🔄 Deseja regenerar este esqueleto?\n\nIsso criará uma nova versão baseada no mesmo briefing.')) {
+        showAlert('info', '🔄 Regenerando esqueleto...');
+        
+        fetch(`/regenerate-skeleton/${skeletonId}`, {
+            method: 'POST'
+        })
+               .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', '✅ ' + data.message);
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 2000);
+            } else {
+                showAlert('danger', '❌ ' + (data.error || 'Erro ao regenerar esqueleto'));
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showAlert('danger', '❌ Erro de conexão ao regenerar esqueleto.');
+        });
+    }
+}
+
+function nextPhase(requestId) {
+    if (confirm('🎨 Deseja avançar para a geração da Hero Section?\n\nIsso criará a primeira seção da landing page baseada no esqueleto.')) {
+        showAlert('info', '🚧 Funcionalidade será implementada na Fase 3!');
+        // TODO: Implementar na Fase 3
+    }
+}
+
+function showAlert(type, message) {
+    // Remover alertas existentes
+    const existingAlerts = document.querySelectorAll('.alert');
+    existingAlerts.forEach(alert => {
+        if (alert.classList.contains('alert-dismissible')) {
+            alert.remove();
+        }
+    });
+    
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto-remover após 8 segundos
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 8000);
+}
+</script>
+{% endblock %}

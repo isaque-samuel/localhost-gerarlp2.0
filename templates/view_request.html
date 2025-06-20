@@ -2,13 +2,59 @@
 
 {% block title %}Solicitação {{ request.request_id[:8] }}... - Gerador de Landing Page{% endblock %}
 
+{% block head %}
+<style>
+.btn-skeleton {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-skeleton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    color: white;
+}
+
+.btn-skeleton:disabled {
+    background: #6c757d;
+    transform: none;
+    box-shadow: none;
+}
+
+.skeleton-status-badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.action-card {
+    border-left: 4px solid #667eea;
+}
+
+.log-entry {
+    transition: all 0.2s ease;
+}
+
+.log-entry:hover {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-md-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h3><i class="fas fa-file-alt"></i> {{ request.page_title }}</h3>
-                <span class="badge bg-{{ 'success' if request.status == 'completed' else 'primary' if request.status == 'uploads_completed' else 'warning' }} fs-6">
+                <span class="badge bg-{{ 'success' if request.status == 'completed' else 'primary' if request.status == 'skeleton_completed' else 'info' if request.status == 'generating_skeleton' else 'warning' }} fs-6">
                     {{ request.status }}
                 </span>
             </div>
@@ -22,7 +68,7 @@
                     </div>
                 </div>
                 
-                <!-- SEÇÃO: ARQUIVOS UPLOADADOS -->
+                <!-- NOVA SEÇÃO: ARQUIVOS UPLOADADOS -->
                 {% if upload_info.logo or upload_info.images or upload_info.colors %}
                 <div class="mb-3">
                     <h5><i class="fas fa-folder-open"></i> Arquivos e Dados</h5>
@@ -37,96 +83,31 @@
                         {% endif %}
                         
                         {% if upload_info.colors %}
-                        <div class="col-md-8">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <strong>Paleta de Cores (60-30-10):</strong>
-                                {% if upload_info.colors_editable %}
-                                <button class="btn btn-sm btn-outline-primary" onclick="toggleColorEditor()">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                {% endif %}
+                        <div class="col-md-4">
+                            <strong>Cores Extraídas:</strong>
+                            <div class="d-flex gap-2 mt-2">
+                                {% for color in upload_info.colors %}
+                                <div style="width: 30px; height: 30px; background: {{ color }}; border-radius: 4px; border: 1px solid #ddd;" 
+                                     title="{{ color }}"></div>
+                                {% endfor %}
                             </div>
-                            
-                            <!-- Visualização das cores -->
-                            <div id="colorDisplay" class="mt-2">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div class="text-center">
-                                            <div style="width: 60px; height: 60px; background: {{ upload_info.colors.primary }}; 
-                                                        border-radius: 8px; border: 2px solid #ddd; margin: 0 auto;" 
-                                                 title="{{ upload_info.colors.primary }}"></div>
-                                            <small class="d-block mt-1"><strong>Primária (60%)</strong></small>
-                                            <small class="badge bg-secondary">{{ upload_info.colors.primary }}</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="text-center">
-                                            <div style="width: 45px; height: 45px; background: {{ upload_info.colors.secondary }}; 
-                                                        border-radius: 8px; border: 2px solid #ddd; margin: 0 auto;" 
-                                                 title="{{ upload_info.colors.secondary }}"></div>
-                                            <small class="d-block mt-1"><strong>Secundária (30%)</strong></small>
-                                            <small class="badge bg-secondary">{{ upload_info.colors.secondary }}</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="text-center">
-                                            <div style="width: 30px; height: 30px; background: {{ upload_info.colors.accent }}; 
-                                                        border-radius: 8px; border: 2px solid #ddd; margin: 0 auto;" 
-                                                 title="{{ upload_info.colors.accent }}"></div>
-                                            <small class="d-block mt-1"><strong>Destaque (10%)</strong></small>
-                                            <small class="badge bg-secondary">{{ upload_info.colors.accent }}</small>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="mt-1">
+                                {% for color in upload_info.colors %}
+                                <small class="badge bg-secondary me-1">{{ color }}</small>
+                                {% endfor %}
                             </div>
-                            
-                            <!-- Editor de cores (oculto inicialmente) -->
-                            {% if upload_info.colors_editable %}
-                            <div id="colorEditor" class="mt-3" style="display: none;">
-                                <form id="colorEditForm">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <label class="form-label">Primária (60%)</label>
-                                            <input type="color" class="form-control form-control-color" 
-                                                   id="primary_color" name="primary_color" 
-                                                   value="{{ upload_info.colors.primary }}">
-                                        </div>
-                                        <div class="col-4">
-                                            <label class="form-label">Secundária (30%)</label>
-                                            <input type="color" class="form-control form-control-color" 
-                                                   id="secondary_color" name="secondary_color" 
-                                                   value="{{ upload_info.colors.secondary }}">
-                                        </div>
-                                        <div class="col-4">
-                                            <label class="form-label">Destaque (10%)</label>
-                                            <input type="color" class="form-control form-control-color" 
-                                                   id="accent_color" name="accent_color" 
-                                                   value="{{ upload_info.colors.accent }}">
-                                        </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <button type="button" class="btn btn-success btn-sm" onclick="saveColors()">
-                                            <i class="fas fa-save"></i> Salvar Cores
-                                        </button>
-                                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelColorEdit()">
-                                            <i class="fas fa-times"></i> Cancelar
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                            {% endif %}
                         </div>
                         {% endif %}
                         
                         {% if upload_info.images %}
-                        <div class="col-md-12 mt-3">
+                        <div class="col-md-4">
                             <strong>Imagens ({{ upload_info.images|length }}):</strong>
                             <div class="mt-2">
-                                {% for image_url in upload_info.images[:5] %}
+                                {% for image_url in upload_info.images[:3] %}
                                 <img src="{{ image_url }}" class="img-thumbnail me-1" style="max-height: 40px;">
                                 {% endfor %}
-                                {% if upload_info.images|length > 5 %}
-                                <small class="text-muted">+{{ upload_info.images|length - 5 }} mais</small>
+                                {% if upload_info.images|length > 3 %}
+                                <small class="text-muted">+{{ upload_info.images|length - 3 }} mais</small>
                                 {% endif %}
                             </div>
                         </div>
@@ -164,7 +145,7 @@
         </div>
         {% endif %}
         
-        <!-- GALERIA DE IMAGENS -->
+        <!-- NOVA SEÇÃO: GALERIA DE IMAGENS -->
         {% if upload_info.images %}
         <div class="card mt-3">
             <div class="card-header">
@@ -175,7 +156,7 @@
                     {% for image_url in upload_info.images %}
                     <div class="col-md-3 col-6 mb-3">
                         <div class="card">
-                            <img src="{{ image_url }}" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;" 
+                            <img src="{{ image_url }}" class="card-img-top" style="height: 150px; object-fit: cover;" 
                                  onclick="showImageModal('{{ image_url }}')">
                             <div class="card-body p-2">
                                 <small class="text-muted">Imagem {{ loop.index }}</small>
@@ -190,7 +171,6 @@
     </div>
     
     <div class="col-md-4">
-        <!-- Logs e outras seções permanecem iguais -->
         <div class="card">
             <div class="card-header">
                 <h5><i class="fas fa-list-alt"></i> Logs de Execução</h5>
@@ -231,15 +211,39 @@
                 <button class="btn btn-info btn-sm" onclick="location.reload()">
                     <i class="fas fa-sync"></i> Atualizar
                 </button>
-                {% if request.status == 'uploads_completed' %}
-                <button class="btn btn-primary btn-sm mt-2" onclick="nextPhase('{{ request.request_id }}')">
-                    <i class="fas fa-arrow-right"></i> Próxima Fase
+                
+                <!-- BOTÃO PRINCIPAL: GERAR ESQUELETO -->
+                {% if request.status in ['pending', 'uploads_completed'] %}
+                <button class="btn btn-primary btn-sm mt-2 w-100" id="generateSkeletonBtn" onclick="generateSkeleton('{{ request.request_id }}')">
+                    <i class="fas fa-sitemap"></i> Gerar Esqueleto
+                </button>
+                {% elif request.status == 'generating_skeleton' %}
+                <button class="btn btn-warning btn-sm mt-2 w-100" disabled>
+                    <i class="fas fa-spinner fa-spin"></i> Gerando Esqueleto...
+                </button>
+                {% elif request.status == 'skeleton_completed' %}
+                <a href="{{ url_for('view_skeleton', skeleton_id=skeleton.skeleton_id) if skeleton else '#' }}" class="btn btn-success btn-sm mt-2 w-100">
+                    <i class="fas fa-eye"></i> Ver Esqueleto
+                </a>
+                <button class="btn btn-outline-primary btn-sm mt-2 w-100" onclick="regenerateSkeleton('{{ request.request_id }}')">
+                    <i class="fas fa-redo"></i> Regenerar Esqueleto
+                </button>
+                {% elif request.status in ['skeleton_error', 'api_error', 'parse_error', 'system_error'] %}
+                <button class="btn btn-danger btn-sm mt-2 w-100" onclick="regenerateSkeleton('{{ request.request_id }}')">
+                    <i class="fas fa-redo"></i> Tentar Novamente
+                </button>
+                {% endif %}
+                
+                <!-- BOTÃO SECUNDÁRIO: PRÓXIMA FASE -->
+                {% if request.status == 'skeleton_completed' %}
+                <button class="btn btn-outline-success btn-sm mt-2 w-100" onclick="nextPhase('{{ request.request_id }}')">
+                    <i class="fas fa-arrow-right"></i> Gerar Hero Section
                 </button>
                 {% endif %}
             </div>
         </div>
         
-        <!-- ESTATÍSTICAS DE UPLOAD -->
+        <!-- NOVA SEÇÃO: ESTATÍSTICAS DE UPLOAD -->
         {% if upload_info.logo or upload_info.images or upload_info.colors %}
         <div class="card mt-3">
             <div class="card-header">
@@ -265,7 +269,7 @@
                         <i class="fas fa-palette fa-2x {{ 'text-success' if upload_info.colors else 'text-muted' }}"></i>
                         <p class="mt-1 mb-0">Cores</p>
                         <small class="{{ 'text-success' if upload_info.colors else 'text-muted' }}">
-                            {{ '60-30-10' if upload_info.colors else 'N/A' }}
+                            {{ upload_info.colors|length if upload_info.colors else 0 }}
                         </small>
                     </div>
                 </div>
@@ -298,97 +302,91 @@ function showImageModal(imageUrl) {
     new bootstrap.Modal(document.getElementById('imageModal')).show();
 }
 
-function toggleColorEditor() {
-    const display = document.getElementById('colorDisplay');
-    const editor = document.getElementById('colorEditor');
-    
-    if (editor.style.display === 'none') {
-        display.style.display = 'none';
-        editor.style.display = 'block';
-    } else {
-        display.style.display = 'block';
-        editor.style.display = 'none';
+function generateSkeleton(requestId) {
+    if (confirm('🤖 Deseja gerar o esqueleto da landing page usando IA?\n\nIsso analisará o briefing e criará a estrutura da página.')) {
+        // Mostrar loading
+        const btn = document.getElementById('generateSkeletonBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Esqueleto...';
+        btn.disabled = true;
+        
+        // Mostrar alerta de progresso
+        showAlert('info', '🚀 Iniciando geração do esqueleto... Isso pode levar alguns segundos.');
+        
+        fetch(`/generate-skeleton/${requestId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', '✅ ' + data.message);
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 2000);
+            } else {
+                showAlert('danger', '❌ ' + (data.error || 'Erro ao gerar esqueleto'));
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showAlert('danger', '❌ Erro de conexão. Verifique sua internet e tente novamente.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        });
     }
 }
 
-function cancelColorEdit() {
-    document.getElementById('colorDisplay').style.display = 'block';
-    document.getElementById('colorEditor').style.display = 'none';
-}
-
-function saveColors() {
-    const primaryColor = document.getElementById('primary_color').value;
-    const secondaryColor = document.getElementById('secondary_color').value;
-    const accentColor = document.getElementById('accent_color').value;
-    
-    // Validar cores
-    if (!primaryColor || !secondaryColor || !accentColor) {
-        alert('Por favor, selecione todas as cores.');
-        return;
+function regenerateSkeleton(requestId) {
+    if (confirm('🔄 Deseja regenerar o esqueleto?\n\nIsso criará uma nova versão baseada no mesmo briefing.')) {
+        showAlert('info', '🔄 Regenerando esqueleto...');
+        
+        // Implementar regeneração usando a mesma função do view_skeleton.html
+        fetch(`/regenerate-skeleton-by-request/${requestId}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('success', '✅ ' + data.message);
+                setTimeout(() => {
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        location.reload();
+                    }
+                }, 2000);
+            } else {
+                showAlert('danger', '❌ ' + (data.error || 'Erro ao regenerar esqueleto'));
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showAlert('danger', '❌ Erro de conexão ao regenerar esqueleto.');
+        });
     }
-    
-    // Enviar para o servidor
-    const formData = new FormData();
-    formData.append('primary_color', primaryColor);
-    formData.append('secondary_color', secondaryColor);
-    formData.append('accent_color', accentColor);
-    
-    fetch(`/update-colors/{{ request.request_id }}`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Atualizar visualização
-            updateColorDisplay(data.colors);
-            cancelColorEdit();
-            
-            // Mostrar mensagem de sucesso
-            showAlert('success', data.message);
-            
-            // Recarregar página após 2 segundos para atualizar logs
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
-        } else {
-            showAlert('danger', data.error || 'Erro ao salvar cores');
-        }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        showAlert('danger', 'Erro de conexão ao salvar cores');
-    });
 }
 
-function updateColorDisplay(colors) {
-    // Atualizar as cores na visualização
-    const colorDisplay = document.getElementById('colorDisplay');
-    
-    // Atualizar cores de fundo dos quadrados
-    const colorDivs = colorDisplay.querySelectorAll('div[style*="background"]');
-    const badges = colorDisplay.querySelectorAll('.badge');
-    
-    if (colorDivs.length >= 3 && badges.length >= 3) {
-        // Primária
-        colorDivs[0].style.background = colors.primary;
-        colorDivs[0].title = colors.primary;
-        badges[0].textContent = colors.primary;
-        
-        // Secundária
-        colorDivs[1].style.background = colors.secondary;
-        colorDivs[1].title = colors.secondary;
-        badges[1].textContent = colors.secondary;
-        
-        // Destaque
-        colorDivs[2].style.background = colors.accent;
-        colorDivs[2].title = colors.accent;
-        badges[2].textContent = colors.accent;
+function nextPhase(requestId) {
+    if (confirm('🎨 Deseja avançar para a geração da Hero Section?\n\nIsso criará a primeira seção da landing page baseada no esqueleto.')) {
+        showAlert('info', '🚧 Funcionalidade será implementada na Fase 3!');
+        // TODO: Implementar na Fase 3
     }
 }
 
 function showAlert(type, message) {
-    // Criar alerta temporário
+    // Remover alertas existentes
+    const existingAlerts = document.querySelectorAll('.alert');
+    existingAlerts.forEach(alert => {
+        if (alert.classList.contains('alert-dismissible')) {
+            alert.remove();
+        }
+    });
+    
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
     alertDiv.innerHTML = `
@@ -396,30 +394,33 @@ function showAlert(type, message) {
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
     
-    // Inserir no topo da página
     const container = document.querySelector('.container');
     container.insertBefore(alertDiv, container.firstChild);
     
-    // Remover automaticamente após 5 segundos
+    // Auto-remover após 8 segundos
     setTimeout(() => {
         if (alertDiv.parentNode) {
             alertDiv.remove();
         }
-    }, 5000);
+    }, 8000);
 }
 
-function nextPhase(requestId) {
-    if (confirm('Deseja avançar para a próxima fase do desenvolvimento?')) {
-        alert('Funcionalidade será implementada na próxima fase!');
-        // TODO: Implementar navegação para próxima fase
-    }
-}
-
-// Auto-refresh dos logs a cada 10 segundos se status for processing
-{% if request.status in ['processing_uploads', 'pending'] %}
+// Auto-refresh se status for processing
+{% if request.status in ['generating_skeleton', 'processing_uploads'] %}
 setInterval(() => {
     location.reload();
-}, 10000);
+}, 5000);
+{% endif %}
+
+// Verificar se há skeleton para mostrar link
+{% if request.status == 'skeleton_completed' %}
+// Adicionar indicador visual de sucesso
+document.addEventListener('DOMContentLoaded', function() {
+    const statusBadge = document.querySelector('.badge');
+    if (statusBadge) {
+        statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> skeleton_completed';
+    }
+});
 {% endif %}
 </script>
 {% endblock %}

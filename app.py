@@ -9,6 +9,9 @@ from models.landing_page import LandingPageRequest
 from models.execution_log import ExecutionLog
 from services.image_processor import ImageProcessor
 from services.color_extractor import ColorExtractor
+from config.claude_api import claude_client
+from services.skeleton_generator import SkeletonGenerator
+from models.skeleton import GeneratedSkeleton
 
 # Criar diretórios necessários
 os.makedirs('static/uploads', exist_ok=True)
@@ -20,6 +23,7 @@ app.config.from_object(Config)
 # Instanciar serviços
 image_processor = ImageProcessor()
 color_extractor = ColorExtractor()
+skeleton_generator = SkeletonGenerator()
 
 def create_page_slug(page_title):
     """Cria slug único para a página"""
@@ -36,10 +40,22 @@ def index():
     try:
         # Buscar solicitações recentes
         requests = LandingPageRequest.get_all(limit=10)
-        return render_template('index.html', requests=requests or [])
+        
+        # Verificar status do Claude
+        claude_status = 'not_configured'
+        if Config.CLAUDE_API_KEY:
+            try:
+                test_result = claude_client.test_connection()
+                claude_status = 'connected' if test_result['status'] == 'success' else 'error'
+            except:
+                claude_status = 'error'
+        
+        return render_template('index.html', 
+                             requests=requests or [], 
+                             claude_status=claude_status)
     except Exception as e:
         flash(f'Erro ao carregar dados: {str(e)}', 'error')
-        return render_template('index.html', requests=[])
+        return render_template('index.html', requests=[], claude_status='error')
 
 @app.route('/create-request', methods=['POST'])
 def create_request():
@@ -275,49 +291,85 @@ def view_request(request_id):
         # Buscar logs relacionados
         logs = ExecutionLog.get_logs_by_request(request_id, limit=20)
         
-        # Processar dados de upload para exibição
+        # Buscar skeleton se existir
+        skeleton = None
+        if request_obj.status == 'skeleton_completed':
+            skeleton = GeneratedSkeleton.get_by_request_id(request_id)
+        
+        # Buscar informações de upload (placeholder - será implementado na Fase 1)
         upload_info = {
-            'logo': None,
+            'logo': request_obj.company_logo_url,
             'images': [],
-            'colors': {},
-            'colors_editable': False
+            'colors': []
         }
         
-        if request_obj.company_logo_url:
-            upload_info['logo'] = request_obj.company_logo_url
-        
-        if request_obj.images_input:
-            try:
-                upload_info['images'] = json.loads(request_obj.images_input)
-            except:
-                pass
-        
+        # Se houver style_preferences_input, extrair cores
         if request_obj.style_preferences_input:
             try:
                 style_prefs = json.loads(request_obj.style_preferences_input)
                 brand_colors = style_prefs.get('brand_colors', {})
-                
-                # Se é o formato antigo (lista), converter
-                if isinstance(brand_colors, list):
-                    upload_info['colors'] = {
-                        'primary': brand_colors[0] if len(brand_colors) > 0 else '#2563eb',
-                        'secondary': brand_colors[1] if len(brand_colors) > 1 else '#64748b',
-                        'accent': brand_colors[2] if len(brand_colors) > 2 else '#f59e0b'
-                    }
-                else:
-                    upload_info['colors'] = brand_colors
-                
-                upload_info['colors_editable'] = True
+                if brand_colors:
+                    upload_info['colors'] = [
+                        brand_colors.get('primary', ''),
+                        brand_colors.get('secondary', ''),
+                        brand_colors.get('accent', '')
+                    ]
+                    upload_info['colors'] = [c for c in upload_info['colors'] if c]
+            except:
+                pass
+        
+        # Se houver images_input, extrair URLs
+        if request_obj.images_input:
+            try:
+                images = json.loads(request_obj.images_input)
+                upload_info['images'] = images if isinstance(images, list) else []
             except:
                 pass
         
         return render_template('view_request.html', 
                              request=request_obj, 
-                             logs=logs or [], 
+                             logs=logs or [],
+                             skeleton=skeleton,
                              upload_info=upload_info)
     except Exception as e:
         flash(f'Erro ao carregar solicitação: {str(e)}', 'error')
         return redirect(url_for('index'))
+
+@app.route('/regenerate-skeleton-by-request/<request_id>', methods=['POST'])
+def regenerate_skeleton_by_request(request_id):
+    """Regenerar esqueleto por request_id"""
+    try:
+        # Buscar skeleton existente
+        skeleton = GeneratedSkeleton.get_by_request_id(request_id)
+        if not skeleton:
+            return jsonify({
+                'success': False,
+                'error': 'Nenhum esqueleto encontrado para regenerar'
+            })
+        
+        # Regenerar usando o skeleton_id
+        new_skeleton = skeleton_generator.regenerate_skeleton(skeleton.skeleton_id)
+        
+        if new_skeleton and new_skeleton.status == 'completed':
+            return jsonify({
+                'success': True,
+                'message': 'Esqueleto regenerado com sucesso!',
+                'skeleton_id': new_skeleton.skeleton_id,
+                'redirect_url': url_for('view_skeleton', skeleton_id=new_skeleton.skeleton_id)
+            })
+        elif new_skeleton:
+            return jsonify({
+                'success': False,
+                'error': new_skeleton.error_details or 'Erro ao regenerar esqueleto'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Não foi possível regenerar o esqueleto'
+            })
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/test-upload')
 def test_upload():
@@ -390,6 +442,222 @@ def api_requests():
             'status': 'error',
             'message': str(e)
         })
+
+@app.route('/regenerate-skeleton/<skeleton_id>', methods=['POST'])
+def regenerate_skeleton(skeleton_id):
+    """Regenerar esqueleto existente"""
+    try:
+        new_skeleton = skeleton_generator.regenerate_skeleton(skeleton_id)
+        
+        if new_skeleton and new_skeleton.status == 'completed':
+            return jsonify({
+                'success': True,
+                'message': 'Esqueleto regenerado com sucesso!',
+                'skeleton_id': new_skeleton.skeleton_id,
+                'redirect_url': url_for('view_skeleton', skeleton_id=new_skeleton.skeleton_id)
+            })
+        elif new_skeleton:
+            return jsonify({
+                'success': False,
+                'error': new_skeleton.error_details or 'Erro ao regenerar esqueleto'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Não foi possível regenerar o esqueleto'
+            })
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/generate-skeleton/<request_id>', methods=['POST'])
+def generate_skeleton(request_id):
+    """Gerar esqueleto da landing page"""
+    try:
+        # Buscar solicitação
+        request_obj = LandingPageRequest.get_by_id(request_id)
+        if not request_obj:
+            return jsonify({
+                'success': False,
+                'error': 'Solicitação não encontrada'
+            })
+        
+        # Verificar se já não está gerando
+        if request_obj.status == 'generating_skeleton':
+            return jsonify({
+                'success': False,
+                'error': 'Esqueleto já está sendo gerado'
+            })
+        
+        # Atualizar status para gerando
+        request_obj.update_status('generating_skeleton')
+        
+        # Log início
+        ExecutionLog.add_log(
+            request_id,
+            'SKELETON_GENERATION',
+            'INFO',
+            'Iniciando geração de esqueleto via interface web'
+        )
+        
+        # Extrair dados de cores se existirem
+        colors_data = None
+        if request_obj.style_preferences_input:
+            try:
+                style_prefs = json.loads(request_obj.style_preferences_input)
+                colors_data = style_prefs.get('brand_colors', {})
+            except:
+                pass
+        
+        # Gerar esqueleto
+        skeleton = skeleton_generator.generate_skeleton(request_obj, colors_data)
+        
+        if skeleton and skeleton.status == 'completed':
+            # Atualizar status da solicitação
+            request_obj.update_status('skeleton_completed')
+            
+            return jsonify({
+                'success': True,
+                'message': 'Esqueleto gerado com sucesso!',
+                'skeleton_id': skeleton.skeleton_id,
+                'redirect_url': url_for('view_skeleton', skeleton_id=skeleton.skeleton_id)
+            })
+        else:
+            # Erro na geração
+            error_msg = skeleton.error_details if skeleton else 'Erro desconhecido'
+            request_obj.update_status('skeleton_error', error_msg)
+            
+            return jsonify({
+                'success': False,
+                'error': error_msg
+            })
+            
+    except Exception as e:
+        # Erro interno
+        ExecutionLog.add_log(
+            request_id,
+            'SKELETON_GENERATION',
+            'ERROR',
+            'Erro interno na geração de esqueleto',
+            str(e)
+        )
+        
+        # Atualizar status
+        try:
+            request_obj = LandingPageRequest.get_by_id(request_id)
+            if request_obj:
+                request_obj.update_status('system_error', str(e))
+        except:
+            pass
+        
+        return jsonify({
+            'success': False,
+            'error': f'Erro interno: {str(e)}'
+        })
+
+@app.route('/view-skeleton/<skeleton_id>')
+def view_skeleton(skeleton_id):
+    """Visualizar esqueleto específico"""
+    try:
+        skeleton = GeneratedSkeleton.get_by_id(skeleton_id)
+        if not skeleton:
+            flash('Esqueleto não encontrado', 'error')
+            return redirect(url_for('index'))
+        
+        # Buscar request relacionado
+        request_obj = LandingPageRequest.get_by_id(skeleton.request_id)
+        
+        return render_template('view_skeleton.html', 
+                             skeleton=skeleton,
+                             request=request_obj)
+    except Exception as e:
+        flash(f'Erro ao carregar esqueleto: {str(e)}', 'error')
+        return redirect(url_for('index'))
+
+@app.route('/test-claude')
+def test_claude():
+    """Testar conexão com Claude API"""
+    try:
+        result = claude_client.test_connection()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Erro ao testar Claude: {str(e)}'
+        })
+
+@app.route('/debug-config')
+def debug_config():
+    """Debug das configurações"""
+    return jsonify({
+        'claude_api_key_configured': bool(Config.CLAUDE_API_KEY and len(Config.CLAUDE_API_KEY) > 10),
+        'claude_api_key_preview': Config.CLAUDE_API_KEY[:10] + '...' if Config.CLAUDE_API_KEY else 'Não configurada',
+        'claude_api_url': Config.CLAUDE_API_URL,
+        'db_host': Config.DB_HOST,
+        'db_name': Config.DB_NAME,
+        'debug_mode': Config.DEBUG
+    })
+
+@app.route('/test-claude-models')
+def test_claude_models():
+    """Testa diferentes modelos do Claude"""
+    models_to_test = [
+        "claude-3-5-sonnet-20241022",  # Claude 3.5 Sonnet mais recente
+        "claude-3-5-sonnet-20240620",  # Claude 3.5 Sonnet anterior
+        "claude-3-sonnet-20240229",    # Claude 3 Sonnet
+        "claude-3-haiku-20240307",     # Claude 3 Haiku (mais barato)
+        "claude-3-opus-20240229"       # Claude 3 Opus (mais poderoso)
+    ]
+    
+    results = {}
+    
+    for model in models_to_test:
+        try:
+            # Testar cada modelo
+            payload = {
+                "model": model,
+                "max_tokens": 10,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Responda apenas 'OK'"
+                    }
+                ]
+            }
+            
+            response = requests.post(
+                Config.CLAUDE_API_URL,
+                headers={
+                    'Content-Type': 'application/json',
+                    'x-api-key': Config.CLAUDE_API_KEY,
+                    'anthropic-version': '2023-06-01'
+                },
+                json=payload,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                results[model] = {
+                    'status': 'success',
+                    'message': 'Modelo disponível'
+                }
+            else:
+                error_data = response.json() if response.content else {}
+                results[model] = {
+                    'status': 'error',
+                    'message': error_data.get('error', {}).get('message', f'HTTP {response.status_code}')
+                }
+                
+        except Exception as e:
+            results[model] = {
+                'status': 'error',
+                'message': str(e)
+            }
+    
+    return jsonify({
+        'results': results,
+        'recommendation': 'Use o primeiro modelo com status success'
+    })
 
 if __name__ == '__main__':
     print("🚀 Iniciando Landing Page Generator...")
