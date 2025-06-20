@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Gerador de Landing Page{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-plus-circle"></i> Nova Landing Page</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/create-request" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Título da Página</label>
+                        <input type="text" class="form-control" name="page_title" 
+                               placeholder="Ex: Site da Empresa XYZ" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Nome da Empresa</label>
+                        <input type="text" class="form-control" name="company_name" 
+                               placeholder="Ex: Kaptha Tech" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Logo da Empresa</label>
+                        <input type="file" class="form-control" name="company_logo" 
+                               accept="image/*" id="logoInput">
+                        <div class="form-text">Formatos aceitos: PNG, JPG, JPEG, GIF, WEBP (máx. 16MB)</div>
+                        <div id="logoPreview" class="mt-2"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Imagens para o Site</label>
+                        <input type="file" class="form-control" name="site_images" 
+                               accept="image/*" multiple id="imagesInput">
+                        <div class="form-text">Selecione múltiplas imagens (máx. 16MB cada)</div>
+                        <div id="imagesPreview" class="mt-2"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Briefing do Cliente</label>
+                        <textarea class="form-control" name="main_content_brief" rows="5" 
+                                  placeholder="Descreva o projeto detalhadamente..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> Criar Landing Page
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list"></i> Solicitações Recentes</h5>
+            </div>
+            <div class="card-body">
+                {% if requests %}
+                    {% for req in requests %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <a href="{{ url_for('view_request', request_id=req.request_id) }}" class="text-decoration-none">
+                            <strong>{{ req.page_title }}</strong>
+                        </a><br>
+                        <small class="text-muted">{{ req.company_name }}</small><br>
+                        <span class="badge bg-{{ 'success' if req.status == 'completed' else 'primary' if req.status == 'uploads_completed' else 'warning' }}">
+                            {{ req.status }}
+                        </span>
+                        <small class="text-muted d-block">{{ req.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">Nenhuma solicitação encontrada.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Status do Sistema</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col">
+                        <i class="fas fa-database fa-2x text-success"></i>
+                        <p class="mt-2 mb-0">MySQL</p>
+                        <small class="text-success">Conectado</small>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-palette fa-2x text-info"></i>
+                        <p class="mt-2 mb-0">Cores</p>
+                        <small class="text-info">60-30-10</small>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-robot fa-2x text-muted"></i>
+                        <p class="mt-2 mb-0">Claude API</p>
+                        <small class="text-muted">Próxima fase</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-lightbulb"></i> Dicas</h5>
+            </div>
+            <div class="card-body">
+                <ul class="small mb-0">
+                    <li><strong>Logo:</strong> Use imagem com boa qualidade para melhor extração de cores</li>
+                    <li><strong>Cores:</strong> Seguimos a regra 60% (primária), 30% (secundária), 10% (destaque)</li>
+                    <li><strong>Imagens:</strong> Selecione imagens que representem bem seu negócio</li>
+                    <li><strong>Briefing:</strong> Seja detalhado sobre objetivos e público-alvo</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Preview da logo
+document.getElementById('logoInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('logoPreview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <div class="mt-2">
+                    <img src="${e.target.result}" class="img-thumbnail" style="max-height: 100px;">
+                    <div class="mt-1">
+                        <small class="text-muted">${file.name} (${(file.size/1024).toFixed(1)} KB)</small>
+                    </div>
+                </div>
+            `;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = '';
+    }
+});
+
+// Preview das imagens
+document.getElementById('imagesInput').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    const preview = document.getElementById('imagesPreview');
+    
+    if (files.length > 0) {
+        let previewHTML = '<div class="row mt-2">';
+        
+        files.forEach((file, index) => {
+            if (index < 6) { // Mostrar apenas 6 previews
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const col = document.createElement('div');
+                    col.className = 'col-4 col-md-2 mb-2';
+                    col.innerHTML = `
+                        <img src="${e.target.result}" class="img-thumbnail" style="height: 60px; width: 100%; object-fit: cover;">
+                        <small class="text-muted d-block text-center">${index + 1}</small>
+                    `;
+                    preview.appendChild(col);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        if (files.length > 6) {
+            preview.innerHTML += `<div class="col-12"><small class="text-muted">+${files.length - 6} imagens adicionais</small></div>`;
+        }
+        
+        preview.innerHTML += '</div>';
+        preview.innerHTML += `<small class="text-info">${files.length} imagem(ns) selecionada(s)</small>`;
+    } else {
+        preview.innerHTML = '';
+    }
+});
+</script>
+{% endblock %}

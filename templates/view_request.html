@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}Solicitação {{ request.request_id[:8] }}... - Gerador de Landing Page{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3><i class="fas fa-file-alt"></i> {{ request.page_title }}</h3>
+                <span class="badge bg-{{ 'success' if request.status == 'completed' else 'primary' if request.status == 'uploads_completed' else 'warning' }} fs-6">
+                    {{ request.status }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Empresa:</strong> {{ request.company_name or 'Não informado' }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Slug:</strong> {{ request.page_slug }}
+                    </div>
+                </div>
+                
+                <!-- SEÇÃO: ARQUIVOS UPLOADADOS -->
+                {% if upload_info.logo or upload_info.images or upload_info.colors %}
+                <div class="mb-3">
+                    <h5><i class="fas fa-folder-open"></i> Arquivos e Dados</h5>
+                    <div class="row">
+                        {% if upload_info.logo %}
+                        <div class="col-md-4">
+                            <strong>Logo:</strong>
+                            <div class="mt-2">
+                                <img src="{{ upload_info.logo }}" class="img-thumbnail" style="max-height: 80px;">
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if upload_info.colors %}
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>Paleta de Cores (60-30-10):</strong>
+                                {% if upload_info.colors_editable %}
+                                <button class="btn btn-sm btn-outline-primary" onclick="toggleColorEditor()">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Visualização das cores -->
+                            <div id="colorDisplay" class="mt-2">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <div style="width: 60px; height: 60px; background: {{ upload_info.colors.primary }}; 
+                                                        border-radius: 8px; border: 2px solid #ddd; margin: 0 auto;" 
+                                                 title="{{ upload_info.colors.primary }}"></div>
+                                            <small class="d-block mt-1"><strong>Primária (60%)</strong></small>
+                                            <small class="badge bg-secondary">{{ upload_info.colors.primary }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <div style="width: 45px; height: 45px; background: {{ upload_info.colors.secondary }}; 
+                                                        border-radius: 8px; border: 2px solid #ddd; margin: 0 auto;" 
+                                                 title="{{ upload_info.colors.secondary }}"></div>
+                                            <small class="d-block mt-1"><strong>Secundária (30%)</strong></small>
+                                            <small class="badge bg-secondary">{{ upload_info.colors.secondary }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="text-center">
+                                            <div style="width: 30px; height: 30px; background: {{ upload_info.colors.accent }}; 
+                                                        border-radius: 8px; border: 2px solid #ddd; margin: 0 auto;" 
+                                                 title="{{ upload_info.colors.accent }}"></div>
+                                            <small class="d-block mt-1"><strong>Destaque (10%)</strong></small>
+                                            <small class="badge bg-secondary">{{ upload_info.colors.accent }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Editor de cores (oculto inicialmente) -->
+                            {% if upload_info.colors_editable %}
+                            <div id="colorEditor" class="mt-3" style="display: none;">
+                                <form id="colorEditForm">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label class="form-label">Primária (60%)</label>
+                                            <input type="color" class="form-control form-control-color" 
+                                                   id="primary_color" name="primary_color" 
+                                                   value="{{ upload_info.colors.primary }}">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label">Secundária (30%)</label>
+                                            <input type="color" class="form-control form-control-color" 
+                                                   id="secondary_color" name="secondary_color" 
+                                                   value="{{ upload_info.colors.secondary }}">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label">Destaque (10%)</label>
+                                            <input type="color" class="form-control form-control-color" 
+                                                   id="accent_color" name="accent_color" 
+                                                   value="{{ upload_info.colors.accent }}">
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-success btn-sm" onclick="saveColors()">
+                                            <i class="fas fa-save"></i> Salvar Cores
+                                        </button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelColorEdit()">
+                                            <i class="fas fa-times"></i> Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if upload_info.images %}
+                        <div class="col-md-12 mt-3">
+                            <strong>Imagens ({{ upload_info.images|length }}):</strong>
+                            <div class="mt-2">
+                                {% for image_url in upload_info.images[:5] %}
+                                <img src="{{ image_url }}" class="img-thumbnail me-1" style="max-height: 40px;">
+                                {% endfor %}
+                                {% if upload_info.images|length > 5 %}
+                                <small class="text-muted">+{{ upload_info.images|length - 5 }} mais</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <strong>Briefing:</strong>
+                    <div class="bg-light p-3 rounded mt-2">
+                        {{ request.main_content_brief or 'Não informado' }}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Criado em:</strong> {{ request.created_at.strftime('%d/%m/%Y às %H:%M') if request.created_at else 'N/A' }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Atualizado em:</strong> {{ request.updated_at.strftime('%d/%m/%Y às %H:%M') if request.updated_at else 'N/A' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if request.error_message %}
+        <div class="card mt-3">
+            <div class="card-header bg-danger text-white">
+                <h5><i class="fas fa-exclamation-triangle"></i> Erro</h5>
+            </div>
+            <div class="card-body">
+                <pre class="text-danger">{{ request.error_message }}</pre>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- GALERIA DE IMAGENS -->
+        {% if upload_info.images %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-images"></i> Galeria de Imagens</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for image_url in upload_info.images %}
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="card">
+                            <img src="{{ image_url }}" class="card-img-top" style="height: 150px; object-fit: cover; cursor: pointer;" 
+                                 onclick="showImageModal('{{ image_url }}')">
+                            <div class="card-body p-2">
+                                <small class="text-muted">Imagem {{ loop.index }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Logs e outras seções permanecem iguais -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list-alt"></i> Logs de Execução</h5>
+            </div>
+            <div class="card-body log-section">
+                {% if logs %}
+                    {% for log in logs %}
+                    <div class="mb-2 p-2 border-start border-{{ 'danger' if log.log_level == 'ERROR' else 'info' }} border-3">
+                        <div class="d-flex justify-content-between">
+                            <span class="badge bg-{{ 'danger' if log.log_level == 'ERROR' else 'info' }}">
+                                {{ log.log_level }}
+                            </span>
+                            <small class="text-muted">{{ log.timestamp.strftime('%H:%M:%S') }}</small>
+                        </div>
+                        <strong>{{ log.component }}</strong>: {{ log.message }}
+                        {% if log.details %}
+                            <details class="mt-1">
+                                <summary class="text-muted" style="cursor: pointer;">Detalhes</summary>
+                                <pre class="small mt-1">{{ log.details }}</pre>
+                            </details>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">Nenhum log encontrado.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs"></i> Ações</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+                <button class="btn btn-info btn-sm" onclick="location.reload()">
+                    <i class="fas fa-sync"></i> Atualizar
+                </button>
+                {% if request.status == 'uploads_completed' %}
+                <button class="btn btn-primary btn-sm mt-2" onclick="nextPhase('{{ request.request_id }}')">
+                    <i class="fas fa-arrow-right"></i> Próxima Fase
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- ESTATÍSTICAS DE UPLOAD -->
+        {% if upload_info.logo or upload_info.images or upload_info.colors %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar"></i> Estatísticas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <i class="fas fa-image fa-2x {{ 'text-success' if upload_info.logo else 'text-muted' }}"></i>
+                        <p class="mt-1 mb-0">Logo</p>
+                        <small class="{{ 'text-success' if upload_info.logo else 'text-muted' }}">
+                            {{ 'Sim' if upload_info.logo else 'Não' }}
+                        </small>
+                    </div>
+                    <div class="col-4">
+                        <i class="fas fa-images fa-2x {{ 'text-success' if upload_info.images else 'text-muted' }}"></i>
+                        <p class="mt-1 mb-0">Imagens</p>
+                        <small class="{{ 'text-success' if upload_info.images else 'text-muted' }}">
+                            {{ upload_info.images|length if upload_info.images else 0 }}
+                        </small>
+                    </div>
+                    <div class="col-4">
+                        <i class="fas fa-palette fa-2x {{ 'text-success' if upload_info.colors else 'text-muted' }}"></i>
+                        <p class="mt-1 mb-0">Cores</p>
+                        <small class="{{ 'text-success' if upload_info.colors else 'text-muted' }}">
+                            {{ '60-30-10' if upload_info.colors else 'N/A' }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal para visualizar imagens -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Visualizar Imagem</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showImageModal(imageUrl) {
+    document.getElementById('modalImage').src = imageUrl;
+    new bootstrap.Modal(document.getElementById('imageModal')).show();
+}
+
+function toggleColorEditor() {
+    const display = document.getElementById('colorDisplay');
+    const editor = document.getElementById('colorEditor');
+    
+    if (editor.style.display === 'none') {
+        display.style.display = 'none';
+        editor.style.display = 'block';
+    } else {
+        display.style.display = 'block';
+        editor.style.display = 'none';
+    }
+}
+
+function cancelColorEdit() {
+    document.getElementById('colorDisplay').style.display = 'block';
+    document.getElementById('colorEditor').style.display = 'none';
+}
+
+function saveColors() {
+    const primaryColor = document.getElementById('primary_color').value;
+    const secondaryColor = document.getElementById('secondary_color').value;
+    const accentColor = document.getElementById('accent_color').value;
+    
+    // Validar cores
+    if (!primaryColor || !secondaryColor || !accentColor) {
+        alert('Por favor, selecione todas as cores.');
+        return;
+    }
+    
+    // Enviar para o servidor
+    const formData = new FormData();
+    formData.append('primary_color', primaryColor);
+    formData.append('secondary_color', secondaryColor);
+    formData.append('accent_color', accentColor);
+    
+    fetch(`/update-colors/{{ request.request_id }}`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Atualizar visualização
+            updateColorDisplay(data.colors);
+            cancelColorEdit();
+            
+            // Mostrar mensagem de sucesso
+            showAlert('success', data.message);
+            
+            // Recarregar página após 2 segundos para atualizar logs
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        } else {
+            showAlert('danger', data.error || 'Erro ao salvar cores');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        showAlert('danger', 'Erro de conexão ao salvar cores');
+    });
+}
+
+function updateColorDisplay(colors) {
+    // Atualizar as cores na visualização
+    const colorDisplay = document.getElementById('colorDisplay');
+    
+    // Atualizar cores de fundo dos quadrados
+    const colorDivs = colorDisplay.querySelectorAll('div[style*="background"]');
+    const badges = colorDisplay.querySelectorAll('.badge');
+    
+    if (colorDivs.length >= 3 && badges.length >= 3) {
+        // Primária
+        colorDivs[0].style.background = colors.primary;
+        colorDivs[0].title = colors.primary;
+        badges[0].textContent = colors.primary;
+        
+        // Secundária
+        colorDivs[1].style.background = colors.secondary;
+        colorDivs[1].title = colors.secondary;
+        badges[1].textContent = colors.secondary;
+        
+        // Destaque
+        colorDivs[2].style.background = colors.accent;
+        colorDivs[2].title = colors.accent;
+        badges[2].textContent = colors.accent;
+    }
+}
+
+function showAlert(type, message) {
+    // Criar alerta temporário
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Inserir no topo da página
+    const container = document.querySelector('.container');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Remover automaticamente após 5 segundos
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+function nextPhase(requestId) {
+    if (confirm('Deseja avançar para a próxima fase do desenvolvimento?')) {
+        alert('Funcionalidade será implementada na próxima fase!');
+        // TODO: Implementar navegação para próxima fase
+    }
+}
+
+// Auto-refresh dos logs a cada 10 segundos se status for processing
+{% if request.status in ['processing_uploads', 'pending'] %}
+setInterval(() => {
+    location.reload();
+}, 10000);
+{% endif %}
+</script>
+{% endblock %}

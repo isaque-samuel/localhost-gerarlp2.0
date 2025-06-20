@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Teste de Upload - Gerador de Landing Page{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-flask"></i> Teste de Upload de Arquivos</h3>
+            </div>
+            <div class="card-body">
+                <form id="testUploadForm">
+                    <div class="mb-3">
+                        <label class="form-label">Testar Extração de Cores</label>
+                        <input type="file" class="form-control" id="testColorExtraction" accept="image/*">
+                        <div id="colorResult" class="mt-2"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Teste de Validação</label>
+                        <input type="file" class="form-control" id="testValidation" multiple>
+                        <button type="button" class="btn btn-outline-primary mt-2" onclick="testValidation()">
+                            Validar Arquivos
+                        </button>
+                        <div id="validationResult" class="mt-2"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Informações do Teste</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Formatos aceitos:</strong><br>
+                PNG, JPG, JPEG, GIF, WEBP</p>
+                
+                <p><strong>Tamanho máximo:</strong><br>
+                16MB por arquivo</p>
+                
+                <p><strong>Funcionalidades:</strong></p>
+                <ul class="small">
+                    <li>Upload seguro</li>
+                    <li>Validação de tipos</li>
+                    <li>Otimização automática</li>
+                    <li>Extração de cores</li>
+                    <li>Preview de imagens</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('testColorExtraction').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    fetch('/api/extract-colors', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultDiv = document.getElementById('colorResult');
+        if (data.error) {
+            resultDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        } else {
+            const colorsHtml = data.colors.map(color => 
+                `<div style="display: inline-block; width: 40px; height: 40px; background: ${color}; 
+                 border: 1px solid #ddd; margin-right: 5px; border-radius: 4px;" title="${color}"></div>`
+            ).join('');
+            
+            const codesHtml = data.colors.map(color => 
+                `<span class="badge bg-secondary me-1">${color}</span>`
+            ).join('');
+            
+            resultDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>Cores extraídas:</strong><br>
+                    <div class="mt-2">${colorsHtml}</div>
+                    <div class="mt-2">${codesHtml}</div>
+                    <img src="${data.image_url}" class="img-thumbnail mt-2" style="max-height: 100px;">
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        document.getElementById('colorResult').innerHTML = 
+            `<div class="alert alert-danger">Erro: ${error.message}</div>`;
+    });
+});
+
+function testValidation() {
+    const files = document.getElementById('testValidation').files;
+    const resultDiv = document.getElementById('validationResult');
+    
+    if (!files.length) {
+        resultDiv.innerHTML = '<div class="alert alert-warning">Selecione arquivos para validar</div>';
+        return;
+    }
+    
+    const maxSize = 16 * 1024 * 1024; // 16MB
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
+    
+    let results = [];
+    
+    Array.from(files).forEach((file, index) => {
+        let status = 'success';
+        let message = 'Válido';
+        
+        if (file.size > maxSize) {
+            status = 'danger';
+            message = 'Arquivo muito grande (máx. 16MB)';
+        } else if (!allowedTypes.includes(file.type)) {
+            status = 'danger';
+            message = 'Tipo não permitido';
+        }
+        
+        results.push({
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            type: file.type,
+            status: status,
+            message: message
+        });
+    });
+    
+    const resultsHtml = results.map(result => `
+        <div class="alert alert-${result.status} p-2">
+            <strong>${result.name}</strong><br>
+            <small>Tipo: ${result.type} | Tamanho: ${result.size}</small><br>
+            <span class="badge bg-${result.status}">${result.message}</span>
+        </div>
+    `).join('');
+    
+    resultDiv.innerHTML = resultsHtml;
+}
+</script>
+{% endblock %}
