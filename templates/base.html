@@ -4,1555 +4,382 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Gerador de Landing Pages com IA - Crie páginas profissionais automaticamente">
-    <meta name="keywords" content="landing page, gerador, IA, marketing digital, conversão">
-    <meta name="author" content="Landing Page Generator">
-    
     <title>{% block title %}Gerador de Landing Page{% endblock %}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" 
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" 
-          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous">
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Heroicons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/24/outline/style.css">
     
-    <!-- Custom CSS -->
-    <style>
-        :root {
-            /* Primary Colors - Tons mais profissionais */
-            --primary-color: #2563eb;
-            --primary-dark: #1d4ed8;
-            --primary-light: #3b82f6;
-            
-            /* Secondary Colors - Tons neutros */
-            --secondary-color: #475569;
-            --accent-color: #0ea5e9;
-            
-            /* Neutral Colors */
-            --dark-color: #1e293b;
-            --light-color: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-600: #64748b;
-            --gray-800: #334155;
-            
-            /* Status Colors */
-            --success-color: #059669;
-            --warning-color: #d97706;
-            --danger-color: #dc2626;
-            --info-color: #0284c7;
-            
-            /* Gradients - Mais sutis */
-            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-            --gradient-accent: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-            --gradient-dark: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            
-            /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            
-            /* Typography */
-            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            
-            /* Spacing */
-            --spacing-xs: 0.25rem;
-            --spacing-sm: 0.5rem;
-            --spacing-md: 1rem;
-            --spacing-lg: 1.5rem;
-            --spacing-xl: 2rem;
-            --spacing-2xl: 3rem;
-            
-            /* Border Radius */
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            
-            /* Transitions */
-            --transition-fast: 0.15s ease-in-out;
-            --transition-normal: 0.3s ease-in-out;
-            --transition-slow: 0.5s ease-in-out;
-        }
-        
-        /* Base Styles */
-        * {
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: var(--font-primary);
-            line-height: 1.6;
-            color: var(--dark-color);
-            background: linear-gradient(135deg, #dcdddd 0%, #919191 100%) !important;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Enhanced Navbar */
-        .navbar-custom {
-            background: var(--gradient-primary);
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow-lg);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: var(--spacing-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 1030;
-        }
-        
-        .navbar-brand {
-            font-family: var(--font-secondary);
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: white !important;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            transition: var(--transition-normal);
-        }
-        
-        .navbar-brand:hover {
-            color: var(--accent-color) !important;
-            transform: translateY(-1px);
-        }
-        
-        .navbar-brand i {
-            font-size: 1.75rem;
-            background: var(--gradient-accent);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Navigation Links */
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            padding: var(--spacing-sm) var(--spacing-md) !important;
-            border-radius: var(--radius-md);
-            transition: var(--transition-normal);
-            margin: 0 var(--spacing-xs);
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: white !important;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-1px);
-        }
-        
-        .navbar-nav .nav-link.active {
-            color: white !important;
-            background: rgba(255, 255, 255, 0.2);
-            font-weight: 600;
-        }
-        
-        /* Main Container */
-        .main-container {
-            min-height: calc(100vh - 80px);
-            padding: var(--spacing-xl) 0;
-        }
-        
-        /* Enhanced Cards */
-        .card {
-            border: none;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            background: white;
-            transition: var(--transition-normal);
-            overflow: hidden;
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-xl);
-            transform: translateY(-2px);
-        }
-        
-        .card-header {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            padding: var(--spacing-lg);
-            font-weight: 600;
-        }
-        
-        .card-header h3,
-        .card-header h4,
-        .card-header h5,
-        .card-header h6 {
-            margin: 0;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-        
-        .card-body {
-            padding: var(--spacing-xl);
-        }
-        
-        /* Enhanced Buttons */
-        .btn {
-            font-weight: 500;
-            border-radius: var(--radius-md);
-            padding: var(--spacing-sm) var(--spacing-lg);
-            transition: var(--transition-normal);
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            text-decoration: none;
-        }
-        
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--gradient-primary);
-            filter: brightness(1.1);
-            color: white;
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-            color: white;
-        }
-        
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
-            color: white;
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
-            color: white;
-        }
-        
-        .btn-info {
-            background: linear-gradient(135deg, var(--info-color) 0%, #2563eb 100%);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-800) 100%);
-            color: white;
-        }
-        
-        .btn-outline-primary {
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            background: transparent;
-        }
-        
-        .btn-outline-primary:hover {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        /* Enhanced Forms */
-        .form-control,
-        .form-select {
-            border: 2px solid var(--gray-200);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-sm) var(--spacing-md);
-            transition: var(--transition-normal);
-            font-size: 0.95rem;
-        }
-        
-        .form-control:focus,
-        .form-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: var(--gray-800);
-            margin-bottom: var(--spacing-sm);
-        }
-        
-        /* Enhanced Alerts */
-        .alert {
-            border: none;
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-lg);
-            box-shadow: var(--shadow-md);
-            border-left: 4px solid;
-            animation: slideInDown 0.3s ease-out;
-        }
-        
-        .alert-success {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
-            color: #065f46;
-            border-left-color: var(--success-color);
-        }
-        
-        .alert-danger {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
-            color: #991b1b;
-            border-left-color: var(--danger-color);
-        }
-        
-        .alert-warning {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
-            color: #92400e;
-            border-left-color: var(--warning-color);
-        }
-        
-        .alert-info {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
-            color: #1e40af;
-            border-left-color: var(--info-color);
-        }
-        
-        /* Enhanced Badges */
-        .badge {
-            font-weight: 500;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-        }
-        
-        /* Progress Bars */
-        .progress {
-            height: 8px;
-            border-radius: var(--radius-sm);
-            background: var(--gray-200);
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            background: var(--gradient-primary);
-            transition: width 0.6s ease;
-        }
-        
-        /* Log Section */
-        .log-section {
-            max-height: 400px;
-            overflow-y: auto;
-            background: var(--gray-100);
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--gray-200);
-        }
-        
-        .log-section::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .log-section::-webkit-scrollbar-track {
-            background: var(--gray-200);
-            border-radius: var(--radius-sm);
-        }
-        
-        .log-section::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: var(--radius-sm);
-        }
-        
-        /* Loading States */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            backdrop-filter: blur(5px);
-        }
-        
-        .loading-content {
-            background: white;
-            padding: var(--spacing-2xl);
-            border-radius: var(--radius-xl);
-            text-align: center;
-            box-shadow: var(--shadow-xl);
-            max-width: 300px;
-        }
-        
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
-        }
-        
-        /* Status Indicators */
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        
-        .status-indicator.online {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-color);
-        }
-        
-        .status-indicator.offline {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
-        }
-        
-        .status-indicator.pending {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning-color);
-        }
-        
-        /* File Upload Areas */
-        .upload-area {
-            border: 2px dashed var(--gray-300);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-2xl);
-            text-align: center;
-            background: var(--gray-100);
-            transition: var(--transition-normal);
-            cursor: pointer;
-        }
-        
-        .upload-area:hover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.05);
-        }
-        
-        .upload-area.dragover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
-        }
-        
-        /* Image Previews */
-        .image-preview {
-            position: relative;
-            display: inline-block;
-            margin: var(--spacing-sm);
-        }
-        
-        .image-preview img {
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-md);
-            transition: var(--transition-normal);
-        }
-        
-        .image-preview:hover img {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .image-preview .remove-btn {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--danger-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: var(--transition-fast);
-        }
-        
-        .image-preview .remove-btn:hover {
-            background: #dc2626;
-            transform: scale(1.1);
-        }
-        
-        /* Color Palette Display */
-        .color-palette {
-            display: flex;
-            gap: var(--spacing-sm);
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        .color-swatch {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            border: 2px solid white;
-            box-shadow: var(--shadow-md);
-            cursor: pointer;
-            transition: var(--transition-normal);
-            position: relative;
-        }
-        
-        .color-swatch:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .color-swatch::after {
-            content: attr(data-color);
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            white-space: nowrap;
-        }
-        
-        /* Statistics Cards */
-        .stats-card {
-            background: var(--gradient-primary);
-            color: white;
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-lg);
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .stats-card .stats-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: var(--spacing-sm);
-        }
-        
-        .stats-card .stats-label {
-            font-size: 0.875rem;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        /* Timeline */
-        .timeline {
-            position: relative;
-            padding-left: var(--spacing-xl);
-        }
-        
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: var(--gray-300);
-        }
-        
-        .timeline-item {
-            position: relative;
-            margin-bottom: var(--spacing-lg);
-            background: white;
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -23px;
-            top: 20px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            border: 3px solid white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        /* Animations */
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translate3d(0, -100%, 0);
-            }
-            to {
-                opacity: 1;
-                transform: translate3d(0, 0, 0);
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        }
+                    }
+                }
             }
         }
-        
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translate3d(0, 100%, 0);
-            }
-            to {
-                opacity: 1;
-                transform: translate3d(0, 0, 0);
-            }
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-        
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        
-        /* Utility Classes */
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        .slide-in-up {
-            animation: slideInUp 0.5s ease-out;
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        .spin {
-            animation: spin 1s linear infinite;
-        }
-        
-        .text-gradient {
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .bg-gradient {
-            background: var(--gradient-primary);
-        }
-        
-        .shadow-custom {
-            box-shadow: var(--shadow-xl);
-        }
-        
-        .border-gradient {
-            border: 2px solid transparent;
-            background: linear-gradient(white, white) padding-box,
-                        var(--gradient-primary) border-box;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .main-container {
-                padding: var(--spacing-md) 0;
-            }
-            
-            .card-body {
-                padding: var(--spacing-lg);
-            }
-            
-            .navbar-brand {
-                font-size: 1.25rem;
-            }
-            
-            .btn {
-                padding: var(--spacing-sm) var(--spacing-md);
-                font-size: 0.875rem;
-            }
-            
-            .stats-card .stats-number {
-                font-size: 2rem;
-            }
-            
-            .color-swatch {
-                width: 32px;
-                height: 32px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .container {
-                padding-left: var(--spacing-md);
-                padding-right: var(--spacing-md);
-            }
-            
-            .card-header {
-                padding: var(--spacing-md);
-            }
-            
-            .card-body {
-                padding: var(--spacing-md);
-            }
-            
-            .alert {
-                padding: var(--spacing-md);
-            }
-            
-            .upload-area {
-                padding: var(--spacing-lg);
-            }
-        }
-        
-        /* Dark Mode Support (Future Enhancement) */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --dark-color: #f7fafc;
-                --light-color: #1a202c;
-                --gray-100: #2d3748;
-                --gray-200: #4a5568;
-            }
-            
-            body {
-                background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-                color: var(--dark-color);
-            }
-            
-            .card {
-                background: #2d3748;
-                color: var(--dark-color);
-            }
-            
-            .form-control,
-            .form-select {
-                background: #4a5568;
-                border-color: #718096;
-                color: var(--dark-color);
-            }
-            
-            .log-section {
-                background: #4a5568;
-                border-color: #718096;
-            }
-        }
-        
-        /* Print Styles */
-        @media print {
-            .navbar-custom,
-            .btn,
-            .alert,
-            .loading-overlay {
-                display: none !important;
-            }
-            
-            .card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-            
-            body {
-                background: white;
-                color: black;
-            }
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--gray-200);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: var(--radius-sm);
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-        
-        /* Focus Styles for Accessibility */
-        *:focus {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-        
-        .btn:focus {
-            outline: 2px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-        
-        /* High Contrast Mode Support */
-        @media (prefers-contrast: high) {
-            .card {
-                border: 2px solid var(--dark-color);
-            }
-            
-            .btn {
-                border: 2px solid currentColor;
-            }
-        }
-        
-        /* Reduced Motion Support */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* Notificações Flutuantes */
-#floating-notifications {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    max-width: 400px;
-    pointer-events: none;
-}
-
-#floating-notifications .alert {
-    pointer-events: auto;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    animation: slideInRight 0.3s ease-out;
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Responsivo para mobile */
-@media (max-width: 768px) {
-    #floating-notifications {
-        top: 10px;
-        right: 10px;
-        left: 10px;
-        max-width: none;
-    }
-}
-
-@keyframes slideOutRight {
-    from {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-}
-
-
-    </style>
+    </script>
     
     {% block head %}{% endblock %}
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen" x-data="app()">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-rocket"></i>
-                <span>Landing Page Generator</span>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ 'active' if request.endpoint == 'index' }}" href="{{ url_for('index') }}">
-                            <i class="fas fa-home me-1"></i>
-                            Início
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="showCreateModal()">
-                            <i class="fas fa-plus me-1"></i>
-                            Nova Landing Page
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('api_requests') }}">
-                            <i class="fas fa-list me-1"></i>
-                            API
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('test_connection') }}">
-                            <i class="fas fa-database me-1"></i>
-                            Status
-                        </a>
-                    </li>
-                </ul>
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-2">
+                        <svg class="w-8 h-8 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="text-xl font-bold text-gray-900">Landing Page Generator</span>
+                    </a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="{{ url_for('index') }}" 
+                       class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium {{ 'text-primary-600 bg-primary-50' if request.endpoint == 'index' }}">
+                        Início
+                    </a>
+                    <button @click="showCreateModal = true" 
+                            class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>Nova Landing Page</span>
+                    </button>
+                    <a href="{{ url_for('api_requests') }}" 
+                       class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
+                        API
+                    </a>
+                    <a href="{{ url_for('test_connection') }}" 
+                       class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium">
+                        Status
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="container">
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="flash-messages">
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                                <div class="d-flex align-items-center">
-                                    {% if category == 'success' %}
-                                        <i class="fas fa-check-circle me-2"></i>
-                                    {% elif category == 'error' or category == 'danger' %}
-                                        <i class="fas fa-exclamation-triangle me-2"></i>
-                                    {% elif category == 'warning' %}
-                                        <i class="fas fa-exclamation-circle me-2"></i>
-                                    {% elif category == 'info' %}
-                                        <i class="fas fa-info-circle me-2"></i>
-                                    {% else %}
-                                        <i class="fas fa-bell me-2"></i>
-                                    {% endif %}
-                                    <div class="flex-grow-1">{{ message }}</div>
-                                </div>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        {% endfor %}
+    <!-- Flash Messages -->
+    <div x-show="notifications.length > 0" class="fixed top-4 right-4 z-50 space-y-2">
+        <template x-for="notification in notifications" :key="notification.id">
+            <div x-show="notification.show" 
+                 x-transition:enter="transform ease-out duration-300 transition"
+                 x-transition:enter-start="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+                 x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5">
+                <div class="p-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg x-show="notification.type === 'success'" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <svg x-show="notification.type === 'error'" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <svg x-show="notification.type === 'warning'" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3 w-0 flex-1 pt-0.5">
+                            <p class="text-sm font-medium text-gray-900" x-text="notification.message"></p>
+                        </div>
+                        <div class="ml-4 flex-shrink-0 flex">
+                            <button @click="removeNotification(notification.id)" class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                {% endif %}
-            {% endwith %}
-
-            <!-- Page Content -->
-            {% block content %}{% endblock %}
-        </div>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="spinner-border text-primary mb-3" role="status">
-                <span class="visually-hidden">Carregando...</span>
+                </div>
             </div>
-            <h5 class="mb-2">Processando...</h5>
-            <p class="text-muted mb-0">Por favor, aguarde enquanto processamos sua solicitação.</p>
-        </div>
+        </template>
     </div>
+
+    <!-- Flask Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                {% for category, message in messages %}
+                    <div class="rounded-md p-4 mb-4 {{ 'bg-red-50 border border-red-200' if category == 'error' else 'bg-green-50 border border-green-200' if category == 'success' else 'bg-yellow-50 border border-yellow-200' if category == 'warning' else 'bg-blue-50 border border-blue-200' }}">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                {% if category == 'success' %}
+                                    <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                {% elif category == 'error' %}
+                                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                    </svg>
+                                {% elif category == 'warning' %}
+                                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                {% else %}
+                                    <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm {{ 'text-red-800' if category == 'error' else 'text-green-800' if category == 'success' else 'text-yellow-800' if category == 'warning' else 'text-blue-800' }}">
+                                    {{ message }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+    </main>
 
     <!-- Create Landing Page Modal -->
-    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-gradient text-white">
-                    <h5 class="modal-title" id="createModalLabel">
-                        <i class="fas fa-plus-circle me-2"></i>
-                        Nova Landing Page
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div x-show="showCreateModal" 
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         style="display: none;">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            
+            <div x-show="showCreateModal"
+                 x-transition:enter="ease-out duration-300"
+                                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-gray-500">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
                 </div>
-                <form method="POST" action="{{ url_for('create_request') }}" enctype="multipart/form-data" id="createForm">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        <i class="fas fa-heading me-1"></i>
-                                        Título da Página *
-                                    </label>
-                                    <input type="text" class="form-control" name="page_title" 
-                                           placeholder="Ex: Site da Empresa XYZ" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        <i class="fas fa-building me-1"></i>
-                                        Nome da Empresa *
-                                    </label>
-                                    <input type="text" class="form-control" name="company_name" 
-                                           placeholder="Ex: Kaptha Tech" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        <i class="fas fa-image me-1"></i>
-                                        Logo da Empresa
-                                    </label>
-                                    <input type="file" class="form-control" name="company_logo" 
-                                           accept="image/*" onchange="previewLogo(this)">
-                                    <div class="form-text">Formatos aceitos: JPG, PNG, SVG (máx. 5MB)</div>
-                                    <div id="logoPreview" class="mt-2"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        <i class="fas fa-images me-1"></i>
-                                        Imagens para o Site
-                                    </label>
-                                    <input type="file" class="form-control" name="site_images" 
-                                           accept="image/*" multiple onchange="previewImages(this)">
-                                    <div class="form-text">Selecione múltiplas imagens (máx. 10MB cada)</div>
-                                    <div id="imagesPreview" class="mt-2"></div>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        <i class="fas fa-palette me-1"></i>
-                                        Paleta de Cores
-                                    </label>
-                                    <div class="color-palette" id="colorPalette">
-                                        <div class="text-muted">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Cores serão extraídas automaticamente da logo
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">
-                                <i class="fas fa-file-alt me-1"></i>
-                                Briefing do Cliente *
-                            </label>
-                            <textarea class="form-control" name="main_content_brief" rows="6" 
-                                      placeholder="Descreva detalhadamente o projeto: objetivo da página, público-alvo, serviços/produtos, diferenciais, estilo desejado, etc." 
-                                      required></textarea>
-                            <div class="form-text">
-                                Seja específico: quanto mais detalhes, melhor será o resultado da IA.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            <i class="fas fa-times me-1"></i>
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary" id="createSubmitBtn">
-                            <i class="fas fa-rocket me-1"></i>
-                            Criar Landing Page
-                        </button>
-                    </div>
-                </form>
             </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h6 class="text-gradient">Landing Page Generator</h6>
-                    <p class="mb-0">Criando páginas profissionais com inteligência artificial.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="d-flex justify-content-md-end gap-3">
-                        <a href="#" class="text-light text-decoration-none">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="#" class="text-light text-decoration-none">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="#" class="text-light text-decoration-none">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                    </div>
-                    <small class="text-muted">© 2024 Landing Page Generator. Todos os direitos reservados.</small>
-                </div>
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <p class="text-sm text-gray-500 text-center">© 2024 Landing Page Generator. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    
-    <!-- Custom JavaScript -->
+    <!-- Alpine.js App Logic -->
     <script>
-        // Global Variables
-        let isLoading = false;
-        
-        // Utility Functions
-        function showLoading(message = 'Processando...') {
-            const overlay = document.getElementById('loadingOverlay');
-            const content = overlay.querySelector('.loading-content p');
-            if (content) content.textContent = message;
-            overlay.style.display = 'flex';
-            isLoading = true;
-        }
-        
-        function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
-            isLoading = false;
-        }
-        
-      function showAlert(type, message, duration = 8000) {
-    // Criar ou usar container de notificações flutuantes
-    let notificationContainer = document.getElementById('floating-notifications');
-    if (!notificationContainer) {
-        notificationContainer = document.createElement('div');
-        notificationContainer.id = 'floating-notifications';
-        document.body.appendChild(notificationContainer);
-    }
-    
-    const iconMap = {
-        'success': 'fas fa-check-circle',
-        'danger': 'fas fa-exclamation-triangle',
-        'warning': 'fas fa-exclamation-circle',
-        'info': 'fas fa-info-circle'
-    };
-    
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        <div class="d-flex align-items-center">
-            <i class="${iconMap[type] || 'fas fa-bell'} me-2"></i>
-            <div class="flex-grow-1">${message}</div>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    notificationContainer.appendChild(alertDiv);
-    
-    // Auto-remove
-    if (duration > 0) {
-        setTimeout(() => {
-            if (alertDiv.parentNode) {
-                alertDiv.remove();
-            }
-        }, duration);
-    }
-}
+        function app() {
+            return {
+                // State
+                showCreateModal: false,
+                isLoading: false,
+                isSubmitting: false,
+                loadingMessage: 'Por favor, aguarde...',
+                notifications: [],
+                notificationId: 0,
 
-
-        // Modal Functions
-        function showCreateModal() {
-            const modal = new bootstrap.Modal(document.getElementById('createModal'));
-            modal.show();
-        }
-        
-        // File Preview Functions
-        function previewLogo(input) {
-            const preview = document.getElementById('logoPreview');
-            preview.innerHTML = '';
-            
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                
-                // Validate file size (5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    showAlert('warning', '⚠️ Logo muito grande. Máximo 5MB permitido.');
-                    input.value = '';
-                    return;
-                }
-                
-                // Validate file type
-                if (!file.type.startsWith('image/')) {
-                    showAlert('warning', '⚠️ Formato inválido. Use JPG, PNG ou SVG.');
-                    input.value = '';
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'img-thumbnail';
-                    img.style.maxHeight = '80px';
-                    img.style.maxWidth = '120px';
+                // Methods
+                init() {
+                    // Initialize app
+                    console.log('🚀 Landing Page Generator - App initialized');
                     
-                    const container = document.createElement('div');
-                    container.className = 'image-preview';
-                    container.appendChild(img);
-                    
-                    const removeBtn = document.createElement('button');
-                    removeBtn.type = 'button';
-                    removeBtn.className = 'remove-btn';
-                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
-                    removeBtn.onclick = function() {
-                        input.value = '';
-                        preview.innerHTML = '';
-                        document.getElementById('colorPalette').innerHTML = `
-                            <div class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Cores serão extraídas automaticamente da logo
-                            </div>
-                        `;
-                    };
-                    
-                    container.appendChild(removeBtn);
-                    preview.appendChild(container);
-                    
-                    // Extract colors (placeholder - will be implemented)
-                    extractColorsFromLogo(file);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        function previewImages(input) {
-            const preview = document.getElementById('imagesPreview');
-            preview.innerHTML = '';
-            
-            if (input.files && input.files.length > 0) {
-                Array.from(input.files).forEach((file, index) => {
-                    // Validate file size (10MB)
-                    if (file.size > 10 * 1024 * 1024) {
-                        showAlert('warning', `⚠️ Imagem ${index + 1} muito grande. Máximo 10MB por imagem.`);
-                        return;
-                    }
-                    
-                    // Validate file type
-                    if (!file.type.startsWith('image/')) {
-                        showAlert('warning', `⚠️ Arquivo ${index + 1} não é uma imagem válida.`);
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'img-thumbnail';
-                        img.style.maxHeight = '60px';
-                        img.style.maxWidth = '80px';
-                        img.style.margin = '2px';
-                        
-                        preview.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
-                });
-                
-                const info = document.createElement('div');
-                info.className = 'form-text mt-2';
-                info.innerHTML = `<i class="fas fa-images me-1"></i>${input.files.length} imagem(ns) selecionada(s)`;
-                preview.appendChild(info);
-            }
-        }
-        
-        function extractColorsFromLogo(file) {
-            // Placeholder for color extraction
-            // This would integrate with the backend color extraction service
-            const palette = document.getElementById('colorPalette');
-            palette.innerHTML = `
-                <div class="d-flex align-items-center gap-2">
-                    <div class="spinner-border spinner-border-sm text-primary" role="status">
-                        <span class="visually-hidden">Extraindo cores...</span>
-                    </div>
-                    <span class="text-muted">Extraindo cores da logo...</span>
-                </div>
-            `;
-            
-            // Simulate color extraction (replace with actual API call)
-            setTimeout(() => {
-                const colors = ['#667eea', '#764ba2', '#f093fb']; // Placeholder colors
-                displayColorPalette(colors);
-            }, 2000);
-        }
-        
-        function displayColorPalette(colors) {
-            const palette = document.getElementById('colorPalette');
-            const labels = ['Primária', 'Secundária', 'Destaque'];
-            
-            palette.innerHTML = colors.map((color, index) => `
-                <div class="d-flex flex-column align-items-center">
-                    <div class="color-swatch" 
-                         style="background-color: ${color}" 
-                         data-color="${color}"
-                         title="${labels[index]}: ${color}">
-                    </div>
-                    <small class="text-muted mt-1">${labels[index]}</small>
-                </div>
-            `).join('');
-        }
-        
-        // Form Validation
-        function validateCreateForm() {
-            const form = document.getElementById('createForm');
-            const title = form.page_title.value.trim();
-            const company = form.company_name.value.trim();
-            const brief = form.main_content_brief.value.trim();
-            
-            if (!title || title.length < 3) {
-                showAlert('warning', '⚠️ Título da página deve ter pelo menos 3 caracteres.');
-                return false;
-            }
-            
-            if (!company || company.length < 2) {
-                showAlert('warning', '⚠️ Nome da empresa deve ter pelo menos 2 caracteres.');
-                return false;
-            }
-            
-            if (!brief || brief.length < 50) {
-                showAlert('warning', '⚠️ Briefing deve ter pelo menos 50 caracteres para um bom resultado.');
-                return false;
-            }
-            
-            return true;
-        }
-        
-        // Form Submission
-        document.addEventListener('DOMContentLoaded', function() {
-            const createForm = document.getElementById('createForm');
-            if (createForm) {
-                createForm.addEventListener('submit', function(e) {
-                    if (!validateCreateForm()) {
-                        e.preventDefault();
-                        return;
-                    }
-                    
-                    const submitBtn = document.getElementById('createSubmitBtn');
-                    const originalText = submitBtn.innerHTML;
-                    
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Criando...';
-                    submitBtn.disabled = true;
-                    
-                    showLoading('Processando uploads e criando solicitação...');
-                    
-                    // Form will submit normally, loading will be hidden on page redirect
-                });
-            }
-        });
-        
-        // Drag and Drop for File Uploads
-        function initializeDragAndDrop() {
-            const uploadAreas = document.querySelectorAll('.upload-area');
-            
-            uploadAreas.forEach(area => {
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    area.addEventListener(eventName, preventDefaults, false);
-                });
-                
-                ['dragenter', 'dragover'].forEach(eventName => {
-                    area.addEventListener(eventName, highlight, false);
-                });
-                
-                ['dragleave', 'drop'].forEach(eventName => {
-                    area.addEventListener(eventName, unhighlight, false);
-                });
-                
-                area.addEventListener('drop', handleDrop, false);
-            });
-            
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            function highlight(e) {
-                e.currentTarget.classList.add('dragover');
-            }
-            
-            function unhighlight(e) {
-                e.currentTarget.classList.remove('dragover');
-            }
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                const input = e.currentTarget.querySelector('input[type="file"]');
-                
-                if (input && files.length > 0) {
-                    input.files = files;
-                    input.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            }
-        }
-        
-        // Keyboard Shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Ctrl/Cmd + N = New Landing Page
-            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-                e.preventDefault();
-                showCreateModal();
-            }
-            
-            // Escape = Close Modals
-            if (e.key === 'Escape') {
-                const modals = document.querySelectorAll('.modal.show');
-                modals.forEach(modal => {
-                    const modalInstance = bootstrap.Modal.getInstance(modal);
-                    if (modalInstance) modalInstance.hide();
-                });
-            }
-        });
-        
-        // Auto-hide alerts after interaction
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.alert')) {
-                const alerts = document.querySelectorAll('.alert:not(.alert-important)');
-                alerts.forEach(alert => {
-                    setTimeout(() => {
-                        if (alert.parentNode) {
-                            const alertInstance = new bootstrap.Alert(alert);
-                            alertInstance.close();
+                    // Handle keyboard shortcuts
+                    document.addEventListener('keydown', (e) => {
+                        // Ctrl/Cmd + N = New Landing Page
+                        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                            e.preventDefault();
+                            this.showCreateModal = true;
                         }
-                    }, 5000);
-                });
-            }
-        });
-        
-        // Status Checker
-        function checkSystemStatus() {
-            fetch('/test-connection')
-                .then(response => response.json())
-                .then(data => {
-                    const statusIndicators = document.querySelectorAll('.status-indicator');
-                    statusIndicators.forEach(indicator => {
-                        if (indicator.textContent.includes('MySQL')) {
-                            indicator.className = `status-indicator ${data.status === 'success' ? 'online' : 'offline'}`;
-                            indicator.innerHTML = `
-                                <i class="fas fa-database me-1"></i>
-                                MySQL: ${data.status === 'success' ? 'Online' : 'Offline'}
-                            `;
+                        
+                        // Escape = Close modals
+                        if (e.key === 'Escape') {
+                            this.showCreateModal = false;
                         }
                     });
-                })
-                .catch(error => {
-                    console.error('Erro ao verificar status:', error);
-                });
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize drag and drop
-            initializeDragAndDrop();
-            
-            // Check system status
-            checkSystemStatus();
-            
-            // Auto-refresh status every 30 seconds
-            setInterval(checkSystemStatus, 30000);
-            
-            // Initialize tooltips
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-            
-            // Initialize popovers
-            const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-            popoverTriggerList.map(function (popoverTriggerEl) {
-                return new bootstrap.Popover(popoverTriggerEl);
-            });
-            
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-            
-            // Auto-focus first input in modals
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('shown.bs.modal', function() {
-                    const firstInput = this.querySelector('input, textarea, select');
-                    if (firstInput) firstInput.focus();
-                });
-            });
-            
-            // Prevent double form submission
-            document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', function() {
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    if (submitBtn && !submitBtn.disabled) {
+
+                    // Auto-check system status
+                    this.checkSystemStatus();
+                    setInterval(() => this.checkSystemStatus(), 30000);
+                },
+
+                // Notification system
+                addNotification(type, message, duration = 5000) {
+                    const id = ++this.notificationId;
+                    const notification = {
+                        id,
+                        type,
+                        message,
+                        show: true
+                    };
+                    
+                    this.notifications.push(notification);
+                    
+                    if (duration > 0) {
                         setTimeout(() => {
-                            submitBtn.disabled = true;
-                        }, 100);
+                            this.removeNotification(id);
+                        }, duration);
                     }
-                });
-            });
-            
-            // Add loading states to buttons with data-loading attribute
-            document.querySelectorAll('[data-loading]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const loadingText = this.getAttribute('data-loading');
-                    const originalText = this.innerHTML;
+                },
+
+                removeNotification(id) {
+                    const index = this.notifications.findIndex(n => n.id === id);
+                    if (index > -1) {
+                        this.notifications[index].show = false;
+                        setTimeout(() => {
+                            this.notifications.splice(index, 1);
+                        }, 300);
+                    }
+                },
+
+                // Loading states
+                showLoading(message = 'Processando...') {
+                    this.loadingMessage = message;
+                    this.isLoading = true;
+                },
+
+                hideLoading() {
+                    this.isLoading = false;
+                },
+
+                // Form handling
+                handleFormSubmit(event) {
+                    if (!this.validateForm(event.target)) {
+                        event.preventDefault();
+                        return false;
+                    }
                     
-                    this.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i>${loadingText}`;
-                    this.disabled = true;
+                    this.isSubmitting = true;
+                    this.showLoading('Processando uploads e criando solicitação...');
                     
-                    // Re-enable after 10 seconds as fallback
-                    setTimeout(() => {
-                        this.innerHTML = originalText;
-                        this.disabled = false;
-                    }, 10000);
-                });
-            });
-            
-            // Console welcome message
-            console.log('%c🚀 Landing Page Generator', 'color: #667eea; font-size: 20px; font-weight: bold;');
-            console.log('%cSistema carregado com sucesso!', 'color: #10b981; font-weight: bold;');
-            console.log('%c⌨️ Atalhos disponíveis:', 'color: #6c757d; font-weight: bold;');
-            console.log('%c  • Ctrl/Cmd + N: Nova Landing Page', 'color: #6c757d;');
-            console.log('%c  • Escape: Fechar modais', 'color: #6c757d;');
-            console.log('%c🔧 Funções globais disponíveis:', 'color: #6c757d; font-weight: bold;');
-            console.log('%c  • showAlert(type, message): Exibir alerta', 'color: #6c757d;');
-            console.log('%c  • showLoading(message): Exibir loading', 'color: #6c757d;');
-            console.log('%c  • hideLoading(): Ocultar loading', 'color: #6c757d;');
-            console.log('%c  • showCreateModal(): Abrir modal de criação', 'color: #6c757d;');
-        });
-        
-        // Error handling for uncaught errors
+                    // Form will submit normally
+                    return true;
+                },
+
+                validateForm(form) {
+                    const formData = new FormData(form);
+                    const title = formData.get('page_title')?.trim();
+                    const company = formData.get('company_name')?.trim();
+                    const brief = formData.get('main_content_brief')?.trim();
+                    
+                    if (!title || title.length < 3) {
+                        this.addNotification('warning', 'Título da página deve ter pelo menos 3 caracteres.');
+                        return false;
+                    }
+                    
+                    if (!company || company.length < 2) {
+                        this.addNotification('warning', 'Nome da empresa deve ter pelo menos 2 caracteres.');
+                        return false;
+                    }
+                    
+                    if (!brief || brief.length < 50) {
+                        this.addNotification('warning', 'Briefing deve ter pelo menos 50 caracteres para um bom resultado.');
+                        return false;
+                    }
+                    
+                    // Validate file sizes
+                    const logo = formData.get('company_logo');
+                    if (logo && logo.size > 5 * 1024 * 1024) {
+                        this.addNotification('warning', 'Logo muito grande. Máximo 5MB permitido.');
+                        return false;
+                    }
+                    
+                    const images = formData.getAll('site_images');
+                    for (let image of images) {
+                        if (image.size > 10 * 1024 * 1024) {
+                            this.addNotification('warning', 'Uma das imagens é muito grande. Máximo 10MB por imagem.');
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                },
+
+                // System status check
+                async checkSystemStatus() {
+                    try {
+                        const response = await fetch('/test-connection');
+                        const data = await response.json();
+                        
+                        // Update status indicators if they exist
+                        const statusElements = document.querySelectorAll('[data-status="mysql"]');
+                        statusElements.forEach(el => {
+                            el.className = data.status === 'success' 
+                                ? 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'
+                                : 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800';
+                            el.textContent = data.status === 'success' ? 'MySQL: Online' : 'MySQL: Offline';
+                        });
+                        
+                    } catch (error) {
+                        console.error('Erro ao verificar status:', error);
+                    }
+                },
+
+                // Utility methods
+                formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                },
+
+                formatDate(date) {
+                    return new Intl.DateTimeFormat('pt-BR', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }).format(new Date(date));
+                }
+            }
+        }
+
+        // Global error handling
         window.addEventListener('error', function(e) {
             console.error('Erro não capturado:', e.error);
-            hideLoading();
-            showAlert('danger', '❌ Ocorreu um erro inesperado. Recarregue a página se necessário.');
+            // Access Alpine data through Alpine.store or direct reference
+            if (window.Alpine && window.Alpine.store) {
+                window.Alpine.store('app').hideLoading();
+                window.Alpine.store('app').addNotification('error', 'Ocorreu um erro inesperado. Recarregue a página se necessário.');
+            }
         });
-        
-        // Handle unhandled promise rejections
+
         window.addEventListener('unhandledrejection', function(e) {
             console.error('Promise rejeitada:', e.reason);
-            hideLoading();
-            showAlert('danger', '❌ Erro de conexão. Verifique sua internet e tente novamente.');
+            if (window.Alpine && window.Alpine.store) {
+                window.Alpine.store('app').hideLoading();
+                window.Alpine.store('app').addNotification('error', 'Erro de conexão. Verifique sua internet e tente novamente.');
+            }
         });
-        
-        // Performance monitoring (optional)
+
+        // Performance monitoring
         if ('performance' in window) {
             window.addEventListener('load', function() {
                 setTimeout(() => {
@@ -1563,7 +390,7 @@
             });
         }
     </script>
-    
+
     {% block scripts %}{% endblock %}
 </body>
 </html>

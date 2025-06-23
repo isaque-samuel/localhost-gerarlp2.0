@@ -2,293 +2,533 @@
 
 {% block title %}Solicitação {{ request.request_id[:8] }}... - Gerador de Landing Page{% endblock %}
 
-{% block head %}
-<style>
-.btn-skeleton {
-    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.btn-skeleton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
-    color: white;
-}
-
-.btn-skeleton:disabled {
-    background: #6c757d;
-    transform: none;
-    box-shadow: none;
-}
-
-.skeleton-status-badge {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
-}
-
-.action-card {
-    border-left: 4px solid #667eea;
-}
-
-.log-entry {
-    transition: all 0.2s ease;
-}
-
-.log-entry:hover {
-    background-color: #f8f9fa;
-    border-radius: 4px;
-}
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3><i class="fas fa-file-alt"></i> {{ request.page_title }}</h3>
-                <span class="badge bg-{{ 'success' if request.status == 'completed' else 'primary' if request.status == 'skeleton_completed' else 'info' if request.status == 'generating_skeleton' else 'warning' }} fs-6">
-                    {{ request.status }}
-                </span>
+<div x-data="viewRequestPage()" class="space-y-6">
+    <!-- Header Section -->
+    <div class="bg-white rounded-lg shadow-sm border p-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <button @click="window.history.back()" 
+                        class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 flex items-center">
+                        <svg class="w-6 h-6 text-primary-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        {{ request.page_title }}
+                    </h1>
+                    <p class="text-gray-600 mt-1">ID: {{ request.request_id[:8] }}...</p>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <strong>Empresa:</strong> {{ request.company_name or 'Não informado' }}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Slug:</strong> {{ request.page_slug }}
-                    </div>
+            
+            <!-- Status Badge -->
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                    {{ 'bg-green-100 text-green-800' if request.status == 'completed' 
+                       else 'bg-blue-100 text-blue-800' if request.status == 'skeleton_completed' 
+                       else 'bg-yellow-100 text-yellow-800 animate-pulse' if request.status == 'generating_skeleton' 
+                       else 'bg-gray-100 text-gray-800' }}">
+                    <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                        {% if request.status == 'completed' %}
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        {% elif request.status == 'generating_skeleton' %}
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                        {% else %}
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                        {% endif %}
+                    </svg>
+                    {{ request.status.replace('_', ' ').title() }}
+                </span>
+                
+                <button @click="refreshPage()" 
+                        class="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Project Details -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Detalhes do Projeto
+                    </h2>
                 </div>
                 
-                <!-- NOVA SEÇÃO: ARQUIVOS UPLOADADOS -->
-                {% if upload_info.logo or upload_info.images or upload_info.colors %}
-                <div class="mb-3">
-                    <h5><i class="fas fa-folder-open"></i> Arquivos e Dados</h5>
-                    <div class="row">
-                        {% if upload_info.logo %}
-                        <div class="col-md-4">
-                            <strong>Logo:</strong>
-                            <div class="mt-2">
-                                <img src="{{ upload_info.logo }}" class="img-thumbnail" style="max-height: 80px;">
+                <div class="p-6 space-y-6">
+                    <!-- Basic Info -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-4 h-4 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-gray-700">Empresa</span>
+                            </div>
+                            <p class="text-gray-900 font-medium">{{ request.company_name or 'Não informado' }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-4 h-4 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-gray-700">Slug</span>
+                            </div>
+                            <p class="text-gray-900 font-medium">{{ request.page_slug }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Info -->
+                    {% if upload_info.logo or upload_info.images or upload_info.colors %}
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+                            </svg>
+                            Arquivos e Dados
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {% if upload_info.logo %}
+                            <div class="text-center">
+                                <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                    <img src="{{ upload_info.logo }}" 
+                                         class="mx-auto h-20 w-20 object-contain rounded-lg"
+                                         alt="Logo da empresa">
+                                </div>
+                                <h4 class="font-medium text-gray-900">Logo</h4>
+                                <p class="text-sm text-gray-600">Carregado com sucesso</p>
+                            </div>
+                            {% endif %}
+                            
+                            {% if upload_info.colors %}
+                            <div class="text-center">
+                                <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                    <div class="flex justify-center space-x-2">
+                                        {% for color in upload_info.colors[:3] %}
+                                        <div class="w-8 h-8 rounded-full border-2 border-white shadow-sm" 
+                                             style="background-color: {{ color }}"
+                                             title="{{ color }}"></div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <h4 class="font-medium text-gray-900">Cores Extraídas</h4>
+                                <p class="text-sm text-gray-600">{{ upload_info.colors|length }} cores</p>
+                            </div>
+                            {% endif %}
+                            
+                            {% if upload_info.images %}
+                            <div class="text-center">
+                                <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                    <div class="grid grid-cols-2 gap-1">
+                                        {% for image_url in upload_info.images[:4] %}
+                                        <img src="{{ image_url }}" 
+                                             class="w-full h-8 object-cover rounded"
+                                             alt="Imagem {{ loop.index }}">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <h4 class="font-medium text-gray-900">Imagens</h4>
+                                <p class="text-sm text-gray-600">{{ upload_info.images|length }} arquivo(s)</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Briefing -->
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Briefing do Cliente
+                        </h3>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-gray-800 whitespace-pre-wrap">{{ request.main_content_brief or 'Não informado' }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timestamps -->
+                    <div class="border-t pt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span class="font-medium">Criado em:</span>
+                                <span class="ml-2">{{ request.created_at.strftime('%d/%m/%Y às %H:%M') if request.created_at else 'N/A' }}</span>
+                            </div>
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                <span class="font-medium">Atualizado em:</span>
+                                <span class="ml-2">{{ request.updated_at.strftime('%d/%m/%Y às %H:%M') if request.updated_at else 'N/A' }}</span>
                             </div>
                         </div>
-                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Error Message -->
+            {% if request.error_message %}
+            <div class="bg-red-50 border border-red-200 rounded-lg">
+                <div class="bg-red-600 text-white p-4 rounded-t-lg">
+                    <h3 class="text-lg font-semibold flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        Erro Detectado
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <pre class="text-red-800 text-sm bg-red-100 p-3 rounded font-mono overflow-x-auto">{{ request.error_message }}</pre>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Image Gallery -->
+            {% if upload_info.images %}
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="bg-gray-50 p-4 border-b rounded-t-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6 6h.01M6 20h36a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V22a2 2 0 012-2z"></path>
+                        </svg>
+                        Galeria de Imagens ({{ upload_info.images|length }})
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {% for image_url in upload_info.images %}
+                        <div class="group relative bg-gray-100 rounded-lg overflow-hidden aspect-square cursor-pointer hover:shadow-lg transition-all duration-200"
+                             @click="showImageModal('{{ image_url }}', {{ loop.index }})">
+                            <img src="{{ image_url }}" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                 alt="Imagem {{ loop.index }}">
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                                </svg>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
+                                <p class="text-white text-xs font-medium">Imagem {{ loop.index }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Action Panel -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="bg-gray-50 p-4 border-b rounded-t-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+                        </svg>
+                        Ações
+                    </h3>
+                </div>
+                <div class="p-4 space-y-3">
+                    <!-- Primary Actions -->
+                    {% if request.status in ['pending', 'uploads_completed'] %}
+                    <button @click="generateSkeleton('{{ request.request_id }}')" 
+                            :disabled="isProcessing"
+                            class="w-full bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all transform hover:scale-105">
+                        <svg x-show="!isProcessing" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 00-2 2v2m0 0V9a2 2 0 012-2h14a2 2 0 012 2v2M7 7V5a2 2 0 012-2h6a2 2 0 012 2v2"></path>
+                        </svg>
+                        <svg x-show="isProcessing" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span x-text="isProcessing ? 'Gerando...' : 'Gerar Esqueleto'"></span>
+                    </button>
+                    
+                    {% elif request.status == 'generating_skeleton' %}
+                    <div class="w-full bg-yellow-100 text-yellow-800 px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2">
+                        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Gerando Esqueleto...</span>
+                    </div>
+                    
+                    {% elif request.status == 'skeleton_completed' %}
+                    <a href="{{ url_for('view_skeleton', skeleton_id=skeleton.skeleton_id) if skeleton else '#' }}" 
+                       class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all transform hover:scale-105">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <span>Ver Esqueleto</span>
+                    </a>
+                    
+                    <button @click="regenerateSkeleton('{{ request.request_id }}')" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span>Regenerar Esqueleto</span>
+                    </button>
+                    
+                    {% elif request.status in ['skeleton_error', 'api_error', 'parse_error', 'system_error'] %}
+                    <button @click="regenerateSkeleton('{{ request.request_id }}')" 
+                            class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span>Tentar Novamente</span>
+                    </button>
+                    {% endif %}
+                    
+                    <!-- Next Phase Button -->
+                    {% if request.status == 'skeleton_completed' %}
+                    <button @click="nextPhase('{{ request.request_id }}')" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Gerar Hero Section</span>
+                    </button>
+                    {% endif %}
+                    
+                    <!-- Secondary Actions -->
+                    <div class="border-t pt-3 mt-3 space-y-2">
+                        <button @click="refreshPage()" 
+                                class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span>Atualizar Status</span>
+                        </button>
                         
-                        {% if upload_info.colors %}
-                        <div class="col-md-4">
-                            <strong>Cores Extraídas:</strong>
-                            <div class="d-flex gap-2 mt-2">
-                                {% for color in upload_info.colors %}
-                                <div style="width: 30px; height: 30px; background: {{ color }}; border-radius: 4px; border: 1px solid #ddd;" 
+                        <a href="{{ url_for('index') }}" 
+                           class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span>Voltar ao Início</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics Panel -->
+            {% if upload_info.logo or upload_info.images or upload_info.colors %}
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="bg-gray-50 p-4 border-b rounded-t-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Estatísticas
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-8 h-8 {{ 'text-green-600' if upload_info.logo else 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6 6h.01M6 20h36a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V22a2 2 0 012-2z"></path>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">Logo</p>
+                            <p class="text-xs {{ 'text-green-600' if upload_info.logo else 'text-gray-500' }}">
+                                {{ 'Sim' if upload_info.logo else 'Não' }}
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-8 h-8 {{ 'text-blue-600' if upload_info.images else 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6 6h.01M6 20h36a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V22a2 2 0 012-2z"></path>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">Imagens</p>
+                            <p class="text-xs {{ 'text-blue-600' if upload_info.images else 'text-gray-500' }}">
+                                {{ upload_info.images|length if upload_info.images else 0 }}
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <div class="flex justify-center mb-2">
+                                <svg class="w-8 h-8 {{ 'text-purple-600' if upload_info.colors else 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z"></path>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-900">Cores</p>
+                            <p class="text-xs {{ 'text-purple-600' if upload_info.colors else 'text-gray-500' }}">
+                                {{ upload_info.colors|length if upload_info.colors else 0 }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Color Palette Display -->
+                    {% if upload_info.colors %}
+                    <div class="mt-4 pt-4 border-t">
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">Paleta de Cores</h4>
+                        <div class="flex flex-wrap gap-2">
+                            {% for color in upload_info.colors %}
+                            <div class="group relative">
+                                <div class="w-8 h-8 rounded-lg border-2 border-white shadow-sm cursor-pointer hover:scale-110 transition-transform" 
+                                     style="background-color: {{ color }}"
                                      title="{{ color }}"></div>
-                                {% endfor %}
+                                <div class="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                    {{ color }}
+                                </div>
                             </div>
-                            <div class="mt-1">
-                                {% for color in upload_info.colors %}
-                                <small class="badge bg-secondary me-1">{{ color }}</small>
-                                {% endfor %}
-                            </div>
+                            {% endfor %}
                         </div>
-                        {% endif %}
-                        
-                        {% if upload_info.images %}
-                        <div class="col-md-4">
-                            <strong>Imagens ({{ upload_info.images|length }}):</strong>
-                            <div class="mt-2">
-                                {% for image_url in upload_info.images[:3] %}
-                                <img src="{{ image_url }}" class="img-thumbnail me-1" style="max-height: 40px;">
-                                {% endfor %}
-                                {% if upload_info.images|length > 3 %}
-                                <small class="text-muted">+{{ upload_info.images|length - 3 }} mais</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Execution Logs -->
+            <div class="bg-white rounded-lg shadow-sm border">
+                <div class="bg-gray-50 p-4 border-b rounded-t-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Logs de Execução
+                    </h3>
+                </div>
+                <div class="max-h-96 overflow-y-auto">
+                    {% if logs %}
+                        <div class="divide-y divide-gray-200">
+                            {% for log in logs %}
+                            <div class="p-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        {{ 'bg-red-100 text-red-800' if log.log_level == 'ERROR' 
+                                           else 'bg-yellow-100 text-yellow-800' if log.log_level == 'WARNING'
+                                           else 'bg-blue-100 text-blue-800' if log.log_level == 'INFO'
+                                           else 'bg-gray-100 text-gray-800' }}">
+                                        {% if log.log_level == 'ERROR' %}
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {% elif log.log_level == 'WARNING' %}
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {% else %}
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {% endif %}
+                                        {{ log.log_level }}
+                                    </span>
+                                    <span class="text-xs text-gray-500">{{ log.timestamp.strftime('%H:%M:%S') }}</span>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <span class="font-medium text-gray-900">{{ log.component }}</span>
+                                    <p class="text-sm text-gray-700 mt-1">{{ log.message }}</p>
+                                </div>
+                                
+                                {% if log.details %}
+                                <details class="mt-2">
+                                    <summary class="text-xs text-gray-500 cursor-pointer hover:text-gray-700 select-none">
+                                        Ver detalhes
+                                    </summary>
+                                    <pre class="mt-2 text-xs bg-gray-100 p-2 rounded overflow-x-auto text-gray-800">{{ log.details }}</pre>
+                                </details>
                                 {% endif %}
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endif %}
-                
-                <div class="mb-3">
-                    <strong>Briefing:</strong>
-                    <div class="bg-light p-3 rounded mt-2">
-                        {{ request.main_content_brief or 'Não informado' }}
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <strong>Criado em:</strong> {{ request.created_at.strftime('%d/%m/%Y às %H:%M') if request.created_at else 'N/A' }}
-                    </div>
-                    <div class="col-md-6">
-                        <strong>Atualizado em:</strong> {{ request.updated_at.strftime('%d/%m/%Y às %H:%M') if request.updated_at else 'N/A' }}
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        {% if request.error_message %}
-        <div class="card mt-3">
-            <div class="card-header bg-danger text-white">
-                <h5><i class="fas fa-exclamation-triangle"></i> Erro</h5>
-            </div>
-            <div class="card-body">
-                <pre class="text-danger">{{ request.error_message }}</pre>
-            </div>
-        </div>
-        {% endif %}
-        
-        <!-- NOVA SEÇÃO: GALERIA DE IMAGENS -->
-        {% if upload_info.images %}
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5><i class="fas fa-images"></i> Galeria de Imagens</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {% for image_url in upload_info.images %}
-                    <div class="col-md-3 col-6 mb-3">
-                        <div class="card">
-                            <img src="{{ image_url }}" class="card-img-top" style="height: 150px; object-fit: cover;" 
-                                 onclick="showImageModal('{{ image_url }}')">
-                            <div class="card-body p-2">
-                                <small class="text-muted">Imagem {{ loop.index }}</small>
-                            </div>
+                    {% else %}
+                        <div class="p-8 text-center text-gray-500">
+                            <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-sm">Nenhum log encontrado</p>
+                            <p class="text-xs text-gray-400 mt-1">Os logs aparecerão aqui conforme o processamento avança</p>
                         </div>
-                    </div>
-                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
-        </div>
-        {% endif %}
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5><i class="fas fa-list-alt"></i> Logs de Execução</h5>
-            </div>
-            <div class="card-body log-section">
-                {% if logs %}
-                    {% for log in logs %}
-                    <div class="mb-2 p-2 border-start border-{{ 'danger' if log.log_level == 'ERROR' else 'info' }} border-3">
-                        <div class="d-flex justify-content-between">
-                            <span class="badge bg-{{ 'danger' if log.log_level == 'ERROR' else 'info' }}">
-                                {{ log.log_level }}
-                            </span>
-                            <small class="text-muted">{{ log.timestamp.strftime('%H:%M:%S') }}</small>
-                        </div>
-                        <strong>{{ log.component }}</strong>: {{ log.message }}
-                        {% if log.details %}
-                            <details class="mt-1">
-                                <summary class="text-muted" style="cursor: pointer;">Detalhes</summary>
-                                <pre class="small mt-1">{{ log.details }}</pre>
-                            </details>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-muted">Nenhum log encontrado.</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5><i class="fas fa-cogs"></i> Ações</h5>
-            </div>
-            <div class="card-body">
-                <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-arrow-left"></i> Voltar
-                </a>
-                <button class="btn btn-info btn-sm" onclick="location.reload()">
-                    <i class="fas fa-sync"></i> Atualizar
-                </button>
-                
-                <!-- BOTÃO PRINCIPAL: GERAR ESQUELETO -->
-                {% if request.status in ['pending', 'uploads_completed'] %}
-                <button class="btn btn-primary btn-sm mt-2 w-100" id="generateSkeletonBtn" onclick="generateSkeleton('{{ request.request_id }}')">
-                    <i class="fas fa-sitemap"></i> Gerar Esqueleto
-                </button>
-                {% elif request.status == 'generating_skeleton' %}
-                <button class="btn btn-warning btn-sm mt-2 w-100" disabled>
-                    <i class="fas fa-spinner fa-spin"></i> Gerando Esqueleto...
-                </button>
-                {% elif request.status == 'skeleton_completed' %}
-                <a href="{{ url_for('view_skeleton', skeleton_id=skeleton.skeleton_id) if skeleton else '#' }}" class="btn btn-success btn-sm mt-2 w-100">
-                    <i class="fas fa-eye"></i> Ver Esqueleto
-                </a>
-                <button class="btn btn-outline-primary btn-sm mt-2 w-100" onclick="regenerateSkeleton('{{ request.request_id }}')">
-                    <i class="fas fa-redo"></i> Regenerar Esqueleto
-                </button>
-                {% elif request.status in ['skeleton_error', 'api_error', 'parse_error', 'system_error'] %}
-                <button class="btn btn-danger btn-sm mt-2 w-100" onclick="regenerateSkeleton('{{ request.request_id }}')">
-                    <i class="fas fa-redo"></i> Tentar Novamente
-                </button>
-                {% endif %}
-                
-                <!-- BOTÃO SECUNDÁRIO: PRÓXIMA FASE -->
-                {% if request.status == 'skeleton_completed' %}
-                <button class="btn btn-outline-success btn-sm mt-2 w-100" onclick="nextPhase('{{ request.request_id }}')">
-                    <i class="fas fa-arrow-right"></i> Gerar Hero Section
-                </button>
-                {% endif %}
-            </div>
-        </div>
-        
-        <!-- NOVA SEÇÃO: ESTATÍSTICAS DE UPLOAD -->
-        {% if upload_info.logo or upload_info.images or upload_info.colors %}
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5><i class="fas fa-chart-bar"></i> Estatísticas</h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-4">
-                        <i class="fas fa-image fa-2x {{ 'text-success' if upload_info.logo else 'text-muted' }}"></i>
-                        <p class="mt-1 mb-0">Logo</p>
-                        <small class="{{ 'text-success' if upload_info.logo else 'text-muted' }}">
-                            {{ 'Sim' if upload_info.logo else 'Não' }}
-                        </small>
-                    </div>
-                    <div class="col-4">
-                        <i class="fas fa-images fa-2x {{ 'text-success' if upload_info.images else 'text-muted' }}"></i>
-                        <p class="mt-1 mb-0">Imagens</p>
-                        <small class="{{ 'text-success' if upload_info.images else 'text-muted' }}">
-                            {{ upload_info.images|length if upload_info.images else 0 }}
-                        </small>
-                    </div>
-                    <div class="col-4">
-                        <i class="fas fa-palette fa-2x {{ 'text-success' if upload_info.colors else 'text-muted' }}"></i>
-                        <p class="mt-1 mb-0">Cores</p>
-                        <small class="{{ 'text-success' if upload_info.colors else 'text-muted' }}">
-                            {{ upload_info.colors|length if upload_info.colors else 0 }}
-                        </small>
-                    </div>
+            
+                       <!-- Progress Indicator -->
+            {% if request.status in ['generating_skeleton', 'processing_uploads'] %}
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200 p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-sm font-medium text-gray-900">Progresso</h4>
+                    <span class="text-xs text-gray-600">Em andamento...</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full animate-pulse" style="width: 65%"></div>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                    <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>{{ 'Gerando estrutura da página...' if request.status == 'generating_skeleton' else 'Processando uploads...' }}</span>
                 </div>
             </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
 
-<!-- Modal para visualizar imagens -->
-<div class="modal fade" id="imageModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Visualizar Imagem</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- Image Modal -->
+<div x-show="showModal" 
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     class="fixed inset-0 z-50 overflow-y-auto"
+     style="display: none;">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="closeModal()"></div>
+        
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900" x-text="'Imagem ' + currentImageIndex"></h3>
+                    <button @click="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="text-center">
+                    <img :src="currentImageUrl" class="max-w-full max-h-96 mx-auto rounded-lg shadow-lg" alt="Imagem ampliada">
+                </div>
             </div>
-            <div class="modal-body text-center">
-                <img id="modalImage" class="img-fluid">
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button @click="closeModal()" 
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-600 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Fechar
+                </button>
             </div>
         </div>
     </div>
@@ -297,130 +537,243 @@
 
 {% block scripts %}
 <script>
-function showImageModal(imageUrl) {
-    document.getElementById('modalImage').src = imageUrl;
-    new bootstrap.Modal(document.getElementById('imageModal')).show();
-}
-
-function generateSkeleton(requestId) {
-    if (confirm('🤖 Deseja gerar o esqueleto da landing page usando IA?\n\nIsso analisará o briefing e criará a estrutura da página.')) {
-        // Mostrar loading
-        const btn = document.getElementById('generateSkeletonBtn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando Esqueleto...';
-        btn.disabled = true;
+function viewRequestPage() {
+    return {
+        isProcessing: false,
+        showModal: false,
+        currentImageUrl: '',
+        currentImageIndex: 0,
         
-        // Mostrar alerta de progresso
-        showAlert('info', '🚀 Iniciando geração do esqueleto... Isso pode levar alguns segundos.');
+        init() {
+            // Auto-refresh for processing statuses
+            {% if request.status in ['generating_skeleton', 'processing_uploads'] %}
+            this.startAutoRefresh();
+            {% endif %}
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.showModal) {
+                    this.closeModal();
+                }
+                if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                    e.preventDefault();
+                    this.refreshPage();
+                }
+            });
+            
+            console.log('🔍 View Request Page initialized');
+        },
         
-        fetch(`/generate-skeleton/${requestId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        // Modal functions
+        showImageModal(imageUrl, index) {
+            this.currentImageUrl = imageUrl;
+            this.currentImageIndex = index;
+            this.showModal = true;
+            document.body.style.overflow = 'hidden';
+        },
+        
+        closeModal() {
+            this.showModal = false;
+            document.body.style.overflow = 'auto';
+        },
+        
+        // Page functions
+        refreshPage() {
+            this.$dispatch('add-notification', {
+                type: 'info',
+                message: '🔄 Atualizando página...'
+            });
+            
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        },
+        
+        startAutoRefresh() {
+            const interval = setInterval(() => {
+                // Check if status is still processing
+                const currentStatus = '{{ request.status }}';
+                if (!['generating_skeleton', 'processing_uploads'].includes(currentStatus)) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                // Refresh page every 5 seconds
+                this.refreshPage();
+            }, 5000);
+        },
+        
+        // Action functions
+        async generateSkeleton(requestId) {
+            if (!confirm('🤖 Deseja gerar o esqueleto da landing page usando IA?\n\nIsso analisará o briefing e criará a estrutura da página.')) {
+                return;
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('success', '✅ ' + data.message);
-                setTimeout(() => {
-                    window.location.href = data.redirect_url;
-                }, 2000);
-            } else {
-                showAlert('danger', '❌ ' + (data.error || 'Erro ao gerar esqueleto'));
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            showAlert('danger', '❌ Erro de conexão. Verifique sua internet e tente novamente.');
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
-    }
-}
-
-function regenerateSkeleton(requestId) {
-    if (confirm('🔄 Deseja regenerar o esqueleto?\n\nIsso criará uma nova versão baseada no mesmo briefing.')) {
-        showAlert('info', '🔄 Regenerando esqueleto...');
-        
-        // Implementar regeneração usando a mesma função do view_skeleton.html
-        fetch(`/regenerate-skeleton-by-request/${requestId}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('success', '✅ ' + data.message);
-                setTimeout(() => {
-                    if (data.redirect_url) {
-                        window.location.href = data.redirect_url;
-                    } else {
-                        location.reload();
+            
+            this.isProcessing = true;
+            
+            this.$dispatch('add-notification', {
+                type: 'info',
+                message: '🚀 Iniciando geração do esqueleto... Isso pode levar alguns segundos.'
+            });
+            
+            try {
+                const response = await fetch(`/generate-skeleton/${requestId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
                     }
-                }, 2000);
-            } else {
-                showAlert('danger', '❌ ' + (data.error || 'Erro ao regenerar esqueleto'));
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.$dispatch('add-notification', {
+                        type: 'success',
+                        message: '✅ ' + data.message
+                    });
+                    
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url;
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Erro ao gerar esqueleto');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                this.$dispatch('add-notification', {
+                    type: 'danger',
+                    message: '❌ ' + error.message
+                });
+            } finally {
+                this.isProcessing = false;
             }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            showAlert('danger', '❌ Erro de conexão ao regenerar esqueleto.');
-        });
-    }
-}
-
-function nextPhase(requestId) {
-    if (confirm('🎨 Deseja avançar para a geração da Hero Section?\n\nIsso criará a primeira seção da landing page baseada no esqueleto.')) {
-        showAlert('info', '🚧 Funcionalidade será implementada na Fase 3!');
-        // TODO: Implementar na Fase 3
-    }
-}
-
-function showAlert(type, message) {
-    // Remover alertas existentes
-    const existingAlerts = document.querySelectorAll('.alert');
-    existingAlerts.forEach(alert => {
-        if (alert.classList.contains('alert-dismissible')) {
-            alert.remove();
+        },
+        
+        async regenerateSkeleton(requestId) {
+            if (!confirm('🔄 Deseja regenerar o esqueleto?\n\nIsso criará uma nova versão baseada no mesmo briefing.')) {
+                return;
+            }
+            
+            this.$dispatch('add-notification', {
+                type: 'info',
+                message: '🔄 Regenerando esqueleto...'
+            });
+            
+            try {
+                const response = await fetch(`/regenerate-skeleton-by-request/${requestId}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.$dispatch('add-notification', {
+                        type: 'success',
+                        message: '✅ ' + data.message
+                    });
+                    
+                    setTimeout(() => {
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        } else {
+                            this.refreshPage();
+                        }
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Erro ao regenerar esqueleto');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                this.$dispatch('add-notification', {
+                    type: 'danger',
+                    message: '❌ Erro de conexão ao regenerar esqueleto.'
+                });
+            }
+        },
+        
+        nextPhase(requestId) {
+            if (confirm('🎨 Deseja avançar para a geração da Hero Section?\n\nIsso criará a primeira seção da landing page baseada no esqueleto.')) {
+                this.$dispatch('add-notification', {
+                    type: 'info',
+                    message: '🚧 Funcionalidade será implementada na Fase 3!'
+                });
+                // TODO: Implementar na Fase 3
+            }
         }
+    }
+}
+
+// Global functions for backward compatibility
+function showImageModal(imageUrl, index) {
+    // This will be handled by Alpine.js component
+    const component = document.querySelector('[x-data]').__x.$data;
+    component.showImageModal(imageUrl, index);
+}
+
+// Console logging
+console.log('%c🔍 Landing Page Generator - View Request', 'color: #667eea; font-size: 16px; font-weight: bold;');
+console.log('%c📄 Página de visualização carregada!', 'color: #10b981; font-weight: bold;');
+console.log('%c⌨️ Atalhos disponíveis:', 'color: #6c757d; font-weight: bold;');
+console.log('%c  • F5 / Ctrl+R: Atualizar página', 'color: #6c757d;');
+console.log('%c  • Escape: Fechar modal de imagem', 'color: #6c757d;');
+console.log('%c  • Clique nas imagens: Visualizar em tamanho maior', 'color: #6c757d;');
+
+// Performance monitoring
+if ('performance' in window) {
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            const perfData = performance.getEntriesByType('navigation')[0];
+            const loadTime = Math.round(perfData.loadEventEnd - perfData.loadEventStart);
+            console.log(`⚡ Página carregada em ${loadTime}ms`);
+        }, 0);
     });
-    
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    const container = document.querySelector('.container');
-    container.insertBefore(alertDiv, container.firstChild);
-    
-    // Auto-remover após 8 segundos
-    setTimeout(() => {
-        if (alertDiv.parentNode) {
-            alertDiv.remove();
-        }
-    }, 8000);
 }
 
-// Auto-refresh se status for processing
-{% if request.status in ['generating_skeleton', 'processing_uploads'] %}
-setInterval(() => {
-    location.reload();
-}, 5000);
-{% endif %}
-
-// Verificar se há skeleton para mostrar link
-{% if request.status == 'skeleton_completed' %}
-// Adicionar indicador visual de sucesso
+// Status monitoring
 document.addEventListener('DOMContentLoaded', function() {
-    const statusBadge = document.querySelector('.badge');
-    if (statusBadge) {
-        statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> skeleton_completed';
+    const status = '{{ request.status }}';
+    const processingStatuses = ['generating_skeleton', 'processing_uploads'];
+    
+    if (processingStatuses.includes(status)) {
+        console.log('🔄 Status de processamento detectado. Auto-refresh ativado.');
+        
+        // Visual indicator for processing
+        const statusBadge = document.querySelector('.animate-pulse');
+        if (statusBadge) {
+            let dots = 0;
+            setInterval(() => {
+                dots = (dots + 1) % 4;
+                const text = statusBadge.textContent.replace(/\.+$/, '');
+                statusBadge.textContent = text + '.'.repeat(dots);
+            }, 500);
+        }
     }
+    
+    // Log current status
+    console.log(`📊 Status atual: ${status}`);
+    
+    // Log upload info
+    {% if upload_info.logo or upload_info.images or upload_info.colors %}
+    console.log('📁 Arquivos detectados:');
+    {% if upload_info.logo %}
+    console.log('  • Logo: ✅');
+    {% endif %}
+    {% if upload_info.images %}
+    console.log('  • Imagens: {{ upload_info.images|length }} arquivo(s)');
+    {% endif %}
+    {% if upload_info.colors %}
+    console.log('  • Cores: {{ upload_info.colors|length }} cor(es)');
+    {% endif %}
+    {% endif %}
 });
-{% endif %}
+
+// Error handling
+window.addEventListener('error', function(e) {
+    console.error('❌ Erro não capturado:', e.error);
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('❌ Promise rejeitada:', e.reason);
+});
 </script>
 {% endblock %}

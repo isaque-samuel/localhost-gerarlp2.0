@@ -3,949 +3,638 @@
 {% block title %}Esqueleto {{ skeleton.skeleton_id[:8] }}... - Gerador de Landing Page{% endblock %}
 
 {% block head %}
+<!-- Bootstrap CSS é necessário para os modais -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- FontAwesome para ícones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 <style>
-/* Estilos específicos para o editor de esqueleto */
-.skeleton-header {
-    background: var(--gradient-primary);
+  /* Estilos essenciais */
+  .skeleton-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-xl);
-    margin-bottom: var(--spacing-xl);
-    box-shadow: var(--shadow-lg);
-}
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
 
-.skeleton-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: var(--spacing-sm);
-}
-
-.skeleton-subtitle {
-    opacity: 0.9;
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.section-card {
-    background: white !important;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    margin-bottom: var(--spacing-lg);
+  .section-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
     overflow: hidden;
-    transition: var(--transition-normal);
-    border: 2px solid transparent;
-}
+    transition: all 0.2s ease;
+  }
 
-.section-card:hover {
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-2px);
-}
-
-.section-card.editing {
-    border-color: var(--success-color);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
-}
-
-.section-header {
-    background: var(--gray-100) !important;
-    padding: var(--spacing-lg);
-    border-bottom: 1px solid var(--gray-200);
-    color: white !important;
+  .section-header {
+    background-color: rgb(78, 104, 223);
+    padding: 1rem;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: rgb(78, 104, 223)!important;
-}
+  }
 
-.section-order {
-    background: var(--gradient-primary);
-    color: white !important;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.2rem;
-    margin-right: var(--spacing-md);
-    flex-shrink: 0;
-    box-shadow: var(--shadow-md);
-}
-
-.section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--dark-color);
-    margin: 0;
-}
-
-.section-description {
-    color: var(--gray-600);
-    margin: var(--spacing-xs) 0 0 0;
-    font-size: 0.95rem;
-}
-
-.section-body {
-    padding: var(--spacing-lg);
-}
-
-.editable-field {
-    position: relative;
-    display: inline-block;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    transition: var(--transition-normal);
-    cursor: pointer;
-    border: 2px solid transparent;
+  .editable-field {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 2px dashed transparent;
     min-width: 100px;
     min-height: 24px;
-    color: black;
-}
+    position: relative;
+    display: inline-block;
+  }
 
-.editable-field:hover {
-    background: var(--gray-100);
-    border-color: var(--primary-color);
-}
-
-.editable-field.editing {
-    background: #f0fdf4;
-    border-color: var(--success-color);
-}
-
-.edit-indicator {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    box-shadow: var(--shadow-sm);
-}
-
-.editable-field:hover .edit-indicator {
-    display: flex;
-}
-
-.element-tag {
-    background: var(--gradient-primary);
-    color: white;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    margin: var(--spacing-xs);
-    box-shadow: var(--shadow-sm);
-}
-
-.info-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    margin-bottom: var(--spacing-lg);
-    overflow: hidden;
-}
-
-.info-card.visual-identity {
-    background: var(--gradient-primary);
-    color: white;
-}
-
-.info-card.strategy {
-    background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
-    color: white;
-}
-
-.info-card.context {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    color: white;
-}
-
-.info-card.stats {
-    background: linear-gradient(135deg, var(--info-color) 0%, #1d4ed8 100%);
-    color: white;
-}
-
-.card-header-custom {
-    padding: var(--spacing-lg);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.card-body-custom {
-    padding: var(--spacing-lg);
-}
-
-.card-title-custom {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.color-palette {
-    display: flex;
-    gap: var(--spacing-md);
-    margin: var(--spacing-md) 0;
-}
-
-.color-item {
-    text-align: center;
-    flex: 1;
-}
-
-.color-preview {
-    width: 60px;
-    height: 60px;
-    border-radius: var(--radius-md);
-    border: 3px solid rgba(255, 255, 255, 0.3);
+  .edit-mode .editable-field:hover {
+    background: #f0f9ff;
+    border-color: #3b82f6;
     cursor: pointer;
-    transition: var(--transition-normal);
-    margin: 0 auto var(--spacing-sm);
-    box-shadow: var(--shadow-md);
-}
-
-.color-preview:hover {
-    transform: scale(1.1);
-    box-shadow: var(--shadow-lg);
-}
-
-.color-label {
-    font-size: 0.8rem;
-    opacity: 0.9;
-    margin-bottom: var(--spacing-xs);
-}
-
-.color-value {
-    font-size: 0.75rem;
-    font-family: 'Monaco', 'Menlo', monospace;
-    background: rgba(255, 255, 255, 0.2);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-}
-
-.edit-mode-toggle {
+  }
+  
+  .edit-mode-toggle {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: white;
-    padding: var(--spacing-sm) var(--spacing-lg);
+    padding: 0.5rem 1rem;
     border-radius: 50px;
     font-weight: 600;
-    transition: var(--transition-normal);
-}
-
-.edit-mode-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-    color: white;
-    transform: translateY(-2px);
-}
-
-.edit-mode-toggle.active {
-    background: var(--success-color);
-    border-color: var(--success-color);
-}
-
-.section-actions {
-    display: flex;
-    gap: var(--spacing-sm);
-}
-
-.field-group {
-    margin-bottom: var(--spacing-md);
-}
-
-.field-label {
-    font-weight: 600;
-    color: var(--gray-600);
-    font-size: 0.9rem;
-    margin-bottom: var(--spacing-xs);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-}
-
-.field-value {
-    background: rgba(255, 255, 255, 0.1);
-    padding: var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .skeleton-header {
-        padding: var(--spacing-lg);
-    }
-    
-    .skeleton-title {
-        font-size: 1.5rem;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--spacing-md);
-    }
-    
-    .color-palette {
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
-    
-    .color-preview {
-        width: 50px;
-        height: 50px;
-    }
-}
+    transition: all 0.2s ease;
+  }
+  
+  .edit-mode-toggle.active {
+    background: #10b981;
+    border-color: #10b981;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Header -->
-<div class="skeleton-header">
-    <div class="d-flex justify-content-between align-items-start">
-        <div>
-            <h1 class="skeleton-title">
-                <i class="fas fa-sitemap me-2"></i>
-                Esqueleto da Landing Page
-            </h1>
-            <p class="skeleton-subtitle">
-                {{ request.page_title if request else 'Projeto' }} - {{ request.company_name if request else 'Empresa' }}
-            </p>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <span class="badge bg-{{ 'success' if skeleton.status == 'completed' else 'warning' }} fs-6 px-3 py-2">
-                <i class="fas fa-{{ 'check-circle' if skeleton.status == 'completed' else 'clock' }} me-1"></i>
-                {{ skeleton.status }}
-            </span>
-            <button class="edit-mode-toggle" onclick="toggleEditMode()" id="editModeToggle">
-                <i class="fas fa-edit me-2"></i>
-                <span id="editModeText">Ativar Edição</span>
-            </button>
-        </div>
+<div id="app" class="skeleton-editor">
+  <!-- Header -->
+  <div class="skeleton-header">
+    <div class="flex justify-between items-start">
+      <div>
+        <h1 class="text-2xl font-bold">
+          <i class="fas fa-sitemap me-2"></i>
+          Esqueleto da Landing Page
+        </h1>
+        <p class="opacity-90">
+          {{ request.page_title if request else 'Projeto' }} - {{ request.company_name if request else 'Empresa' }}
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-{{ 'green' if skeleton.status == 'completed' else 'yellow' }}-100 text-{{ 'green' if skeleton.status == 'completed' else 'yellow' }}-800">
+          <i class="fas fa-{{ 'check-circle' if skeleton.status == 'completed' else 'clock' }} me-1"></i>
+          {{ skeleton.status }}
+        </span>
+        <button id="editModeToggle" class="edit-mode-toggle" onclick="toggleEditMode()">
+          <i class="fas fa-edit me-2"></i>
+          <span id="editModeText">Ativar Edição</span>
+        </button>
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="row">
-    <!-- Main Content -->
-    <div class="col-lg-8">
-        <!-- Seções -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="mb-0" style="color: black;">
-                <i class="fas fa-layer-group me-2 text-primary"></i>
-                Seções da Página
-            </h3>
-            <button class="btn btn-success d-none" onclick="addNewSection()" id="addSectionBtn">
-                <i class="fas fa-plus me-1"></i>
-                Adicionar Seção
-            </button>
-        </div>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content (Seções) -->
+    <div class="lg:col-span-2">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800">
+          <i class="fas fa-layer-group me-2 text-blue-600"></i>
+          Seções da Página
+        </h2>
+        <button id="addSectionBtn" class="btn-primary hidden edit-only px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+          <i class="fas fa-plus me-1"></i>
+          Adicionar Seção
+        </button>
+      </div>
 
-        <div id="sectionsContainer">
-            {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.sections %}
-                {% for section in skeleton.parsed_skeleton_data.sections %}
-                <div class="section-card" data-section-index="{{ loop.index0 }}" >
-                    <div class="section-header" >
-                        <div class="d-flex align-items-center flex-grow-1" >
-                            <div class="section-order">{{ section.order }}</div>
-                            <div class="flex-grow-1">
-                                <h4 class="section-title">
-                                    <span class="editable-field" data-field="title" data-section="{{ loop.index0 }}">
-                                        {{ section.title }}
-                                        <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                    </span>
-                                </h4>
-                                <p class="section-description">
-                                    <span class="editable-field" data-field="description" data-section="{{ loop.index0 }}">
-                                        {{ section.description }}
-                                        <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <div class="section-actions d-none">
-                            <div class="btn-group" role="group">
-                                {% if not loop.first %}
-                                <button class="btn btn-outline-primary btn-sm" onclick="SkeletonEditor.moveSection({{ loop.index0 }}, 'up')" title="Mover para cima">
-                                    <i class="fas fa-arrow-up"></i>
-                                </button>
-                                {% endif %}
-                                {% if not loop.last %}
-                                <button class="btn btn-outline-primary btn-sm" onclick="SkeletonEditor.moveSection({{ loop.index0 }}, 'down')" title="Mover para baixo">
-                                    <i class="fas fa-arrow-down"></i>
-                                </button>
-                                {% endif %}
-                                <button class="btn btn-outline-danger btn-sm" onclick="removeSection({{ loop.index0 }})" title="Remover seção">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="section-body">
-                        <!-- Elementos -->
-                        {% if section.elements %}
-                        <div class="field-group">
-                            <div class="field-label">
-                                <i class="fas fa-puzzle-piece"></i>
-                                Elementos:
-                            </div>
-                            <div class="elements-container" data-field="elements" data-section="{{ loop.index0 }}">
-                                {% for element in section.elements %}
-                                <span class="element-tag">
-                                    <i class="fas fa-cube me-1"></i>
-                                    {{ element }}
-                                </span>
-                                {% endfor %}
-                            </div>
-                            <button class="btn btn-outline-primary btn-sm mt-2 d-none edit-only" onclick="editElements({{ loop.index0 }})">
-                                <i class="fas fa-edit me-1"></i>
-                                Editar Elementos
-                            </button>
-                        </div>
-                        {% endif %}
-                        
-                        <!-- Notas de Estilo -->
-                        {% if section.style_notes %}
-                        <div class="field-group">
-                            <div class="field-label">
-                                <i class="fas fa-palette"></i>
-                                Notas de Estilo:
-                            </div>
-                            <div class="bg-light p-3 rounded">
-                                <span class="editable-field" data-field="style_notes" data-section="{{ loop.index0 }}">
-                                    {{ section.style_notes }}
-                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                </span>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        <!-- Diretrizes de Conteúdo -->
-                        {% if section.content_guidelines %}
-                        <div class="field-group">
-                            <div class="field-label">
-                                <i class="fas fa-file-alt"></i>
-                                Diretrizes de Conteúdo:
-                            </div>
-                            <div class="bg-light p-3 rounded">
-                                <span class="editable-field" data-field="content_guidelines" data-section="{{ loop.index0 }}">
-                                    {{ section.content_guidelines }}
-                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                </span>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
+      <div id="sectionsContainer">
+        {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.sections %}
+          {% for section in skeleton.parsed_skeleton_data.sections %}
+            <div class="section-card" data-section-index="{{ loop.index0 }}">
+              <!-- Cabeçalho da Seção -->
+              <div class="section-header">
+                <div class="flex items-center flex-grow-1">
+                  <div class="section-order w-12 h-12 rounded-full bg-blue-800 flex items-center justify-center font-bold text-white mr-3">
+                    {{ section.order }}
+                  </div>
+                  <div class="flex-grow-1">
+                    <h3 class="section-title text-lg font-semibold mb-1">
+                      <span class="editable-field" data-field="title" data-section="{{ loop.index0 }}">
+                        {{ section.title }}
+                      </span>
+                    </h3>
+                    <p class="section-description text-sm opacity-90">
+                      <span class="editable-field" data-field="description" data-section="{{ loop.index0 }}">
+                        {{ section.description }}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                {% endfor %}
-            {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                    <h4>Nenhuma seção encontrada</h4>
-                    <p class="text-muted">O esqueleto não possui seções definidas.</p>
+                
+                <div class="section-actions hidden">
+                  {% if not loop.first %}
+                  <button class="btn-icon text-white hover:bg-blue-700 p-1 rounded" onclick="SkeletonEditor.moveSection({{ loop.index0 }}, 'up')" title="Mover para cima">
+                    <i class="fas fa-arrow-up"></i>
+                  </button>
+                  {% endif %}
+                  {% if not loop.last %}
+                  <button class="btn-icon text-white hover:bg-blue-700 p-1 rounded" onclick="SkeletonEditor.moveSection({{ loop.index0 }}, 'down')" title="Mover para baixo">
+                    <i class="fas fa-arrow-down"></i>
+                  </button>
+                  {% endif %}
+                  <button class="btn-icon text-white hover:bg-red-600 p-1 rounded" onclick="SkeletonEditor.removeSection({{ loop.index0 }})" title="Remover seção">
+                    <i class="fas fa-trash"></i>
+                  </button>
                 </div>
-            {% endif %}
-        </div>
-        
-        <!-- Botão de Salvar no Final das Seções -->
-        <div class="text-center mt-4 d-none edit-only" id="saveChangesFooter">
-            <div class="bg-info bg-opacity-10 border border-info rounded p-3 d-flex align-items-center justify-content-center">
-                <div class="me-3 text-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Você tem alterações não salvas
+              </div>
+              
+              <!-- Corpo da Seção -->
+              <div class="section-body p-4">
+                <!-- Elementos -->
+                {% if section.elements %}
+                <div class="mb-4">
+                  <div class="text-sm font-semibold text-gray-600 mb-1">
+                    <i class="fas fa-puzzle-piece me-1"></i>
+                    Elementos:
+                  </div>
+                  <div class="elements-container flex flex-wrap gap-1" data-field="elements" data-section="{{ loop.index0 }}">
+                    {% for element in section.elements %}
+                    <span class="element-tag bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                      <i class="fas fa-cube me-1"></i>
+                      {{ element }}
+                    </span>
+                    {% endfor %}
+                  </div>
+                  <button class="btn-sm mt-2 hidden edit-only px-2 py-1 text-sm bg-blue-100 text-blue-800 rounded" onclick="SkeletonEditor.editElements({{ loop.index0 }})">
+                    <i class="fas fa-edit me-1"></i>
+                    Editar Elementos
+                  </button>
                 </div>
-                <button class="btn btn-success btn-lg" onclick="saveChanges()">
-                    <i class="fas fa-save me-2"></i>
-                    Salvar Todas as Alterações
-                </button>
+                {% endif %}
+                
+                <!-- Notas de Estilo -->
+                <div class="mb-4">
+                  <div class="text-sm font-semibold text-gray-600 mb-1">
+                    <i class="fas fa-palette me-1"></i>
+                    Notas de Estilo:
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded">
+                    <span class="editable-field" data-field="style_notes" data-section="{{ loop.index0 }}">
+                      {{ section.style_notes or 'Sem notas de estilo' }}
+                    </span>
+                  </div>
+                </div>
+                
+                <!-- Diretrizes de Conteúdo -->
+                <div class="mb-2">
+                  <div class="text-sm font-semibold text-gray-600 mb-1">
+                    <i class="fas fa-file-alt me-1"></i>
+                    Diretrizes de Conteúdo:
+                  </div>
+                  <div class="bg-gray-100 p-3 rounded">
+                    <span class="editable-field" data-field="content_guidelines" data-section="{{ loop.index0 }}">
+                      {{ section.content_guidelines or 'Sem diretrizes de conteúdo' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-5 bg-gray-100 rounded-lg">
+            <i class="fas fa-exclamation-triangle text-yellow-500 text-4xl mb-3"></i>
+            <h3 class="text-lg font-medium">Nenhuma seção encontrada</h3>
+            <p class="text-gray-600">O esqueleto não possui seções definidas.</p>
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Botão de Salvar (Rodapé) -->
+      <div id="saveChangesFooter" class="mt-4 hidden edit-only">
+        <div class="bg-blue-100 border border-blue-200 rounded p-3 flex items-center justify-center">
+          <div class="me-3 text-blue-800">
+            <i class="fas fa-info-circle me-2"></i>
+            Alterações não salvas
+          </div>
+          <button class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" onclick="SkeletonEditor.saveChanges()">
+            <i class="fas fa-save me-2"></i>
+            Salvar Alterações
+          </button>
         </div>
+      </div>
     </div>
     
     <!-- Sidebar -->
-    <div class="col-lg-4">
-        <!-- Identidade Visual -->
-        {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.visual_identity %}
-        <div class="info-card visual-identity">
-            <div class="card-header-custom">
-                <h6 class="card-title-custom">
-                    <i class="fas fa-palette"></i>
-                    Identidade Visual
-                </h6>
-            </div>
-            <div class="card-body-custom">
-                <!-- Paleta de Cores -->
-                <div class="color-palette">
-                    <div class="color-item">
-                        <div class="color-label">Primária</div>
-                        <div class="color-preview" 
-                             style="background: {{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}"
-                             onclick="editColor('primary', '{{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}')">
-                        </div>
-                        <div class="color-value" data-field="primary_color">
-                            {{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}
-                        </div>
-                    </div>
-                    
-                    <div class="color-item">
-                        <div class="color-label">Secundária</div>
-                        <div class="color-preview" 
-                             style="background: {{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}"
-                             onclick="editColor('secondary', '{{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}')">
-                        </div>
-                        <div class="color-value" data-field="secondary_color">
-                            {{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}
-                        </div>
-                    </div>
-                    
-                    <div class="color-item">
-                        <div class="color-label">Destaque</div>
-                        <div class="color-preview" 
-                             style="background: {{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}"
-                             onclick="editColor('accent', '{{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}')">
-                        </div>
-                        <div class="color-value" data-field="accent_color">
-                            {{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Tipografia e Layout -->
-                <div class="row mt-4">
-                    <div class="col-6">
-                        <div class="field-group">
-                            <div class="field-label">Fonte Principal:</div>
-                            <div class="field-value">
-                                <span class="editable-field" data-field="font_primary" data-context="visual_identity">
-                                    {{ skeleton.parsed_skeleton_data.visual_identity.font_primary or 'Inter' }}
-                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="field-group">
-                            <div class="field-label">Fonte Secundária:</div>
-                            <div class="field-value">
-                                <span class="editable-field" data-field="font_secondary" data-context="visual_identity">
-                                    {{ skeleton.parsed_skeleton_data.visual_identity.font_secondary or 'Georgia' }}
-                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-6">
-                        <div class="field-group">
-                            <div class="field-label">Estilo Layout:</div>
-                            <div class="field-value">
-                                <span class="editable-field" data-field="layout_style" data-context="visual_identity">
-                                    {{ skeleton.parsed_skeleton_data.visual_identity.layout_style or 'modern_grid' }}
-                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="field-group">
-                            <div class="field-label">Espaçamento:</div>
-                            <div class="field-value">
-                                <span class="editable-field" data-field="spacing_unit" data-context="visual_identity">
-                                    {{ skeleton.parsed_skeleton_data.visual_identity.spacing_unit or '1.5rem' }}
-                                    <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="lg:col-span-1">
+      <!-- Identidade Visual -->
+      {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.visual_identity %}
+      <div class="card mb-4 bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-lg overflow-hidden">
+        <div class="card-header p-3 border-b border-blue-700">
+          <h3 class="text-base font-semibold flex items-center">
+            <i class="fas fa-palette me-2"></i>
+            Identidade Visual
+          </h3>
         </div>
-        {% endif %}
-        
-        <!-- Estratégia de Conversão -->
-        {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.conversion_strategy %}
-        <div class="info-card strategy">
-            <div class="card-header-custom">
-                <h6 class="card-title-custom">
-                    <i class="fas fa-bullseye"></i>
-                    Estratégia de Conversão
-                </h6>
+        <div class="card-body p-3">
+          <!-- Paleta de Cores -->
+          <div class="flex gap-2 mb-3">
+            <div class="flex-1 text-center">
+              <div class="text-xs mb-1 opacity-90">Primária</div>
+              <div class="color-preview w-10 h-10 mx-auto rounded mb-1 cursor-pointer border-2 border-white/30"
+                   style="background: {{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}"
+                   onclick="SkeletonEditor.editColor('primary', '{{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}')">
+              </div>
+              <div class="text-xs bg-white/20 rounded py-1 px-2 font-mono" data-field="primary_color">
+                {{ skeleton.parsed_skeleton_data.visual_identity.primary_color or '#2563eb' }}
+              </div>
             </div>
-            <div class="card-body-custom">
-                <div class="field-group">
-                    <div class="field-label">CTA Principal:</div>
-                    <div class="field-value">
-                        <span class="editable-field" data-field="primary_cta" data-context="conversion_strategy">
-                            {{ skeleton.parsed_skeleton_data.conversion_strategy.primary_cta or 'Entre em Contato' }}
-                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="field-group">
-                    <div class="field-label">CTA Secundário:</div>
-                    <div class="field-value">
-                        <span class="editable-field" data-field="secondary_cta" data-context="conversion_strategy">
-                            {{ skeleton.parsed_skeleton_data.conversion_strategy.secondary_cta or 'Saiba Mais' }}
-                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="field-group">
-                    <div class="field-label">Proposta de Valor:</div>
-                    <div class="field-value">
-                        <span class="editable-field" data-field="value_proposition" data-context="conversion_strategy">
-                            {{ skeleton.parsed_skeleton_data.conversion_strategy.value_proposition or 'Solução inovadora para seu negócio' }}
-                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-                
-                <!-- Elementos de Confiança -->
-                {% if skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
-                <div class="field-group">
-                    <div class="field-label">Elementos de Confiança:</div>
-                    <div class="elements-container" data-field="trust_elements" data-context="conversion_strategy">
-                        {% for element in skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
-                        <span class="element-tag">
-                            <i class="fas fa-shield-alt me-1"></i>
-                            {{ element }}
-                        </span>
-                        {% endfor %}
-                    </div>
-                    <button class="btn btn-outline-light btn-sm mt-2 d-none edit-only" onclick="editTrustElements()">
-                        <i class="fas fa-edit me-1"></i>
-                        Editar
-                    </button>
-                </div>
-                {% endif %}
-                
-                <!-- Elementos de Urgência -->
-                {% if skeleton.parsed_skeleton_data.conversion_strategy.urgency_elements %}
-                <div class="field-group">
-                    <div class="field-label">Elementos de Urgência:</div>
-                    <div class="elements-container" data-field="urgency_elements" data-context="conversion_strategy">
-                        {% for element in skeleton.parsed_skeleton_data.conversion_strategy.urgency_elements %}
-                        <span class="element-tag">
-                            <i class="fas fa-clock me-1"></i>
-                            {{ element }}
-                        </span>
-                        {% endfor %}
-                    </div>
-                    <button class="btn btn-outline-light btn-sm mt-2 d-none edit-only" onclick="editUrgencyElements()">
-                        <i class="fas fa-edit me-1"></i>
-                        Editar
-                    </button>
-                </div>
-                {% endif %}
+            
+            <div class="flex-1 text-center">
+              <div class="text-xs mb-1 opacity-90">Secundária</div>
+              <div class="color-preview w-10 h-10 mx-auto rounded mb-1 cursor-pointer border-2 border-white/30"
+                   style="background: {{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}"
+                   onclick="SkeletonEditor.editColor('secondary', '{{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}')">
+              </div>
+              <div class="text-xs bg-white/20 rounded py-1 px-2 font-mono" data-field="secondary_color">
+                {{ skeleton.parsed_skeleton_data.visual_identity.secondary_color or '#64748b' }}
+              </div>
             </div>
+            
+            <div class="flex-1 text-center">
+              <div class="text-xs mb-1 opacity-90">Destaque</div>
+              <div class="color-preview w-10 h-10 mx-auto rounded mb-1 cursor-pointer border-2 border-white/30"
+                   style="background: {{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}"
+                   onclick="SkeletonEditor.editColor('accent', '{{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}')">
+              </div>
+              <div class="text-xs bg-white/20 rounded py-1 px-2 font-mono" data-field="accent_color">
+                {{ skeleton.parsed_skeleton_data.visual_identity.accent_color or '#f59e0b' }}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Fontes e Layout -->
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <div>
+              <div class="text-xs mb-1">Fonte Principal:</div>
+              <div class="bg-white/10 p-2 rounded text-sm">
+                               <span class="editable-field" data-field="font_primary" data-context="visual_identity">
+                  {{ skeleton.parsed_skeleton_data.visual_identity.font_primary or 'Inter' }}
+                </span>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs mb-1">Fonte Secundária:</div>
+              <div class="bg-white/10 p-2 rounded text-sm">
+                <span class="editable-field" data-field="font_secondary" data-context="visual_identity">
+                  {{ skeleton.parsed_skeleton_data.visual_identity.font_secondary or 'Georgia' }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 mt-2">
+            <div>
+              <div class="text-xs mb-1">Estilo Layout:</div>
+              <div class="bg-white/10 p-2 rounded text-sm">
+                <span class="editable-field" data-field="layout_style" data-context="visual_identity">
+                  {{ skeleton.parsed_skeleton_data.visual_identity.layout_style or 'modern_grid' }}
+                </span>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs mb-1">Espaçamento:</div>
+              <div class="bg-white/10 p-2 rounded text-sm">
+                <span class="editable-field" data-field="spacing_unit" data-context="visual_identity">
+                  {{ skeleton.parsed_skeleton_data.visual_identity.spacing_unit or '1.5rem' }}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-        {% endif %}
-        
-        <!-- Contexto Global -->
-        {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.global_context %}
-        <div class="info-card context">
-            <div class="card-header-custom">
-                <h6 class="card-title-custom">
-                    <i class="fas fa-globe"></i>
-                    Contexto Global
-                </h6>
-            </div>
-            <div class="card-body-custom">
-                <div class="field-group">
-                    <div class="field-label">Tipo de Negócio:</div>
-                    <div class="field-value">
-                        <span class="editable-field" data-field="business_type" data-context="global_context">
-                            {{ skeleton.parsed_skeleton_data.global_context.business_type or 'Não definido' }}
-                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="field-group">
-                    <div class="field-label">Tom de Voz:</div>
-                    <div class="field-value">
-                        <span class="editable-field" data-field="tone_of_voice" data-context="global_context">
-                            {{ skeleton.parsed_skeleton_data.global_context.tone_of_voice or 'Não definido' }}
-                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="field-group">
-                    <div class="field-label">Público-Alvo:</div>
-                    <div class="field-value">
-                        <span class="editable-field" data-field="target_audience" data-context="global_context">
-                            {{ skeleton.parsed_skeleton_data.global_context.target_audience or 'Não definido' }}
-                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="field-group">
-                    <div class="field-label">Objetivo Principal:</div>
-                    <div class="field-value">
-                        <span class="editable-field" data-field="primary_goal" data-context="global_context">
-                            {{ skeleton.parsed_skeleton_data.global_context.primary_goal or 'Não definido' }}
-                            <span class="edit-indicator"><i class="fas fa-edit"></i></span>
-                        </span>
-                    </div>
-                </div>
-                
-                {% if skeleton.parsed_skeleton_data.global_context.secondary_goals %}
-                <div class="field-group">
-                    <div class="field-label">Objetivos Secundários:</div>
-                    <div class="elements-container" data-field="secondary_goals" data-context="global_context">
-                        {% for goal in skeleton.parsed_skeleton_data.global_context.secondary_goals %}
-                        <span class="element-tag">
-                            <i class="fas fa-target me-1"></i>
-                            {{ goal }}
-                        </span>
-                        {% endfor %}
-                    </div>
-                    <button class="btn btn-outline-light btn-sm mt-2 d-none edit-only" onclick="editSecondaryGoals()">
-                        <i class="fas fa-edit me-1"></i>
-                        Editar
-                    </button>
-                </div>
-                {% endif %}
-            </div>
+      </div>
+      {% endif %}
+      
+      <!-- Estratégia de Conversão -->
+      {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.conversion_strategy %}
+      <div class="card mb-4 bg-gradient-to-br from-green-600 to-green-800 text-white rounded-lg overflow-hidden">
+        <div class="card-header p-3 border-b border-green-700">
+          <h3 class="text-base font-semibold flex items-center">
+            <i class="fas fa-bullseye me-2"></i>
+            Estratégia de Conversão
+          </h3>
         </div>
-        {% endif %}
-        
-        <!-- Estatísticas -->
-        <div class="info-card stats">
-            <div class="card-header-custom">
-                <h6 class="card-title-custom">
-                    <i class="fas fa-chart-bar"></i>
-                    Estatísticas
-                </h6>
+        <div class="card-body p-3">
+          <div class="mb-2">
+            <div class="text-xs mb-1">CTA Principal:</div>
+            <div class="bg-white/10 p-2 rounded text-sm">
+              <span class="editable-field" data-field="primary_cta" data-context="conversion_strategy">
+                {{ skeleton.parsed_skeleton_data.conversion_strategy.primary_cta or 'Entre em Contato' }}
+              </span>
             </div>
-            <div class="card-body-custom">
-                <div class="row text-center">
-                    <div class="col-4">
-                        <div class="mb-2">
-                            <i class="fas fa-layer-group fa-2x mb-2"></i>
-                            <div class="fw-bold fs-4">{{ skeleton.parsed_skeleton_data.sections|length if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.sections else 0 }}</div>
-                            <small class="opacity-75">Seções</small>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="mb-2">
-                            <i class="fas fa-coins fa-2x mb-2"></i>
-                            <div class="fw-bold fs-4">{{ skeleton.prompt_tokens_phase1 + skeleton.completion_tokens_phase1 }}</div>
-                            <small class="opacity-75">Tokens</small>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="mb-2">
-                            <i class="fas fa-clock fa-2x mb-2"></i>
-                            <div class="fw-bold fs-4">{{ "%.1f"|format(skeleton.duration_ms_phase1 / 1000) }}s</div>
-                            <small class="opacity-75">Tempo</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <hr class="my-3 opacity-25">
-                
-                <div class="row text-center">
-                    <div class="col-6">
-                        <small class="d-block opacity-75">Criado em:</small>
-                        <small class="fw-semibold">{{ skeleton.created_at.strftime('%d/%m/%Y %H:%M') if skeleton.created_at else 'N/A' }}</small>
-                    </div>
-                    <div class="col-6">
-                        <small class="d-block opacity-75">Status:</small>
-                        <small class="fw-semibold">{{ skeleton.status }}</small>
-                    </div>
-                </div>
+          </div>
+          
+          <div class="mb-2">
+            <div class="text-xs mb-1">CTA Secundário:</div>
+            <div class="bg-white/10 p-2 rounded text-sm">
+              <span class="editable-field" data-field="secondary_cta" data-context="conversion_strategy">
+                {{ skeleton.parsed_skeleton_data.conversion_strategy.secondary_cta or 'Saiba Mais' }}
+              </span>
             </div>
+          </div>
+          
+          <div class="mb-2">
+            <div class="text-xs mb-1">Proposta de Valor:</div>
+            <div class="bg-white/10 p-2 rounded text-sm">
+              <span class="editable-field" data-field="value_proposition" data-context="conversion_strategy">
+                {{ skeleton.parsed_skeleton_data.conversion_strategy.value_proposition or 'Solução inovadora para seu negócio' }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Elementos de Confiança -->
+          {% if skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
+          <div class="mb-2">
+            <div class="text-xs mb-1">Elementos de Confiança:</div>
+            <div class="flex flex-wrap gap-1" data-field="trust_elements" data-context="conversion_strategy">
+              {% for element in skeleton.parsed_skeleton_data.conversion_strategy.trust_elements %}
+              <span class="element-tag bg-white/20 text-white text-xs px-2 py-1 rounded-full">
+                <i class="fas fa-shield-alt me-1"></i>
+                {{ element }}
+              </span>
+              {% endfor %}
+            </div>
+            <button class="text-xs mt-1 bg-white/20 px-2 py-1 rounded hidden edit-only" onclick="SkeletonEditor.editTrustElements()">
+              <i class="fas fa-edit me-1"></i>Editar
+            </button>
+          </div>
+          {% endif %}
         </div>
-        
-        <!-- Ações -->
-        <div class="info-card">
-            <div class="card-header">
-                <h6 class="card-title">
-                    <i class="fas fa-cogs"></i>
-                    Ações
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('view_request', request_id=skeleton.request_id) }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-1"></i>
-                        Voltar para Solicitação
-                    </a>
-                    
-                    <button class="btn btn-warning" onclick="regenerateSkeleton()">
-                        <i class="fas fa-redo me-1"></i>
-                        Regenerar Esqueleto
-                    </button>
-                    
-                    <button class="btn btn-success d-none" onclick="saveChanges()" id="saveChangesBtn">
-                        <i class="fas fa-save me-1"></i>
-                        Salvar Alterações
-                    </button>
-                    
-                    <button class="btn btn-primary" onclick="generateHeroSection()" id="generateHeroBtn">
-                        <i class="fas fa-rocket me-1"></i>
-                        Gerar Hero Section
-                    </button>
-                </div>
-            </div>
+      </div>
+      {% endif %}
+      
+      <!-- Contexto Global -->
+      {% if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.global_context %}
+      <div class="card mb-4 bg-gradient-to-br from-purple-600 to-purple-800 text-white rounded-lg overflow-hidden">
+        <div class="card-header p-3 border-b border-purple-700">
+          <h3 class="text-base font-semibold flex items-center">
+            <i class="fas fa-globe me-2"></i>
+            Contexto Global
+          </h3>
         </div>
+        <div class="card-body p-3">
+          <div class="mb-2">
+            <div class="text-xs mb-1">Tipo de Negócio:</div>
+            <div class="bg-white/10 p-2 rounded text-sm">
+              <span class="editable-field" data-field="business_type" data-context="global_context">
+                {{ skeleton.parsed_skeleton_data.global_context.business_type or 'Não definido' }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="mb-2">
+            <div class="text-xs mb-1">Tom de Voz:</div>
+            <div class="bg-white/10 p-2 rounded text-sm">
+              <span class="editable-field" data-field="tone_of_voice" data-context="global_context">
+                {{ skeleton.parsed_skeleton_data.global_context.tone_of_voice or 'Não definido' }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="mb-2">
+            <div class="text-xs mb-1">Público-Alvo:</div>
+            <div class="bg-white/10 p-2 rounded text-sm">
+              <span class="editable-field" data-field="target_audience" data-context="global_context">
+                {{ skeleton.parsed_skeleton_data.global_context.target_audience or 'Não definido' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      
+      <!-- Estatísticas -->
+      <div class="card mb-4 bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-lg overflow-hidden">
+        <div class="card-header p-3 border-b border-blue-600">
+          <h3 class="text-base font-semibold flex items-center">
+            <i class="fas fa-chart-bar me-2"></i>
+            Estatísticas
+          </h3>
+        </div>
+        <div class="card-body p-3">
+          <div class="grid grid-cols-3 text-center mb-3">
+            <div>
+              <i class="fas fa-layer-group text-2xl mb-1"></i>
+              <div class="font-bold text-lg">{{ skeleton.parsed_skeleton_data.sections|length if skeleton.parsed_skeleton_data and skeleton.parsed_skeleton_data.sections else 0 }}</div>
+              <small class="opacity-75">Seções</small>
+            </div>
+            <div>
+              <i class="fas fa-coins text-2xl mb-1"></i>
+              <div class="font-bold text-lg">{{ skeleton.prompt_tokens_phase1 + skeleton.completion_tokens_phase1 }}</div>
+              <small class="opacity-75">Tokens</small>
+            </div>
+            <div>
+              <i class="fas fa-clock text-2xl mb-1"></i>
+              <div class="font-bold text-lg">{{ "%.1f"|format(skeleton.duration_ms_phase1 / 1000) }}s</div>
+              <small class="opacity-75">Tempo</small>
+            </div>
+          </div>
+          
+          <hr class="opacity-25 my-2">
+          
+          <div class="grid grid-cols-2 text-center text-sm">
+            <div>
+              <small class="opacity-75">Criado em:</small>
+              <div>{{ skeleton.created_at.strftime('%d/%m/%Y %H:%M') if skeleton.created_at else 'N/A' }}</div>
+            </div>
+            <div>
+              <small class="opacity-75">Status:</small>
+              <div>{{ skeleton.status }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ações -->
+      <div class="card bg-white rounded-lg overflow-hidden shadow">
+        <div class="card-header p-3 bg-gray-50 border-b">
+          <h3 class="text-base font-semibold text-gray-700 flex items-center">
+            <i class="fas fa-cogs me-2"></i>
+            Ações
+          </h3>
+        </div>
+        <div class="card-body p-3">
+          <div class="grid gap-2">
+            <a href="{{ url_for('view_request', request_id=skeleton.request_id) }}" class="btn py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded text-center">
+              <i class="fas fa-arrow-left me-1"></i>
+              Voltar para Solicitação
+            </a>
+            
+            <button class="btn py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded" onclick="SkeletonEditor.regenerateSkeleton()">
+              <i class="fas fa-redo me-1"></i>
+              Regenerar Esqueleto
+            </button>
+            
+            <button id="saveChangesBtn" class="btn py-2 bg-green-600 hover:bg-green-700 text-white rounded hidden" onclick="SkeletonEditor.saveChanges()">
+              <i class="fas fa-save me-1"></i>
+              Salvar Alterações
+            </button>
+            
+            <button class="btn py-2 bg-blue-600 hover:bg-blue-700 text-white rounded" onclick="SkeletonEditor.generateHeroSection()">
+              <i class="fas fa-rocket me-1"></i>
+              Gerar Hero Section
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Modais -->
-
-<!-- Modal de Edição de Cor -->
-<div class="modal fade" id="colorModal" tabindex="-1">
+  <!-- Modais -->
+  <!-- Modal de Edição de Cor -->
+  <div class="modal fade" id="colorModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-palette me-2"></i>
-                    Editar Cor <span id="colorType"></span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-label">Seletor de Cor:</label>
-                        <input type="color" class="form-control form-control-color w-100" id="colorPicker" style="height: 60px;">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Código Hex:</label>
-                        <input type="text" class="form-control" id="colorHex" placeholder="#000000" pattern="^#[0-9A-Fa-f]{6}$">
-                    </div>
-                </div>
-                
-                <div class="mt-3">
-                    <label class="form-label">Preview:</label>
-                    <div id="colorPreview" style="width: 100%; height: 60px; border-radius: 8px; border: 2px solid #dee2e6;"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="saveColor()">Salvar Cor</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">
+            <i class="fas fa-palette me-2"></i>
+            Editar Cor <span id="colorType"></span>
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-    </div>
-</div>
-
-<!-- Modal de Adicionar Seção -->
-<div class="modal fade" id="addSectionModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-plus me-2"></i>
-                    Adicionar Nova Seção
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Seletor de Cor:</label>
+              <input type="color" class="form-control form-control-color w-100" id="colorPicker" style="height: 40px;">
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-label">Tipo de Seção:</label>
-                        <select class="form-select" id="newSectionName">
-                            <option value="about">Sobre Nós</option>
-                            <option value="services">Serviços</option>
-                            <option value="benefits">Benefícios</option>
-                            <option value="testimonials">Depoimentos</option>
-                            <option value="pricing">Preços</option>
-                            <option value="faq">FAQ</option>
-                            <option value="team">Equipe</option>
-                            <option value="portfolio">Portfólio</option>
-                            <option value="contact">Contato</option>
-                            <option value="custom">Personalizada</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6" id="customNameField" style="display: none;">
-                        <label class="form-label">Nome Personalizado:</label>
-                        <input type="text" class="form-control" id="customSectionName" placeholder="Ex: newsletter">
-                    </div>
-                </div>
-                
-                <div class="mt-3">
-                    <label class="form-label">Título da Seção:</label>
-                    <input type="text" class="form-control" id="newSectionTitle" placeholder="Ex: Sobre Nossa Empresa">
-                </div>
-                
-                <div class="mt-3">
-                    <label class="form-label">Descrição:</label>
-                    <textarea class="form-control" id="newSectionDescription" rows="3" placeholder="Descreva o propósito e conteúdo desta seção..."></textarea>
-                </div>
+            <div class="col-md-6">
+              <label class="form-label">Código Hex:</label>
+              <input type="text" class="form-control" id="colorHex" placeholder="#000000">
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="saveNewSection()">Adicionar Seção</button>
-            </div>
+          </div>
+          
+          <div>
+            <label class="form-label">Preview:</label>
+            <div id="colorPreview" style="width: 100%; height: 40px; border-radius: 4px; border: 1px solid #dee2e6;"></div>
+          </div>
         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="saveColor()">Salvar Cor</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Modal de Editar Elementos -->
-<div class="modal fade" id="elementsModal" tabindex="-1">
+  <!-- Modal de Elementos -->
+  <div class="modal fade" id="elementsModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-puzzle-piece me-2"></i>
-                    Editar Elementos
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <label class="form-label">Elementos (um por linha):</label>
-                <textarea class="form-control" id="elementsTextarea" rows="6" placeholder="title
-subtitle
-cta_button
-image"></textarea>
-                <small class="text-muted mt-2 d-block">
-                    <i class="fas fa-info-circle me-1"></i>
-                    Digite cada elemento em uma linha separada.
-                </small>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="saveElements()">Salvar Elementos</button>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">
+            <i class="fas fa-puzzle-piece me-2"></i>
+            Editar Elementos
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
+        <div class="modal-body">
+          <label class="form-label">Elementos (um por linha):</label>
+          <textarea class="form-control" id="elementsTextarea" rows="6" placeholder="título
+subtítulo
+botão_cta
+imagem"></textarea>
+          <small class="text-muted mt-2 d-block">
+            <i class="fas fa-info-circle me-1"></i>
+            Digite cada elemento em uma linha separada
+          </small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="saveElements()">Salvar Elementos</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
+  <!-- Modal de Adicionar Seção -->
+  <div class="modal fade" id="addSectionModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">
+            <i class="fas fa-plus me-2"></i>
+            Adicionar Nova Seção
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Tipo de Seção:</label>
+            <select class="form-select" id="newSectionName">
+              <option value="about">Sobre Nós</option>
+              <option value="services">Serviços</option>
+              <option value="benefits">Benefícios</option>
+              <option value="testimonials">Depoimentos</option>
+              <option value="pricing">Preços</option>
+              <option value="faq">FAQ</option>
+              <option value="team">Equipe</option>
+              <option value="contact">Contato</option>
+              <option value="custom">Personalizada</option>
+            </select>
+          </div>
+          
+          <div class="mb-3" id="customNameField" style="display: none;">
+            <label class="form-label">Nome Personalizado:</label>
+            <input type="text" class="form-control" id="customSectionName" placeholder="Ex: newsletter">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Título da Seção:</label>
+            <input type="text" class="form-control" id="newSectionTitle" placeholder="Ex: Sobre Nossa Empresa">
+          </div>
+          
+          <div class="mb-3">
+            <label class="form-label">Descrição:</label>
+            <textarea class="form-control" id="newSectionDescription" rows="3" placeholder="Descreva o propósito e conteúdo desta seção..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="saveNewSection()">Adicionar Seção</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+    <div class="bg-white p-5 rounded-lg shadow-lg text-center">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto mb-3"></div>
+      <p class="loading-text text-gray-800">Processando...</p>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
+<!-- Bootstrap JS é necessário para os modais -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ url_for('static', filename='js/skeleton-editor.js') }}"></script>
 <script>
-// Inicializar o editor com os dados do esqueleto
-document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar o editor com os dados do esqueleto
+  document.addEventListener('DOMContentLoaded', function() {
     const skeletonData = {{ skeleton.parsed_skeleton_data | tojson | safe }};
     const skeletonId = '{{ skeleton.skeleton_id }}';
     
     // Inicializar o editor
     SkeletonEditor.init(skeletonData, skeletonId);
-});
+    
+    // Debug - verificar se o editor foi inicializado
+    console.log('Editor inicializado, modo de edição:', SkeletonEditor.isEditMode());
+  });
 </script>
 {% endblock %}
